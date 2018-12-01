@@ -114,9 +114,9 @@ struct cmd_creature : runable {
 
 	void modify(int count) {
 		current = *this;
-		if(count>0)
+		if(count > 0)
 			draw::execute(increase_proc, 1);
-		if(count<0)
+		if(count < 0)
 			draw::execute(decrease_proc, -1);
 	}
 
@@ -343,121 +343,105 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 	return getresult() != 0;
 }
 
-static void biography(int x1, int y1, const char* id) {
+static void biography(int x1, int y1, const pregen_info* pg) {
 	char temp[260];
 	char temz[260];
-	auto pg = creature::getpregen(id);
-	if(!pg)
-		return;
 	szprint(temp, zendof(temp), "Биография %1", grammar::of(temz, zendof(temz), pg->name));
 	draw::text(x1, y1, temp);
 	y1 += 30;
-	draw::textf(x1, y1, 160, temp);
+	draw::textf(x1, y1, 160, pg->text);
 }
 
-//int show::newgame() {
-//	char temp[64];
-//	int premade = PremadeCombat;
-//	unsigned char data[LastToken + 1];
-//	game::generate::creature(data, premade);
-//	while(true) {
-//		int width = draw::getwidth();
-//		int height = draw::getheight();
-//		draw::background(174);
-//		draw::radio(81, 322, Continue, 0, 8);
-//		draw::radio(436, 319, Change, 0, 8);
-//		draw::radio(81, 424, Create, 0, 8);
-//		draw::radio(461, 424, Cancel, 0, 8);
-//		if(draw::buttonf(292, 320, 122, 123, 0))
-//			draw::execute(KeyLeft);
-//		if(draw::buttonf(318, 320, 124, 125, 0))
-//			draw::execute(KeyRight);
-//		// premade info
-//		draw::image(width / 2, 40 + height / 2, res::INTRFACE, 201 + (premade - FirstPremade - 1));
-//		int nameid = game::findname(bsgets(premade, Name));
-//		const char* p1 = game::getnamepart(nameid);
-//		draw::text((width - draw::textw(p1)) / 2, 50, p1);
-//		biography(width / 2 + 120, 50, premade);
-//		int x1 = 290;
-//		int y1 = 80;
-//		int w1 = 70;
-//		int w2 = 20;
-//		for(int i = FirstStat; i <= LastStat; i++) {
-//			const char* p = game::getnameshort(i);
-//			int value = game::get(i, data);
-//			draw::text(x1 + w1 - 8 - draw::textw(p), y1, p);
-//			draw::text(x1 + w1, y1, sznum(temp, value, 2));
-//			draw::text(x1 + w1 + w2, y1, bsgets(FirstStatStr + value - 1, Name));
-//			y1 += draw::texth();
-//		}
-//		y1 += draw::texth();
-//		static int info1[] = {MaxHP, AC, MaxAP, MeleeDamage};
-//		for(auto i : info1) {
-//			const char* p = game::getnameshort(i);
-//			draw::text(x1 + w1 + w2 - 4 - draw::textw(p), y1, p);
-//			switch(i) {
-//			case MaxHP:
-//				szprint(temp, "%1i/%2i", game::get(MaxHP, data), game::get(MaxHP, data));
-//				draw::text(x1 + w1 + w2, y1, temp);
-//				break;
-//			default:
-//				draw::text(x1 + w1 + w2, y1, sznum(temp, game::get(i, data)));
-//				break;
-//			}
-//			y1 += draw::texth();
-//		}
-//		y1 += draw::texth();
-//		// tags
-//		for(int n = Tag1; n <= Tag4; n++) {
-//			int i = bsget(premade, n);
-//			if(!i)
-//				continue;
-//			const char* p = game::getnameshort(i);
-//			draw::text(x1 + w1 + w2 - 4 - draw::textw(p), y1, p);
-//			draw::text(x1 + w1 + w2, y1, szpercent(temp, game::get(i, data)));
-//			y1 += draw::texth();
-//		}
-//		// traits
-//		for(int n = Trait1; n <= Trait2; n++) {
-//			int i = bsget(premade, n);
-//			if(!i)
-//				continue;
-//			const char* p = game::getnameshort(i);
-//			draw::text(x1 + w1 + w2 - 4 - draw::textw(p), y1, p);
-//			y1 += draw::texth();
-//		}
-//		int id = draw::input();
-//		switch(id) {
-//		case 0:
-//			return 0;
-//		case Cancel:
-//		case KeyEscape:
-//			return Cancel;
-//		case KeyRight:
-//			if(premade < PremadeDiplomat) {
-//				premade++;
-//				game::generate::creature(data, premade);
-//			}
-//			break;
-//		case KeyLeft:
-//			if(premade > PremadeCombat) {
-//				premade--;
-//				game::generate::creature(data, premade);
-//			}
-//			break;
-//		case Change:
-//			id = character(data);
-//			if(!id)
-//				return 0;
-//			return Continue;
-//		case Create:
-//			game::generate::creature(data, FirstPremade);
-//			id = character(data);
-//			if(!id)
-//				return 0;
-//			return Continue;
-//		case Continue:
-//			return Continue;
-//		}
-//	}
-//}
+static void pregen_left() {
+	auto p = (int*)hot.param;
+	if(*p > 0)
+		*p = *p - 1;
+}
+
+static void pregen_right() {
+	auto p = (int*)hot.param;
+	if(*p < 2)
+		*p = *p + 1;
+}
+
+static void take_character() {
+	buttonok();
+}
+
+static void create_new_character() {
+	auto player = (creature*)hot.param;
+	player->clear();
+	if(player->choose_stats(2, 3, 5))
+		buttonok();
+}
+
+static void change_character() {
+	auto player = (creature*)hot.param;
+	if(player->choose_stats(0, 0, 0))
+		buttonok();
+}
+
+void creature::newgame() {
+	char temp[64];
+	static const char* pregen_names[] = {"narg", "mingun", "chitsa"};
+	creature	player;
+	int			index = 1;
+	while(ismodal()) {
+		int width = draw::getwidth();
+		int height = draw::getheight();
+		auto pg = getpregen(pregen_names[index]);
+		player.clear();
+		player.apply(pg);
+		background(174);
+		radio(81, 322, cmd(buttonok), 8);
+		radio(436, 319, cmd(change_character, (int)&player), 8);
+		radio(81, 424, cmd(create_new_character, (int)&player), 8);
+		radio(461, 424, cmd(buttoncancel), 8, KeyEscape);
+		if(draw::buttonf(292, 320, 122, 123, 0) || (hot.key == KeyLeft))
+			draw::execute(pregen_left, (int)&index);
+		if(draw::buttonf(318, 320, 124, 125, 0) || (hot.key == KeyRight))
+			draw::execute(pregen_right, (int)&index);
+		// premade info
+		draw::image(width / 2, 40 + height / 2, res::INTRFACE, 201 + index);
+		draw::text((width - draw::textw(pg->name)) / 2, 50, pg->name);
+		biography(width / 2 + 120, 50, pg);
+		auto x1 = 290, y1 = 80, w1 = 70, w2 = 20;
+		for(auto i = Strenght; i <= Luck; i = (ability_s)(i + 1)) {
+			auto p = ability_data[i].name_short;
+			auto value = player.get(i);
+			draw::text(x1 + w1 - 8 - draw::textw(p), y1, p);
+			draw::text(x1 + w1, y1, sznum(temp, value, 2));
+			draw::text(x1 + w1 + w2, y1, maptbl(ability_values, value));
+			y1 += draw::texth();
+		}
+		y1 += draw::texth();
+		static variant fast_info[] = {HitPoints, ArmorClass, ActionPoints, MeleeDamage};
+		y1 += player.render_stats(x1, y1, 132, fast_info, true) + texth();
+		x1 += 20;
+		// tags
+		for(auto e : pg->tagged) {
+			const char* p = skill_data[e].name;
+			draw::text(x1 + w1 + w2 - 4 - draw::textw(p), y1, p);
+			draw::text(x1 + w1 + w2, y1, szpercent(temp, zendof(temp), player.get(e)));
+			y1 += draw::texth();
+		}
+		// traits
+		for(auto e : pg->perks) {
+			const char* p = perk_data[e].name;
+			draw::text(x1 + w1 + w2 - 4 - draw::textw(p), y1, p);
+			y1 += draw::texth();
+		}
+		domodal();
+		//		case Change:
+		//			id = character(data);
+		//			if(!id)
+		//				return 0;
+		//			return Continue;
+		//		case Create:
+		//			game::generate::creature(data, FirstPremade);
+		//			id = character(data);
+		//			if(!id)
+		//				return 0;
+		//			return Continue;
+	}
+}

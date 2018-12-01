@@ -1,14 +1,15 @@
 #include "main.h"
 
-void draw::radio(int x, int y, const runable& ev, int cicle) {
+void draw::radio(int x, int y, const runable& ev, int cicle, unsigned key) {
 	auto ps = gres(res::INTRFACE);
 	int frame = ps->ganim(cicle, 0);
 	rect rc = {x, y,
 		x + ps->get(frame).sx - 1,
 		y + ps->get(frame).sy - 1};
 	areas a = area(rc);
-	if(hot.key == MouseLeft && !hot.pressed
+	if((hot.key == MouseLeft && !hot.pressed
 		&& (a == AreaHilited || a==AreaHilitedPressed))
+		|| (key && hot.key==key))
 		ev.execute();
 	if(ev.ischecked())
 		a = AreaHilitedPressed;

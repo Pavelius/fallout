@@ -361,6 +361,7 @@ struct creature : actor {
 	bool				is(perk_s id) const { return (perks[id / 32] & (1 << (id % 32))) != 0; }
 	bool				is(skill_s id) const { return (skills_tag & (1 << id)) != 0; }
 	bool				is(wound_s id) const { return (wounds & (1 << id)) != 0; }
+	static void			newgame();
 	void				mark(variant e, int& points);
 	void				set(perk_s id) { perks[id / 32] |= (1 << (id % 32)); }
 	void				set(skill_s id) { skills_tag |= (1 << id); }
@@ -450,7 +451,7 @@ void					label(int x, int y, int id, const char* temp, bool checked, bool disabl
 void					modify(color* pal, int index, int start, int count);
 void					number(int x, int y, int digits, int value);
 void					numbersm(int x, int y, int digits, int value, int type = 0);
-void					radio(int x, int y, const runable& ev, int frame);
+void					radio(int x, int y, const runable& ev, int frame, unsigned key = 0);
 void					setcamera(point pt);
 void					setcolor(color_s value);
 void					setfont(res::tokens e);

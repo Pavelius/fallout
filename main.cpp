@@ -34,12 +34,11 @@ static void show_look() {}
 
 static void new_game() {
 	creature e;
-	e.choose_stats(2, 3, 10);
+	//e.choose_stats(2, 3, 10);
+	e.newgame();
 }
 
 static void mainmenu() {
-	draw::state push;
-	draw::setfont(res::FONT4);
 	setpause(false);
 	while(ismodal()) {
 		background(140);
@@ -47,8 +46,12 @@ static void mainmenu() {
 		auto y = 19;
 		addaction(Talk, show_talk);
 		addaction(Look, show_look);
-		field(x, y, 100, cmd(new_game), "История"); y += 41;
-		field(x, y, 100, cmd(show_intro), "Загрузить"); y += 41;
+		if(true) {
+			draw::state push;
+			draw::setfont(res::FONT4);
+			field(x, y, 100, cmd(new_game), "История"); y += 41;
+			field(x, y, 100, cmd(show_intro), "Загрузить"); y += 41;
+		}
 		//for(int id = ShowIntro; id <= ExitGame; id++)
 		//	draw::field(29, 19 + 41 * (id - ShowIntro), 86, id, 0, bsgets(id, Name));
 		domodal();
