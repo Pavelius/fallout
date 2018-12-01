@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="collection.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="draw.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+    <ClCompile Include="adventure.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="animable.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="cicling.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="city.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="creature.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="ground.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="inventory.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="item.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="map.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="names.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="pallette.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="premade.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="scenery.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="tokens.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="view.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="worldmap.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="io.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="stringcreator.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="crt.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="actor.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="controls.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="win_draw.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="win_io_file.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="draw_text.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+    <ClCompile Include="draw_textf.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+    <ClCompile Include="color.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="point.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="screenshoot.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="skill.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="ability.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="perk.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="variant.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="formula.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="wound.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="illness.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="parameter.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="damage.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="gender.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="grammar.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="ui_creature.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="collection.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="initializer_list.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="draw.h">
+      <Filter>draw</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="io.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="stringcreator.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="crt.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="win.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="color.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="point.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="rect.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="screenshoot.h">
+      <Filter>draw</Filter>
+    </ClInclude>
+    <ClInclude Include="grammar.h">
+      <Filter>support</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="support">
+      <UniqueIdentifier>{3bcad8ad-5252-4cdb-8f0b-2df6a480e159}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="draw">
+      <UniqueIdentifier>{c9e25349-cd27-4b81-82d1-9575c5c9709b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="logic">
+      <UniqueIdentifier>{90dab5c6-b06c-4f72-b7ef-8b62eddaed84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{7545a0e6-f2ed-46b0-9830-54184a8d0817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{ae4435e2-a41e-4ee8-a486-0dccd71339bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{60e0ba45-a83a-4dd6-abbc-fd5b1a9c3779}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
