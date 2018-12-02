@@ -136,6 +136,18 @@
     <ClCompile Include="ui_adventure.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="sprite_util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="szdup.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="lst_criters.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h">
@@ -179,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="datetime.h">
       <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

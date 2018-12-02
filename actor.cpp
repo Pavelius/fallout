@@ -11,10 +11,10 @@ static int modify_weapon_base[] = {
 	56, 58, 59, 57,
 };
 
-int actor::byweapon(animation_s action, int weapon) {
-	if(!weapon || modify_weapon_base[action] == -1)
+int actor::byweapon(animation_s action, int weapon_index) {
+	if(!weapon_index || modify_weapon_base[action] == -1)
 		return action;
-	return modify_weapon_base[action] + weapon * 13;
+	return modify_weapon_base[action] + weapon_index * 13;
 }
 
 static res::tokens bygender(gender_s gender, res::tokens tm, res::tokens tf) {

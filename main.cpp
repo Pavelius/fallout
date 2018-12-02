@@ -37,6 +37,11 @@ static void show_invertory() {
 	creature e;
 	e.add(ArmorMetal);
 	e.add(item(Pistol10mmAuto, 1));
+	e.add(item(Pistol10mm, 1));
+	e.add(ArmorLeather);
+	e.add(ArmorCombat);
+	e.add(ArmorPower);
+	e.add(ArmorReinforced);
 	e.inventory();
 }
 
@@ -57,7 +62,7 @@ static void mainmenu() {
 
 int main(int argc, char* argv[]) {
 	srand(clock());
-	//util_main();
+	util_main();
 	initialize();
 	setfont(res::FONT1);
 	setpause(false);

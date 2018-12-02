@@ -114,7 +114,7 @@ enum color_s : unsigned char {
 	ColorState = 0x90
 };
 enum item_sprite_s : unsigned char {
-	FrameInventory,
+	FrameInventory, FrameGround, FrameWeapon,
 };
 namespace res {
 enum tokens {

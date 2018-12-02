@@ -25,7 +25,7 @@ static void preview(int x, int y, const item& armor, gender_s gender, const item
 	if(!ps)
 		return;
 	auto or = (getstamp() / 300) % 6;
-	auto wp = 0;// item::get(bsget(rec, Weapon), Weapon);
+	auto wp = weapon.get(FrameWeapon);
 	auto cl = actor::byweapon(ActionStand, wp) * 6 + or ;
 	auto pa = draw::getaction(ps, cl / 6);
 	if(!pa)
