@@ -175,7 +175,7 @@ static void clear_hot() {
 	cursor_actions.clear();
 }
 
-unsigned draw::gettick() {
+unsigned draw::getstamp() {
 	return timestamp;
 }
 
@@ -333,4 +333,55 @@ void draw::domodal() {
 		mouse_left_pressed = clock();
 	else if(mouse_left_pressed && !hot.pressed)
 		mouse_left_pressed = 0;
+}
+
+struct layout_info {
+	layout_info*		previous;
+	callback_proc		proc;
+	callback_proc		def_proc;
+	static layout_info*	current;
+	layout_info(void(*proc)()) : proc(proc), def_proc(proc) {
+		previous = current;
+		current = this;
+	}
+	~layout_info() {
+		current = previous;
+	}
+};
+layout_info* layout_info::current;
+
+callback_proc draw::getlayout() {
+	return layout_info::current ? layout_info::current->def_proc : 0;
+}
+
+void draw::setlayout(callback_proc proc) {
+	layout_info e(proc);
+	while(e.proc)
+		e.proc();
+}
+
+void draw::setpage(callback_proc proc) {
+	if(!layout_info::current)
+		return;
+	layout_info::current->proc = proc;
+	breakmodal(1);
+}
+
+void draw::setpagedef(callback_proc proc) {
+	if(!layout_info::current)
+		return;
+	layout_info::current->def_proc = proc;
+}
+
+void draw::setpage() {
+	if(!layout_info::current)
+		return;
+	layout_info::current->proc = layout_info::current->def_proc;
+	breakmodal(1);
+}
+
+bool draw::isnext(callback_proc proc) {
+	if(!layout_info::current)
+		return false;
+	return layout_info::current->proc == proc;
 }

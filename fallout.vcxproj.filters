@@ -58,9 +58,6 @@
     <ClCompile Include="view.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="worldmap.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="io.cpp">
       <Filter>support</Filter>
     </ClCompile>
@@ -136,6 +133,12 @@
     <ClCompile Include="ui_creature.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="ui_worldmap.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="datetime.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h">
@@ -175,6 +178,9 @@
       <Filter>draw</Filter>
     </ClInclude>
     <ClInclude Include="grammar.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="datetime.h">
       <Filter>support</Filter>
     </ClInclude>
   </ItemGroup>

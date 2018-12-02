@@ -68,10 +68,10 @@ float sqrt(const float x) {
 	} u;
 	u.x = x;
 	u.i = 0x5f3759df - (u.i >> 1);  // gives initial guess y0
-	return x * u.x*(1.5f - xhalf * u.x*u.x);// Newton step, repeating increases accuracy 
+	return x * u.x*(1.5f - xhalf * u.x*u.x); // Newton step, repeating increases accuracy 
 }
 
-int isqrt(int num) {
+int draw::isqrt(int num) {
 	int res = 0;
 	int bit = 1 << 30;
 	// "bit" starts at the highest power of four <= the argument.
@@ -860,7 +860,8 @@ draw::state::state() :
 	font(draw::font),
 	linw(draw::linw),
 	canvas(draw::canvas),
-	clip(clipping) {
+	clip(clipping),
+	palt(draw::palt) {
 }
 
 draw::state::~state() {
@@ -869,6 +870,7 @@ draw::state::~state() {
 	draw::fore_stroke = this->fore_stroke;
 	draw::linw = this->linw;
 	draw::clipping = this->clip;
+	draw::palt = this->palt;
 	draw::canvas = this->canvas;
 }
 

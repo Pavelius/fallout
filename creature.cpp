@@ -1,5 +1,8 @@
 #include "main.h"
 
+adat<creature, 128>	creature_data;
+static datetime		today;
+
 void creature::clear() {
 	name = 0;
 	level = 0;
@@ -13,6 +16,14 @@ void creature::clear() {
 	memset(stats, 5, sizeof(stats));
 	memset(skills, 0, sizeof(skills));
 	memset(wears, 0, sizeof(wears));
+}
+
+const datetime& creature::getdate() {
+	return today;
+}
+
+void creature::passtime(unsigned minutes) {
+	today.add(minutes);
 }
 
 int creature::get(ability_s value) const {
@@ -179,4 +190,12 @@ int	creature::getac() const {
 	if(is(Kamikaze))
 		result = 0;
 	return result;
+}
+
+bool creature::isplayer() const {
+	return this == getplayer();
+}
+
+creature* creature::getplayer() {
+	return creature_data.data;
 }

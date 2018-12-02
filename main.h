@@ -1,5 +1,6 @@
 #include "collection.h"
 #include "crt.h"
+#include "datetime.h"
 #include "draw.h"
 #include "grammar.h"
 #include "screenshoot.h"
@@ -307,8 +308,11 @@ struct actor : drawable, point {
 	constexpr actor() : point{0, 0}, action(ActionStand), orientation(0), frame(0), timestart(0) {}
 	virtual item		getarmor() const = 0;
 	int					getcicle() const;
+	int					getdistance(const point p1, const point p2);
 	virtual gender_s	getgender() const { return Male; }
+	static int			getlongest(const point from, const point to);
 	rect				getrect() const override;
+	static char			getorientation(point from, point to);
 	point				getposition() const override { return *this; }
 	const sprite*		getsprite() const;
 	virtual item		getweapon() const = 0;
@@ -344,6 +348,7 @@ struct creature : actor {
 	int					getbase(skill_s id) const;
 	int					getcarryweight() const;
 	int					getcritical() const;
+	static const datetime& getdate();
 	int					gethealrate() const;
 	int					gethp() const { return hp; }
 	int					gethpmax() const;
@@ -352,6 +357,7 @@ struct creature : actor {
 	int					getmeleedamage() const;
 	int					getpartylimit() const;
 	int					getperkrate() const;
+	static creature*	getplayer();
 	static const pregen_info* getpregen(const char* id);
 	int					getresistance(damage_s id) const;
 	int					getsequence() const;
@@ -361,12 +367,15 @@ struct creature : actor {
 	bool				is(perk_s id) const { return (perks[id / 32] & (1 << (id % 32))) != 0; }
 	bool				is(skill_s id) const { return (skills_tag & (1 << id)) != 0; }
 	bool				is(wound_s id) const { return (wounds & (1 << id)) != 0; }
+	bool				isplayer() const;
 	static void			newgame();
 	void				mark(variant e, int& points);
+	static void			passtime(unsigned minutes);
 	void				set(perk_s id) { perks[id / 32] |= (1 << (id % 32)); }
 	void				set(skill_s id) { skills_tag |= (1 << id); }
 	void				remove(perk_s id) { perks[id / 32] &= ~(1 << (id % 32)); }
 	void				remove(skill_s id) { skills_tag &= ~(1 << id); }
+	static void			worldmap();
 private:
 	const char*			name;
 	unsigned char		level;
@@ -382,6 +391,12 @@ private:
 	item				wears[3];
 	unsigned char		wounds;
 	int					render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const;
+};
+struct settlement {
+	const char*			name;
+	point				position;
+	char				size;
+	unsigned			flags;
 };
 struct parameter_info {
 	int					fid;
@@ -436,8 +451,9 @@ void					field(int x, int y, int width, const runable& ev, const char* string);
 void					focusing(const rect& rc, int id);
 const actinfo*			getaction(const sprite* p, int action);
 int						getfocus();
+callback_proc			getlayout();
 int						getnext(int id, int key);
-unsigned				gettick();
+unsigned				getstamp();
 unsigned				gettick(unsigned start);
 rect					getrect(int id);
 sprite*					gres(res::tokens id);
@@ -445,6 +461,7 @@ const char*				getresname(res::tokens id);
 void					hexagon(int index, point screen);
 inline void				image(int x, int y, res::tokens token, int id, int flags = 0, unsigned char alpha = 0xFF);
 void					initialize();
+bool					isnext(callback_proc proc);
 bool					ispause();
 void					iteminv(int x, int y, int sx, int sy, int rec, bool resize = false);
 void					label(int x, int y, int id, const char* temp, bool checked, bool disabled);
@@ -454,15 +471,15 @@ void					numbersm(int x, int y, int digits, int value, int type = 0);
 void					radio(int x, int y, const runable& ev, int frame, unsigned key = 0);
 void					setcamera(point pt);
 void					setcolor(color_s value);
+void					setlayout(callback_proc proc);
 void					setfont(res::tokens e);
+void					setpage();
+void					setpage(callback_proc proc);
+void					setpagedef(callback_proc proc);
 void					setpallette(int daylight);
 void					setpause(bool value);
 void					tiles(point screen);
 }
-const int				world_map_tile_width = 50; // Width of world map tile
-const int				world_map_tile_height = 50; // Height of world map tile
-const int				world_map_width = 28; // Width of world map int tiles
-const int				world_map_height = 30; // Height of world map int tiles
 const int				tile_width = 80; // Width of isometric tile
 const int				tile_height = 36; // Height of isometric tile
 point					h2m(point pt);
@@ -489,42 +506,15 @@ int						moveto(int index, int d);
 extern int				width;
 }
 namespace game {
-namespace generate {
-void					creature(unsigned char* data, int premade);
-int						scenery(int type, int index);
-int						player(unsigned char* data, int index, int orientation);
-int						player(int type, int index, int orientation = 2);
-}
 void					additem(int player, int itm);
-extern unsigned			datetime;
 void					dropitem(int index, int rec);
-int						find(int id, unsigned char* data, int i1, int i2);
-int						get(int id, unsigned char* data);
-int						get(int player, int id);
-int						getdistance(point p1, point p2);
-char*					getformula(char* result, int id);
 int						getground(int** result, int index);
-int						getlongest(point start, point to);
-int						getorientation(point start, point to);
-char*					getname(char* result, unsigned char* data);
-char*					getname(char* result, int rec);
-const char*				getnamepart(int id);
-const char*				getnameshort(int id);
-short unsigned			getnextindex(short unsigned index, int orientation);
 int						getwears(int** result, int player);
 int						getwearsweight(int player);
-bool					ispause();
-void					setaction(int player, int action);
-void					setpause(bool value);
-int						getwm(int x, int y);
-void					setwm(int x, int y, int value);
-void					moveto(int player, short unsigned goal, int run = -1);
-void					passtime(int count);
-int						summ(unsigned char* data, int i1, int i2);
-int						summnz(unsigned char* data, int i1, int i2);
 }
 extern ability_info		ability_data[];
 extern const char*		ability_values[11];
+extern adat<creature, 128> creature_data;
 extern gender_info		gender_data[];
 extern resist_info		damage_data[];
 extern illness_info		illness_data[];

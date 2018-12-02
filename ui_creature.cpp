@@ -2,22 +2,12 @@
 
 using namespace draw;
 
-static const char* score_text[3] = {"очко", "очка", "очков"};
-
-static char* szpercent(char* result, const char* result_maximum, int value) {
-	return szprint(result, result_maximum, "%1i%%", value);
-}
-
 static int gtv(int value) {
-	if(value <= 1)
-		return 0;
-	else if(value <= 2)
-		return 1;
-	else
-		return 2;
+	return (value <= 1) ? 0 : ((value <= 2) ? 1 : 2);
 }
 
 static const char* szscore(int value) {
+	static const char* score_text[3] = {"очко", "очка", "очков"};
 	return score_text[gtv(value)];
 }
 
@@ -221,7 +211,7 @@ struct cmdk : runable {
 		draw::execute(execute_proc);
 	}
 private:
-	creature * player;
+	creature*	player;
 	int			traits_points, tag_skill_points, ability_points;
 	static cmdk	current;
 };
@@ -297,7 +287,7 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 			ev.points = &tag_skill_points;
 			draw::radio(347, 27 + 11 * (i - FirstSkill), ev, 215);
 			draw::label(377, 27 + 11 * (i - FirstSkill), ev.element, getstr(ev.element.skill), ev.checked, false);
-			auto s1 = szpercent(temp, zendof(temp), get(i));
+			auto s1 = szprint(temp, zendof(temp), "%1i%%", get(i));
 			draw::text(377 + w1 - draw::textw(s1), 27 + 11 * (i - FirstSkill), s1);
 		}
 		if(show_tag)
@@ -405,9 +395,10 @@ void creature::newgame() {
 		draw::image(width / 2, 40 + height / 2, res::INTRFACE, 201 + index);
 		draw::text((width - draw::textw(pg->name)) / 2, 50, pg->name);
 		biography(width / 2 + 120, 50, pg);
+		// stats
 		auto x1 = 290, y1 = 80, w1 = 70, w2 = 20;
 		for(auto i = Strenght; i <= Luck; i = (ability_s)(i + 1)) {
-			auto p = ability_data[i].name_short;
+			auto p = ability_data[i].name;
 			auto value = player.get(i);
 			draw::text(x1 + w1 - 8 - draw::textw(p), y1, p);
 			draw::text(x1 + w1, y1, sznum(temp, value, 2));
@@ -422,7 +413,7 @@ void creature::newgame() {
 		for(auto e : pg->tagged) {
 			const char* p = skill_data[e].name;
 			draw::text(x1 + w1 + w2 - 4 - draw::textw(p), y1, p);
-			draw::text(x1 + w1 + w2, y1, szpercent(temp, zendof(temp), player.get(e)));
+			draw::text(x1 + w1 + w2, y1, szprint(temp, zendof(temp), "%1i%%", player.get(e)));
 			y1 += draw::texth();
 		}
 		// traits
@@ -432,16 +423,5 @@ void creature::newgame() {
 			y1 += draw::texth();
 		}
 		domodal();
-		//		case Change:
-		//			id = character(data);
-		//			if(!id)
-		//				return 0;
-		//			return Continue;
-		//		case Create:
-		//			game::generate::creature(data, FirstPremade);
-		//			id = character(data);
-		//			if(!id)
-		//				return 0;
-		//			return Continue;
 	}
 }

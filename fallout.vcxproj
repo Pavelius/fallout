@@ -149,6 +149,7 @@
     <ClCompile Include="creature.cpp" />
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="damage.cpp" />
+    <ClCompile Include="datetime.cpp" />
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="draw_text.cpp" />
     <ClCompile Include="draw_textf.cpp" />
@@ -188,15 +189,14 @@
     <ClCompile Include="view.cpp" />
     <ClCompile Include="win_draw.cpp" />
     <ClCompile Include="win_io_file.cpp" />
-    <ClCompile Include="worldmap.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ui_worldmap.cpp" />
     <ClCompile Include="wound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="crt.h" />
+    <ClInclude Include="datetime.h" />
     <ClInclude Include="draw.h" />
     <ClInclude Include="grammar.h" />
     <ClInclude Include="initializer_list.h" />

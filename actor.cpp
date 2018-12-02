@@ -57,8 +57,7 @@ rect actor::getrect() const {
 	return{pos.x - 100, pos.y - 100, pos.x + 100, pos.y + 64};
 }
 
-void actor::moveto(point position, int run) {
-}
+void actor::moveto(point position, int run) {}
 
 void actor::painting(point camera) const {
 	auto source = getsprite();
@@ -81,6 +80,76 @@ void actor::painting(point camera) const {
 	} else
 		draw::image(pt.x, pt.y, source, frame, 0);
 }
+
+char actor::getorientation(point from, point to) {
+	//static const char orientations[25] = {
+	//	5, 5, 0, 0, 0,
+	//	5, 5, 0, 0, 0,
+	//	4, 4, 2, 1, 1,
+	//	3, 3, 2, 2, 2,
+	//	3, 3, 3, 2, 2
+	//};
+	static const char orientations[25] = {
+		5, 5, 0, 0, 0,
+		5, 5, 0, 0, 0,
+		4, 4, 2, 1, 1,
+		3, 3, 2, 2, 2,
+		3, 3, 3, 2, 2
+	};
+	int dx = to.x - from.x;
+	int dy = to.y - from.y;
+	int div = imax(iabs(dx), iabs(dy));
+	if(!div)
+		return 2; //default
+	if(div > 3)
+		div /= 2;
+	int ax = dx / div;
+	int ay = dy / div;
+	return orientations[(ay + 2) * 5 + ax + 2];
+}
+
+int actor::getlongest(const point from, const point to) {
+	return imax(iabs(from.x - to.x), iabs(from.y - to.y));
+}
+
+int actor::getdistance(const point p1, const point p2) {
+	int dx = p1.x - p2.x;
+	int dy = p1.y - p2.y;
+	return isqrt(dx*dx + dy * dy);
+}
+
+//short unsigned actor::getnext(short unsigned index, int orientation) {
+//	// 0 - Right Up
+//	// 1 - Right
+//	// 2 - Right Down
+//	// 3 - Left Down
+//	// 4 - Left
+//	// 5 - Left 
+//	int nx = i2x(index);
+//	switch(orientation) {
+//	case 0:
+//		if(nx & 1)
+//			return index - 256 + 1;
+//		return index + 1;
+//	case 1:
+//		if(nx & 1)
+//			return index + 1;
+//		return index + 256 + 1;
+//	case 2:
+//		return index + 1 * 256;
+//	case 3:
+//		if(nx & 1)
+//			return index - 1;
+//		return index + 256 - 1;
+//	case 4:
+//		if(nx & 1)
+//			return index - 256 - 1;
+//		return index - 1;
+//	case 5:
+//		return index - 1 * 256;
+//	}
+//	return index;
+//}
 
 //bool hittest(point camera, point mouse) const override {
 //	sprite* source = getsprite();

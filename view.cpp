@@ -144,7 +144,7 @@ void draw::tiles(point screen) {
 	auto ps = gres(res::TILES);
 	if(!ps)
 		return;
-	auto a = draw::gettick() / 100;
+	auto a = draw::getstamp() / 100;
 	auto pm = s2m(camera);
 	int x1 = pm.x - 8; int x2 = x1 + 8 + 11;
 	int y1 = pm.y; int y2 = y1 + 18;

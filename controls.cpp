@@ -188,6 +188,6 @@ void draw::image(int x, int y, res::tokens token, int cicle, int flags, unsigned
 	auto ps = gres(token);
 	if(!ps)
 		return;
-	int frame = ps->ganim(cicle, draw::gettick() / 100);
+	int frame = ps->ganim(cicle, draw::getstamp() / 100);
 	image(x, y, ps, frame, flags, alpha);
 }

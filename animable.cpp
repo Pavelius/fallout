@@ -17,7 +17,7 @@ rect animable::getrect() const {
 }
 
 void animable::update() {
-	unsigned tm = draw::gettick();
+	unsigned tm = draw::getstamp();
 	if(!timestart)
 		timestart = tm;
 	while(tm > timestart) {

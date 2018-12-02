@@ -209,6 +209,7 @@ private:
 	const sprite*		font; // glyph font
 	surface*			canvas;
 	rect				clip;
+	color*				palt;
 };
 struct textplugin {
 	typedef int(*proc)(int x, int y, int width, const char* id, int value, const char* label, const char* tips);
@@ -264,6 +265,7 @@ inline bool				ischecked(unsigned flags) { return (flags&Checked) != 0; }
 inline bool				isdisabled(unsigned flags) { return (flags&Disabled) != 0; }
 inline bool				isfocused(unsigned flags) { return (flags&Focused) != 0; }
 bool					ismodal();
+int						isqrt(int num);
 void					image(int x, int y, const sprite* e, int id, int flags, unsigned char alpha = 0xFF);
 void					image(int x, int y, const sprite* e, int id, int flags, unsigned char alpha, color* pal);
 void					initialize();
