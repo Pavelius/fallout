@@ -156,24 +156,11 @@ int creature::render_stats(int x, int y, int width, aref<variant> elements, bool
 	auto y0 = y;
 	char temp[260];
 	for(auto id : elements) {
-		const char* pr;
+		get(temp, zendof(temp), id, show_maximum_only);
 		switch(id.type) {
 		case Parameters:
-			draw::label(x, y, id, parameter_data[id.parameter].name_short, false, false);
-			pr = "%1i";
-			if(parameter_data[id.parameter].percent)
-				pr = "%1i%%";
-			if(parameter_data[id.parameter].maximum && !show_maximum_only)
-				pr = "%1i/%2i";
-			if(show_maximum_only)
-				szprint(temp, zendof(temp), pr, parameter_data[id.parameter].getmax ? getmax(id.parameter) : get(id.parameter));
-			else
-				szprint(temp, zendof(temp), pr, get(id.parameter), getmax(id.parameter));
-			draw::text(x + width - draw::textw(temp), y, temp);
-			break;
 		case Damages:
-			draw::label(x, y, id, damage_data[id.damage].name_short, false, false);
-			szprint(temp, zendof(temp), "%1i%%", getresistance(id.damage));
+			draw::label(x, y, id, id.getnameshort(), false, false);
 			draw::text(x + width - draw::textw(temp), y, temp);
 			break;
 		case Wounds:
@@ -393,10 +380,10 @@ void creature::newgame() {
 			draw::execute(pregen_right, (int)&index);
 		// premade info
 		draw::image(width / 2, 40 + height / 2, res::INTRFACE, 201 + index);
-		draw::text((width - draw::textw(pg->name)) / 2, 50, pg->name);
-		biography(width / 2 + 120, 50, pg);
+		draw::text((width - draw::textw(pg->name)) / 2, 40, pg->name);
+		biography(width / 2 + 120, 40, pg);
 		// stats
-		auto x1 = 290, y1 = 80, w1 = 70, w2 = 20;
+		auto x1 = 295, y1 = 70, w1 = 70, w2 = 20;
 		for(auto i = Strenght; i <= Luck; i = (ability_s)(i + 1)) {
 			auto p = ability_data[i].name;
 			auto value = player.get(i);
@@ -405,10 +392,16 @@ void creature::newgame() {
 			draw::text(x1 + w1 + w2, y1, maptbl(ability_values, value));
 			y1 += draw::texth();
 		}
-		y1 += draw::texth();
-		static variant fast_info[] = {HitPoints, ArmorClass, ActionPoints, MeleeDamage};
-		y1 += player.render_stats(x1, y1, 132, fast_info, true) + texth();
+		y1 += draw::texth()/2;
 		x1 += 20;
+		static variant fast_info[] = {HitPoints, ArmorClass, ActionPoints, MeleeDamage};
+		for(auto id : fast_info) {
+			const char* p = id.getnameshort();
+			draw::text(x1 + w1 + w2 - 4 - draw::textw(p), y1, p);
+			player.get(temp, zendof(temp), id, true);
+			draw::text(x1 + w1 + w2, y1, temp);
+			y1 += draw::texth();
+		}
 		// tags
 		for(auto e : pg->tagged) {
 			const char* p = skill_data[e].name;

@@ -37,10 +37,8 @@ static void preview(int x, int y, const item& armor, gender_s gender, const item
 	draw::image(x, y, ps, fr, 0);
 }
 
-//static void iteminfo(int x, int y, int width, int player, int id) {
-//	damagei damage;
-//	char temp[128];
-//	int itm = bsget(player, id);
+static void iteminfo(int x, int y, int width, const creature& player, const item& it) {
+	char temp[128];
 //	int type = item::get(itm, Type);
 //	int melee = item::get(itm, MeleeDamage);
 //	if(!itm) {
@@ -64,16 +62,14 @@ static void preview(int x, int y, const item& armor, gender_s gender, const item
 //		}
 //		break;
 //	}
-//}
+}
 
 struct dragdrop {
-	enum type_s : unsigned char {
-		NoTarget,
-		Item, Wearable,
-	};
-	item		element, *source, *target, *hilite;
-	type_s		type;
-	wearable*	target_player;
+	enum type_s : unsigned char { NoTarget, Item, Wearable, };
+	item			element, *source, *target, *hilite;
+	type_s			type;
+	wearable*		target_player;
+	item::proctest	target_test;
 	dragdrop() { clear(); }
 	~dragdrop() { drop(NoTarget); }
 	constexpr operator bool() const { return source != 0; }
@@ -89,6 +85,9 @@ struct dragdrop {
 		target = 0;
 		hilite = 0;
 		target_player = 0;
+	}
+	bool isallow(const item& it) const {
+		return !it || !target_test || (it.*target_test)();
 	}
 private:
 	void clear() {
@@ -129,12 +128,12 @@ private:
 	}
 };
 
-static int itemview(int x, int y, int sx, int sy, item& it, item::proctest test_proc, dragdrop& di) {
+static int itemview(int x, int y, int sx, int sy, item& it, item::proctest test_proc, dragdrop& di, bool allow_begin_drag) {
 	const int dw = 2;
 	rect rc = {x, y, x + sx, y + sy};
 	auto a = area(rc);
 	if(di && (a==AreaHilited || a==AreaHilitedPressed)) {
-		if(!test_proc || (di.element.*test_proc)()) {
+		if(di.isallow(it) && (!test_proc || (di.element.*test_proc)())) {
 			di.type = dragdrop::Item;
 			di.target = &it;
 		}
@@ -153,13 +152,15 @@ static int itemview(int x, int y, int sx, int sy, item& it, item::proctest test_
 	}
 	if(a == AreaHilited || a == AreaHilitedPressed) {
 		di.hilite = &it;
-		if(hot.key == MouseLeft && a == AreaHilitedPressed)
+		if(hot.key == MouseLeft && a == AreaHilitedPressed && allow_begin_drag) {
+			di.target_test = test_proc;
 			di.start();
+		}
 	}
 	return rc.height();
 }
 
-static void backpack(int x, int y, int width, int height, wearable& player, dragdrop& di) {
+static void backpack(int x, int y, int width, int height, wearable& player, dragdrop& di, bool allow_begin_drag) {
 	static int first;
 	rect rc = {x, y, x + width, y + height};
 	auto a = area(rc);
@@ -208,33 +209,33 @@ static void backpack(int x, int y, int width, int height, wearable& player, drag
 	for(auto i = first; i < (int)result.count; i++) {
 		if(y >= rc.y2)
 			break;
-		if(itemview(x, y, width, element_height - 1, *result.data[i], 0, di))
+		if(itemview(x, y, width, element_height - 1, *result.data[i], 0, di, allow_begin_drag))
 			y += element_height;
 	}
 }
 
-//static void itemtext(int x, int y, int width, int height, int rec) {
-//	char temp[128];
-//	draw::state push;
-//	draw::setfont(res::FONT1);
-//	draw::setcolor(ColorText);
-//	rect rc = {x, y, x + width, y + height};
-//	const char* name = item::getname(rec);
-//	if(name && name[0]) {
-//		rc.y1 += draw::text(rc, name) + line_height - 1;
-//		draw::line(rc.x1 - 4, rc.y1, rc.x2, rc.y1);
-//		rc.y1 += line_height + 4;
-//	}
-//	rc.y1 += draw::text(rc, item::getdescription(rec));
-//	if(item::get(rec, Type) == Weapon) {
-//		szprint(temp, szt("Minmal ST: %1i", "Минимальная СЛ: %1i"), item::get(rec, Strenght));
-//		rc.y1 += draw::text(rc, temp);
-//	}
-//	szprint(temp, szt("It weight %1i pounds", "Это весит %1i фунта."), item::get(rec, CarryWeight));
-//	rc.y1 += draw::text(rc, temp);
-//}
+static void itemtext(int x, int y, int width, int height, const item& it) {
+	char temp[128];
+	draw::state push;
+	draw::setfont(res::FONT1);
+	draw::setcolor(ColorText);
+	rect rc = {x, y, x + width, y + height};
+	const char* name = it.getname();
+	if(name && name[0]) {
+		rc.y1 += draw::text(rc, name) + line_height - 1;
+		draw::line(rc.x1 - 4, rc.y1, rc.x2, rc.y1);
+		rc.y1 += line_height + 4;
+	}
+	rc.y1 += draw::text(rc, it.getdescription());
+	if(it.isweapon()) {
+		szprint(temp, zendof(temp), "Минимальная СЛ: %1i", it.getminst());
+		rc.y1 += draw::text(rc, temp);
+	}
+	szprint(temp, zendof(temp), "Это весит %1i фунта.", it.getweight());
+	rc.y1 += draw::text(rc, temp);
+}
 
-//static void chartext(int x, int y, int width, int height, int rec) {
+static void chartext(int x, int y, int width, int height, creature& rec) {
 //	char temp[128];
 //	static int values[] = {HP, AC,
 //		DamageNormal, DamageLaser, DamageFire, DamagePlasma, DamageExplosive};
@@ -286,15 +287,21 @@ static void backpack(int x, int y, int width, int height, wearable& player, drag
 //	rc.y1 += line_height - 1;
 //	szprint(temp, "Общий вес %1i/%2i", game::getwearsweight(rec), game::get(rec, CarryWeight));
 //	draw::text(rc.x1 + (rc.width() - draw::textw(temp)) / 2, rc.y1, temp);
-//}
+}
+
+static void action_look() {
+}
+
+static void action_drop() {
+}
 
 void creature::inventory() {
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
 		return;
+	item* item_info = 0;
 	bool info_mode = false;
 	auto fr = ps->ganim(48, 0);
-	item_info = 0;
 	draw::screenshoot screen;
 	cursorset cursor(res::INTRFACE, 286);
 	dragdrop di;
@@ -304,76 +311,42 @@ void creature::inventory() {
 		auto y = imax(0, (draw::getheight() - ps->get(fr).sy - 100) / 2);
 		image(x, y, ps, fr, ImageNoOffset);
 		preview(x + 206, y + 116, getarmor(), getgender(), getweapon());
-		//if(info_mode && item_info)
-		//	itemtext(x + 298, y + 48, 144, 180, item_info);
-		//else
-		//	chartext(x + 298, y + 48, 144, 180, player);
-		itemview(x + 152, y + 184, 92, 60, armor, &item::isarmor, di);
-		itemview(x + 152, y + 287, 92, 60, weapon[0], &item::isweapon, di);
-		itemview(x + 245, y + 287, 92, 60, weapon[1], &item::isweapon, di);
-		backpack(x + 42, y + 40, 70, 300, *this, di);
-		//if(info_mode && item_hilite) {
-		//	int actions[16]; actions[0] = 0;
-		//	zcat(actions, (int)Look);
-		//	zcat(actions, (int)Drop);
+		if(info_mode && item_info)
+			itemtext(x + 298, y + 48, 144, 180, *item_info);
+		else
+			chartext(x + 298, y + 48, 144, 180, *this);
+		itemview(x + 152, y + 184, 92, 60, armor, &item::isarmor, di, !info_mode);
+		itemview(x + 152, y + 287, 92, 60, weapon[0], &item::isweapon, di, !info_mode);
+		itemview(x + 245, y + 287, 92, 60, weapon[1], &item::isweapon, di, !info_mode);
+		backpack(x + 42, y + 40, 70, 300, *this, di, !info_mode);
+		if(info_mode && di.hilite) {
+			addaction(Look, action_look);
+			addaction(Drop, action_drop);
 		//	if(item::get(*item_hilite, Ammo))
 		//		zcat(actions, (int)Unload);
-		//	draw::setaction(actions);
-		//}
+		}
 		if(buttonf(x + 432, y + 322, 299, 300, 0)
 			|| (hot.key == KeyEscape || hot.key == (Alpha + 'I')))
 			buttoncancel();
-		cursor.set(res::INTRFACE, 286);
 		if(di)
 			cursor.set(res::INVEN, di.element.get(FrameInventory));
+		else if(info_mode)
+			cursor.set(res::INTRFACE, 250);
+		else
+			cursor.set(res::INTRFACE, 286);
 		domodal();
 		di.domodal();
 		switch(hot.key) {
 		case MouseRight:
-			if(!hot.pressed)
-				break;
-			info_mode = !info_mode;
-			if(info_mode)
-				cursor.set(res::INTRFACE, 250);
-			else
-				cursor.set(res::INTRFACE, 286);
+			if(hot.pressed)
+				info_mode = !info_mode;
 			break;
-			//case Armor:
-			//case Weapon:
-			//case WeaponSecondonary:
-			//case Invertory:
-			//	if(!info_mode) {
-			//		draw::drag::begin(id, 0);
-			//		if(drag_item && *drag_item)
-			//			cursor.set(res::INVEN, item::get(*drag_item, Invertory));
-			//	}
-			//	break;
-			//case Look:
-			//	if(item_hilite)
-			//		item_info = *item_hilite;
-			//	break;
-			//case Unload:
-			//	if(item_hilite) {
-			//		int ammo = item::get(*item_hilite, AmmoType);
-			//		int count = item::get(*item_hilite, Ammo);
-			//		if(ammo == -1)
-			//			break; // Bug!
-			//		game::additem(player, item::create(ammo, count));
-			//		*item_hilite = item::set(*item_hilite, Ammo, 0);
-			//	}
-			//	break;
-			//case Drop:
-			//	if(item_hilite) {
-			//		game::dropitem(bsget(player, Position), *item_hilite);
-			//		*item_hilite = 0;
-			//	}
-			//	break;
-			//case MouseLeft:
-			//	if(hot.pressed)
-			//		break;
-			//	if(info_mode)
-			//		break;
-			//	break;
+		case MouseLeft:
+			if(hot.pressed) {
+				if(info_mode)
+					item_info = di.hilite;
+			}
+			break;
 		}
 	}
 }

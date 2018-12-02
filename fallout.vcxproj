@@ -137,12 +137,11 @@
   <ItemGroup>
     <ClCompile Include="ability.cpp" />
     <ClCompile Include="actor.cpp" />
-    <ClCompile Include="adventure.cpp">
+    <ClCompile Include="ui_adventure.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="animable.cpp" />
     <ClCompile Include="cicling.cpp" />
-    <ClCompile Include="city.cpp" />
     <ClCompile Include="collection.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="ui_controls.cpp" />
@@ -154,15 +153,12 @@
     <ClCompile Include="draw_text.cpp" />
     <ClCompile Include="draw_textf.cpp" />
     <ClCompile Include="formula.cpp" />
-    <ClCompile Include="game.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="gender.cpp" />
     <ClCompile Include="grammar.cpp" />
     <ClCompile Include="illness.cpp" />
     <ClCompile Include="parameter.cpp" />
     <ClCompile Include="perk.cpp" />
-    <ClCompile Include="ground.cpp">
+    <ClCompile Include="ui_ground.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ui_input.cpp" />
@@ -175,7 +171,7 @@
     <ClCompile Include="pallette.cpp" />
     <ClCompile Include="point.cpp" />
     <ClCompile Include="premade.cpp" />
-    <ClCompile Include="scenery.cpp">
+    <ClCompile Include="ui_scenery.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="screenshoot.cpp" />

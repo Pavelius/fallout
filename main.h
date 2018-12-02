@@ -175,6 +175,7 @@ struct variant {
 	constexpr variant(wound_s v) : type(Wounds), wound(v) {}
 	constexpr operator unsigned short() const { return (type << 8) | perk; }
 	constexpr explicit operator bool() const { return type != NoVariant; }
+	const char*			getnameshort() const;
 	const char*			getdescription() const;
 	int					getimage() const;
 };
@@ -186,6 +187,7 @@ struct attack_info {
 	adat<action_s, 4>	actions;
 	skill_s				skill;
 	damage_info			damage;
+	unsigned char		minst;
 	unsigned char		capacity;
 	item_s				ammo[4];
 };
@@ -242,7 +244,7 @@ struct item {
 	typedef bool		(item::*proctest)() const;
 	constexpr item() : type(), count(0) {}
 	constexpr item(item_s type) : type(type), count(0) {}
-	item(item_s type, int count) : type(type), count(0) { setcount(count); }
+	item(item_s type, int count);
 	constexpr operator bool() const { return type != NoItem; }
 	void				clear();
 	item_s				get() const { return type; }
@@ -255,9 +257,11 @@ struct item {
 	int					getcount() const;
 	const char*			getdescription() const;
 	res::tokens			getdress(gender_s gender) const;
+	int					getminst() const;
 	const char*			getname() const;
 	int					getresistance(damage_s id) const;
 	int					getweaponindex() const;
+	int					getweight() const;
 	bool				isarmor() const;
 	bool				ismatch(const item& it) const;
 	bool				isweapon() const;
@@ -361,8 +365,9 @@ private:
 };
 struct creature : actor {
 	creature() { clear(); }
+	void				add(const item& it);
 	void				act(const char* format, ...) {}
-	void				equip(const item& it);
+	bool				equip(const item& it);
 	void				apply(const pregen_info* pg);
 	void				clear();
 	bool				choose_gender(int x, int y);
@@ -372,6 +377,7 @@ struct creature : actor {
 	int					get(illness_s id) const { return illness[id]; }
 	int					get(parameter_s id) const;
 	int					get(skill_s id) const;
+	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const;
 	int					getabilitypoints() const;
 	int					getac() const;
 	int					getap() const { return ap; }
@@ -380,6 +386,7 @@ struct creature : actor {
 	int					getbase(skill_s id) const;
 	int					getcarryweight() const;
 	int					getcritical() const;
+	item*				getequip(const item& it);
 	static const datetime& getdate();
 	int					gethealrate() const;
 	int					gethp() const { return hp; }
@@ -534,10 +541,10 @@ const int				gridw = 32;
 const int				gridh = 16;
 void					create();
 extern int				height;
-short unsigned			get(int index);
-void					set(int index, short unsigned fid);
+short unsigned			get(short unsigned index);
+void					set(short unsigned index, short unsigned fid);
 void					set(rect rc, int landscape);
-int						moveto(int index, int d);
+short unsigned			moveto(short unsigned index, direction_s d);
 extern int				width;
 }
 namespace game {

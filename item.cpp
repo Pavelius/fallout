@@ -22,9 +22,17 @@ struct item_info {
 };
 static item_info item_data[] = {{},
 {"Металлическая броня", {1}, {}, 50, 3000, {}, {30, {}, {}, {HMMETL, HFMETL}}},
-{"Пистолет-пулемет 10мм", {2}, {}, 2, 100, {{FireSingle, FireBurst}, SmallGuns, {5, 12}, {Ammo10mm}}},
+{"Пистолет-пулемет 10мм", {2}, {}, 2, 100, {{FireSingle, FireBurst}, SmallGuns, {5, 12}, 2, 30, {Ammo10mm}}},
 };
 getstr_enum(item);
+
+item::item(item_s type, int count) : type(type), count(0) {
+	setcount(count);
+	auto ammo_cap = getcapacity();
+	auto ammo_type = getammo(0);
+	if(ammo_cap)
+		setammo(ammo_type, ammo_cap);
+}
 
 void item::clear() {
 	*((int*)this) = 0;
@@ -46,8 +54,16 @@ int item::getcapacity() const {
 	return item_data[type].weapon.capacity;
 }
 
+int	item::getweight() const {
+	return item_data[type].weight;
+}
+
 res::tokens	item::getdress(gender_s gender) const {
 	return item_data[type].armor.dress[gender];
+}
+
+int	item::getminst() const {
+	return item_data[type].weapon.minst;
 }
 
 bool item::ismatch(const item& it) const {
@@ -68,6 +84,8 @@ void item::join(item& it) {
 }
 
 int item::getcount() const {
+	if(isweapon())
+		return weapon_count + 1;
 	return count + 1;
 }
 

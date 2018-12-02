@@ -1,5 +1,6 @@
 #include "main.h"
 
+const unsigned short	Blocked = 0xFFFF;
 const int				stx = tile_width / 5; // 16 - Ширина юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 const int				sty = tile_height / 3; // 12 - Высота юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 int						map::width;
@@ -38,45 +39,28 @@ point m2h(int x, int y) {
 	return{(short)x1, (short)y1};
 }
 
-// Получение индекса хекагона по координатам (x,y) на экране
-point h2m1(point pt) {
-	int x1 = pt.x + stx / 2;
-	int y1 = pt.y + sty / 2;
-	int x = (x1 / stx - y1 / sty) / 2;
-	// TODO: Не работает корректно нижняя формула
-	//int y = (x1 / stx + 3 * (y1 / sty)) / 4;
-	int y = (x1 / 4 + y1) / 16;
-	//int y = y1 / sty + x/2;
-	return{(short)x, (short)y};
-}
-
 point h2m(point pt) {
 	int x1 = pt.x + stx / 2;
 	int y1 = pt.y;
 	int x0 = 4800;
-
 	int nx;
 	if(x1 - x0 < 0)
 		nx = (x1 - x0 + 1) / stx - 1;
 	else
 		nx = (x1 - x0) / stx;
-
 	int ny;
 	if(y1 < 0)
 		ny = (y1 + 1) / sty - 1;
 	else
 		ny = y1 / sty;
-
 	if(iabs(nx) % 2 != iabs(ny) % 2)
 		nx--;
-
 	long xhBase = x0 + stx * nx;
 	long yhBase = sty * ny;
 	int x = (4 * yhBase - 3 * (xhBase - x0)) / 96;
 	int y = yhBase / 12 - x / 2;
 	x = 150 - x;
 	y = y + 76;
-
 	return{(short)x, (short)y};
 }
 
@@ -153,61 +137,61 @@ void map::set(rect rc, int id) {
 	}
 }
 
-void map::set(int i, short unsigned fid) {
-	if(i == -1)
+void map::set(short unsigned i, short unsigned fid) {
+	if(i == Blocked)
 		return;
 	floors[i] = fid;
 }
 
-short unsigned map::get(int i) {
-	if(i == -1)
+short unsigned map::get(short unsigned i) {
+	if(i == Blocked)
 		return 0;
 	return floors[i];
 }
 
-int map::moveto(int index, int d) {
+short unsigned map::moveto(short unsigned index, direction_s d) {
 	switch(d) {
 	case Left:
 		if(i2x(index) == 0)
-			return -1;
+			return Blocked;
 		return index - 1;
 	case Right:
 		if(i2x(index + 1) == 0)
-			return -1;
+			return Blocked;
 		return index + 1;
 	case Up:
 		if(i2y(index) == 0)
-			return -1;
+			return Blocked;
 		return index - scanline;
 	case Down:
 		if((1 + i2y(index)) == height)
-			return -1;
+			return Blocked;
 		return index + scanline;
 	case RightDown:
 		if(((index + 1) % scanline) == 0)
-			return -1;
+			return Blocked;
 		if((1 + index / scanline) == width)
-			return -1;
+			return Blocked;
 		return index + scanline + 1;
 	case RightUp:
 		if(((index + 1) % scanline) == 0)
-			return -1;
+			return Blocked;
 		if((index / scanline) == 0)
-			return -1;
+			return Blocked;
 		return index - scanline + 1;
 	case LeftUp:
 		if((index%scanline) == 0)
-			return -1;
+			return Blocked;
 		if((index / scanline) == 0)
-			return -1;
+			return Blocked;
 		return index - scanline - 1;
 	case LeftDown:
 		if((index%scanline) == 0)
-			return -1;
+			return Blocked;
 		if((index / scanline) == 0)
-			return -1;
+			return Blocked;
 		return index + scanline - 1;
 	default:
-		return -1;
+		return Blocked;
 	}
 }

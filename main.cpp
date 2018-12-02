@@ -35,7 +35,8 @@ static void show_worldmap() {
 
 static void show_invertory() {
 	creature e;
-	e.equip(ArmorMetal);
+	e.add(ArmorMetal);
+	e.add(item(Pistol10mmAuto, 1));
 	e.inventory();
 }
 

@@ -13,6 +13,16 @@ template<> const char* getstr<variant>(variant value) {
 	}
 }
 
+const char* variant::getnameshort() const {
+	switch(type) {
+	case Abilities: return ability_data[skill].name_short;
+	case Damages: return damage_data[damage].name_short;
+	case Parameters: return parameter_data[parameter].name_short;
+	case Skills: return skill_data[skill].name;
+	default: return "Нет сокращения";
+	}
+}
+
 const char* variant::getdescription() const {
 	switch(type) {
 	case Abilities: return ability_data[skill].description;

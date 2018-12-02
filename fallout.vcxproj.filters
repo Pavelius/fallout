@@ -7,25 +7,13 @@
     <ClCompile Include="draw.cpp">
       <Filter>draw</Filter>
     </ClCompile>
-    <ClCompile Include="adventure.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="animable.cpp">
       <Filter>logic</Filter>
     </ClCompile>
     <ClCompile Include="cicling.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="city.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="creature.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="ground.cpp">
       <Filter>logic</Filter>
     </ClCompile>
     <ClCompile Include="item.cpp">
@@ -44,9 +32,6 @@
       <Filter>logic</Filter>
     </ClCompile>
     <ClCompile Include="premade.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="scenery.cpp">
       <Filter>logic</Filter>
     </ClCompile>
     <ClCompile Include="tokens.cpp">
@@ -140,6 +125,15 @@
       <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="ui_inventory.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui_scenery.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui_ground.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui_adventure.cpp">
       <Filter>ui</Filter>
     </ClCompile>
   </ItemGroup>

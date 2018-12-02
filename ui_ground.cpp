@@ -15,7 +15,7 @@ struct ground : public drawable {
 		return{pt.x - 64, pt.y - 64, pt.x + 64, pt.y + 64};
 	}
 
-	point getzpos() const override {
+	point getposition() const override {
 		if(!owner)
 			return{0, 0};
 		return getpos();
@@ -61,24 +61,3 @@ void game::dropitem(int index, int rec) {
 	pe->owner = index;
 	pe->object = rec;
 }
-
-COMMAND(area_clear) {
-	for(auto e : objects) {
-		e.owner = 0;
-		e.object = 0;
-	}
-}
-
-static struct ground_drawable_plugin : public drawable::plugin {
-	void selecting(drawable** result, unsigned flags) override {
-		if((flags&DrawableModeMask) != 0)
-			return;
-		auto p = result;
-		for(int i = 0; i < objects.count; i++) {
-			if(!objects[i].object)
-				continue;
-			*p++ = objects.data + i;
-		}
-		*p = 0;
-	}
-} drawable_plugin;

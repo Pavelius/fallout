@@ -232,20 +232,54 @@ bool creature::reload(item& target, bool run, bool interactive) {
 	return true;
 }
 
-void creature::equip(const item& it) {
+bool creature::equip(const item& it) {
 	if(it.isweapon()) {
 		if(!weapon[0]) {
 			weapon[0] = it;
-			return;
+			return true;
 		}
 		if(!weapon[1]) {
 			weapon[1] = it;
-			return;
+			return true;
 		}
 	} else if(it.isarmor()) {
 		if(!armor) {
 			armor = it;
-			return;
+			return true;
 		}
 	}
+	return false;
+}
+
+void creature::add(const item& it) {
+	if(equip(it))
+		return;
+	item it1 = it;
+	additem(it1);
+}
+
+char* creature::get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const {
+	auto pr = "%1i";
+	switch(id.type) {
+	case Parameters:
+		if(parameter_data[id.parameter].percent)
+			pr = "%1i%%";
+		if(parameter_data[id.parameter].maximum && !show_maximum_only)
+			pr = "%1i/%2i";
+		if(show_maximum_only)
+			szprint(result, result_maximum, pr, parameter_data[id.parameter].getmax ? getmax(id.parameter) : get(id.parameter));
+		else
+			szprint(result, result_maximum, pr, get(id.parameter), getmax(id.parameter));
+		break;
+	case Damages:
+		szprint(result, result_maximum, "%1i%%", getresistance(id.damage));
+		break;
+	case Skills:
+		szprint(result, result_maximum, "%1.2i%%", get(id.skill));
+		break;
+	default:
+		result[0] = 0;
+		break;
+	}
+	return result;
 }
