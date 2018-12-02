@@ -11,11 +11,15 @@ void creature::clear() {
 	wounds = 0;
 	hp = 0;
 	skills_tag = 0;
+	armor.clear();
+	weapon[0].clear();
+	weapon[1].clear();
+	money.clear();
+	current_weapon = 0;
 	memset(illness, 0, sizeof(illness));
 	memset(perks, 0, sizeof(perks));
 	memset(stats, 5, sizeof(stats));
 	memset(skills, 0, sizeof(skills));
-	memset(wears, 0, sizeof(wears));
 }
 
 const datetime& creature::getdate() {
@@ -136,7 +140,7 @@ int creature::getresistance(damage_s type) const {
 			result = 0;
 		break;
 	}
-	result += wears[Armor].getresistance(type);
+	result += armor.getresistance(type);
 	return result;
 }
 
@@ -198,4 +202,25 @@ bool creature::isplayer() const {
 
 creature* creature::getplayer() {
 	return creature_data.data;
+}
+
+bool creature::reload(item& target, bool run, bool interactive) {
+	auto ammo_cap = target.getcapacity();
+	if(!ammo_cap)
+		return false;
+	auto ammo_count = target.getammocount();
+	auto delta = ammo_cap - ammo_count;
+	if(delta<=0)
+		return false;
+	auto pi = find(target.getammo());
+	if(!pi) {
+		if(run && interactive)
+			act("У вас нету патронов.");
+		return false;
+	}
+	if(delta > pi->getcount())
+		delta = pi->getcount();
+	target.setammo(pi->get(), ammo_count + delta);
+	pi->setcount(pi->getcount() - delta);
+	return true;
 }

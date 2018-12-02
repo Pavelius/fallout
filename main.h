@@ -89,9 +89,6 @@ enum item_s : unsigned short {
 	Ammo10mm,
 	FirstItem = ArmorMetal, LastItem = Ammo10mm,
 };
-enum wear_s : unsigned char {
-	Misc, Armor, Weapon,
-};
 enum material_s : unsigned char {
 	Cement, Glass, Leather, Metal, Plastic, Stone, Wood,
 	FirstMaterial = Cement, LastMaterial = Wood,
@@ -186,7 +183,8 @@ struct attack_info {
 	adat<action_s, 4>	actions;
 	skill_s				skill;
 	damage_info			damage;
-	item_s				ammo;
+	unsigned char		capacity;
+	item_s				ammo[4];
 };
 struct armor_info {
 	unsigned char		ac;
@@ -243,18 +241,39 @@ struct gender_info {
 	const char*			name_short;
 };
 struct item {
-	constexpr item() : type(), count(0), ammo(0) {}
-	constexpr item(item_s type) : type(type), count(0), ammo(0) {}
-	constexpr item(item_s type, unsigned char count) : type(type), count(count - 1), ammo(0) {}
+	constexpr item() : type(), count(0) {}
+	constexpr item(item_s type) : type(type), count(0) {}
+	item(item_s type, int count) : type(type), count(0) { setcount(count); }
+	constexpr operator bool() const { return type != NoItem; }
+	void				clear();
 	item_s				get() const { return type; }
+	item_s				getammo() const;
+	item_s				getammo(int index) const;
+	int					getammocount() const;
+	int					getammoindex(item_s ammo_type) const;
+	int					getcapacity() const;
+	int					getcount() const;
 	const char*			getdescription() const;
 	const char*			getname() const;
 	int					getresistance(damage_s id) const;
 	int					getweaponindex() const;
+	bool				ismatch(const item& it) const;
+	bool				isweapon() const;
+	void				join(item& it);
+	bool				reload(item& it);
+	bool				setammo(item_s type, int count);
+	void				setammocount(int value);
+	void				setcount(int value);
 private:
 	item_s				type;
-	unsigned char		count;
-	unsigned char		ammo;
+	union {
+		struct {
+			unsigned char	weapon_count : 6;
+			unsigned char	ammo_index : 2;
+			unsigned char	ammo_count;
+		};
+		short unsigned	count;
+	};
 };
 struct cursorset {
 	cursorset(res::tokens r = res::INTRFACE, int cicle = 267);
@@ -304,9 +323,17 @@ struct pregen_info {
 	item				gears[8];
 	const char*			text;
 };
-struct actor : drawable, point {
+struct wearable {
+	struct element : item {
+		wearable*		source;
+	};
+	void				additem(item& it);
+	item*				find(item_s type);
+	aref<item*>			select(aref<item*> source) const;
+};
+struct actor : drawable, point, wearable {
 	constexpr actor() : point{0, 0}, action(ActionStand), orientation(0), frame(0), timestart(0) {}
-	virtual item		getarmor() const = 0;
+	virtual item&		getarmor() const = 0;
 	int					getcicle() const;
 	int					getdistance(const point p1, const point p2);
 	virtual gender_s	getgender() const { return Male; }
@@ -315,7 +342,7 @@ struct actor : drawable, point {
 	static char			getorientation(point from, point to);
 	point				getposition() const override { return *this; }
 	const sprite*		getsprite() const;
-	virtual item		getweapon() const = 0;
+	virtual item&		getweapon() const = 0;
 	bool				hittest(point position) const override { return false; }
 	void				moveto(point position, int run);
 	void				painting(point screen) const override;
@@ -331,6 +358,7 @@ private:
 };
 struct creature : actor {
 	creature() { clear(); }
+	void				act(const char* format, ...) {}
 	void				apply(const pregen_info* pg);
 	void				clear();
 	bool				choose_gender(int x, int y);
@@ -344,7 +372,7 @@ struct creature : actor {
 	int					getac() const;
 	int					getap() const { return ap; }
 	int					getapmax() const;
-	item				getarmor() const { return wears[0]; }
+	item&				getarmor() const override { return const_cast<creature*>(this)->armor; }
 	int					getbase(skill_s id) const;
 	int					getcarryweight() const;
 	int					getcritical() const;
@@ -362,7 +390,7 @@ struct creature : actor {
 	int					getresistance(damage_s id) const;
 	int					getsequence() const;
 	int					getskillrate() const;
-	item				getweapon() const override { return wears[1]; }
+	item&				getweapon() const override { return const_cast<creature*>(this)->weapon[current_weapon]; }
 	void				increase(variant, int& points);
 	bool				is(perk_s id) const { return (perks[id / 32] & (1 << (id % 32))) != 0; }
 	bool				is(skill_s id) const { return (skills_tag & (1 << id)) != 0; }
@@ -371,6 +399,7 @@ struct creature : actor {
 	static void			newgame();
 	void				mark(variant e, int& points);
 	static void			passtime(unsigned minutes);
+	bool				reload(item& target, bool run, bool interactive);
 	void				set(perk_s id) { perks[id / 32] |= (1 << (id % 32)); }
 	void				set(skill_s id) { skills_tag |= (1 << id); }
 	void				remove(perk_s id) { perks[id / 32] &= ~(1 << (id % 32)); }
@@ -388,8 +417,9 @@ private:
 	unsigned char		skills[LastSkill + 1];
 	unsigned			perks[1 + LastTraits / 32];
 	unsigned			skills_tag;
-	item				wears[3];
+	item				armor, weapon[2], money;
 	unsigned char		wounds;
+	unsigned char		current_weapon;
 	int					render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const;
 };
 struct settlement {

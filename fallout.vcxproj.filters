@@ -139,6 +139,9 @@
     <ClCompile Include="datetime.cpp">
       <Filter>support</Filter>
     </ClCompile>
+    <ClCompile Include="wearable.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h">

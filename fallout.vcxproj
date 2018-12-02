@@ -187,6 +187,7 @@
     <ClCompile Include="ui_creature.cpp" />
     <ClCompile Include="variant.cpp" />
     <ClCompile Include="view.cpp" />
+    <ClCompile Include="wearable.cpp" />
     <ClCompile Include="win_draw.cpp" />
     <ClCompile Include="win_io_file.cpp" />
     <ClCompile Include="ui_worldmap.cpp" />
