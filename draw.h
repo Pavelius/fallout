@@ -75,9 +75,6 @@ enum image_flag_s {
 	AlignWidth = 0xE000,
 	AlignMask = 0xF000,
 };
-enum drag_part_s : unsigned char {
-	DragControl, DragScrollV, DragScrollH, DragSplitV, DragSplitH, DragColumn,
-};
 struct pma {
 	char				name[4]; // Identifier of current block
 	int					size; // Size of all block
@@ -152,13 +149,6 @@ extern int				scroll;
 }
 namespace draw {
 typedef void(*callback_proc)();
-namespace drag {
-bool					active(int id, drag_part_s part = DragControl);
-bool					active();
-void					begin(int id, drag_part_s part = DragControl);
-extern point			mouse;
-extern int				value;
-}
 struct hotinfo {
 	cursors				cursor; // set this mouse cursor
 	unsigned			key; // if pressed key or mouse this field has key
@@ -247,7 +237,6 @@ void					decortext(unsigned flags);
 void					domodal();
 void					execute(void(*callback)(), int value = 0);
 void					execute(const hotinfo& value);
-rect					getarea();
 int						getbpp();
 color					getcolor(color normal, unsigned flags);
 color					getcolor(rect rc, color normal, color hilite, unsigned flags);

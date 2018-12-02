@@ -28,9 +28,6 @@
     <ClCompile Include="ground.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="inventory.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="item.cpp">
       <Filter>logic</Filter>
     </ClCompile>
@@ -70,9 +67,6 @@
     <ClCompile Include="actor.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="controls.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
     <ClCompile Include="win_draw.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -93,9 +87,6 @@
     </ClCompile>
     <ClCompile Include="screenshoot.cpp">
       <Filter>draw</Filter>
-    </ClCompile>
-    <ClCompile Include="input.cpp">
-      <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="skill.cpp">
       <Filter>logic</Filter>
@@ -141,6 +132,15 @@
     </ClCompile>
     <ClCompile Include="wearable.cpp">
       <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="ui_input.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui_controls.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui_inventory.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -100,10 +100,10 @@ void draw::background(int cicle) {
 	draw::image(0, 0, ps, frame, ImageNoOffset, 255);
 }
 
-void draw::field(int x, int y, int width, const runable& ev, const char* text) {
+void draw::field(int x, int y, int width, const runable& ev, const char* text, unsigned key) {
 	draw::state push;
 	draw::setcolor(ColorButton);
-	draw::radio(x, y, ev, 299);
+	draw::radio(x, y, ev, 299, key);
 	draw::text(x + width - draw::textw(text) / 2, y, text);
 }
 
@@ -190,4 +190,49 @@ void draw::image(int x, int y, res::tokens token, int cicle, int flags, unsigned
 		return;
 	int frame = ps->ganim(cicle, draw::getstamp() / 100);
 	image(x, y, ps, frame, flags, alpha);
+}
+
+void draw::iteminv(int x, int y, int sx, int sy, item& it, bool resize) {
+	if(!it)
+		return;
+	auto cl = it.get(FrameInventory);
+	if(!cl)
+		return;
+	auto ps = gres(res::INVEN);
+	if(!ps)
+		return;
+	auto fr = ps->ganim(cl, 0);
+	int isx = ps->get(fr).sx;
+	int isy = ps->get(fr).sy;
+	if(!resize || (isx <= sx && isy <= sy))
+		draw::image(x + (sx - isx) / 2, y + (sy - isy) / 2, ps, fr, ImageNoOffset);
+	else {
+		int rsx = sx;
+		int rsy = sy;
+		if(isx > sx)
+			rsy = (isy*sx) / isx;
+		else
+			rsx = (isx*sy) / isy;
+		if(rsy > sy) {
+			rsy = sy;
+			rsx = (isx*sy) / isy;
+		}
+		draw::surface real(rsx, rsy, 32);
+		if(true) {
+			draw::surface zoom(isx, isy, 32);
+			draw::state push;
+			draw::canvas = &zoom;
+			draw::setclip();
+			draw::fore.clear();
+			draw::fore.a = 255;
+			draw::rectf({0, 0, isx, isy});
+			draw::image(0, 0, ps, fr, ImageNoOffset);
+			draw::blit(real, 0, 0, real.width, real.height, 0, zoom, 0, 0, zoom.width, zoom.height);
+		}
+		draw::blit(*draw::canvas,
+			x + (sx - real.width) / 2,
+			y + (sy - real.height) / 2,
+			real.width, real.height,
+			ImageTransparent, real, 0, 0);
+	}
 }

@@ -38,18 +38,10 @@ color*				draw::palt;
 rect				draw::clipping;
 char				draw::link[4096];
 hotinfo				draw::hot;
-// Hot keys and menus
-bool				sys_optimize_mouse_move = true;
-rect				sys_static_area;
 // Locale draw variables
 static draw::surface default_surface;
 draw::surface*		draw::canvas = &default_surface;
 static bool			line_antialiasing = true;
-// Drag
-static int			drag_id;
-static drag_part_s	drag_part;
-point				draw::drag::mouse;
-int					draw::drag::value;
 // Metrics
 rect				metrics::edit = {4, 4, -4, -4};
 sprite*				metrics::font = (sprite*)loadb("art/fonts/font.pma");
@@ -854,6 +846,25 @@ static void cpy32t(unsigned char* d, int d_scan, unsigned char* s, int s_scan, i
 	} while(--height);
 }
 
+static void cpy32tn(unsigned char* d, int d_scan, unsigned char* s, int s_scan, int width, int height) {
+	if(height <= 0 || width <= 0)
+		return;
+	do {
+		color* d2 = (color*)d;
+		color* sb = (color*)s;
+		color* se = sb + width;
+		while(sb < se) {
+			if(sb->a==0xFF) {
+				d2++;
+				sb++;
+			} else
+				*d2++ = *sb++;
+		}
+		s += s_scan;
+		d += d_scan;
+	} while(--height);
+}
+
 draw::state::state() :
 	fore(draw::fore),
 	fore_stroke(draw::fore_stroke),
@@ -872,33 +883,6 @@ draw::state::~state() {
 	draw::clipping = this->clip;
 	draw::palt = this->palt;
 	draw::canvas = this->canvas;
-}
-
-rect draw::getarea() {
-	return sys_static_area;
-}
-
-void draw::drag::begin(int id, drag_part_s part) {
-	drag_id = id;
-	drag_part = part;
-	mouse = hot.mouse;
-}
-
-bool draw::drag::active() {
-	return drag_id != 0;
-}
-
-bool draw::drag::active(int id, drag_part_s part) {
-	if(drag_id == id && drag_part == part) {
-		if(!hot.pressed || hot.key == KeyEscape) {
-			drag_id = 0;
-			hot.key = 0;
-			hot.cursor = CursorArrow;
-			return false;
-		}
-		return true;
-	}
-	return false;
 }
 
 int draw::getbpp() {
@@ -1351,8 +1335,6 @@ static void intersect_rect(rect& r1, const rect& r2) {
 }
 
 areas draw::area(rect rc) {
-	if(drag::active())
-		return AreaNormal;
 	if(!hot.mouse.in(clipping))
 		return AreaNormal;
 	if(!mouseinput)
@@ -1927,7 +1909,7 @@ void draw::blit(surface& ds, int x1, int y1, int w, int h, unsigned flags, surfa
 	if(!correctb(x1, y1, w, h, ox))
 		return;
 	if(flags&ImageTransparent)
-		cpy32t(
+		cpy32tn(
 			ds.ptr(x1, y1), ds.scanline,
 			ss.ptr(xs, ys) + ox * 4, ss.scanline,
 			w, h);

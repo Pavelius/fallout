@@ -145,7 +145,7 @@
     <ClCompile Include="city.cpp" />
     <ClCompile Include="collection.cpp" />
     <ClCompile Include="color.cpp" />
-    <ClCompile Include="controls.cpp" />
+    <ClCompile Include="ui_controls.cpp" />
     <ClCompile Include="creature.cpp" />
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="damage.cpp" />
@@ -165,10 +165,8 @@
     <ClCompile Include="ground.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="input.cpp" />
-    <ClCompile Include="inventory.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ui_input.cpp" />
+    <ClCompile Include="ui_inventory.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="main.cpp" />

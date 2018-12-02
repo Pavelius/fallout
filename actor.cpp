@@ -11,7 +11,7 @@ static int modify_weapon_base[] = {
 	56, 58, 59, 57,
 };
 
-static int byweapon(animation_s action, int weapon) {
+int actor::byweapon(animation_s action, int weapon) {
 	if(!weapon || modify_weapon_base[action] == -1)
 		return action;
 	return modify_weapon_base[action] + weapon * 13;

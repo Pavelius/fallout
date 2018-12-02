@@ -33,6 +33,12 @@ static void show_worldmap() {
 	e.worldmap();
 }
 
+static void show_invertory() {
+	creature e;
+	e.equip(ArmorMetal);
+	e.inventory();
+}
+
 static void mainmenu() {
 	while(ismodal()) {
 		background(140);
@@ -42,6 +48,7 @@ static void mainmenu() {
 			draw::setfont(res::FONT4);
 			field(x, y, 100, cmd(new_game), "История"); y += 41;
 			field(x, y, 100, cmd(show_worldmap), "Загрузить"); y += 41;
+			field(x, y, 100, cmd(show_invertory), "Предметы", Alpha + 'I'); y += 41;
 		}
 		domodal();
 	}

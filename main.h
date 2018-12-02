@@ -113,6 +113,9 @@ enum color_s : unsigned char {
 	ColorDisable = 0x60, ColorText = 0xD7, ColorCheck = 0x03, ColorInfo = 0xE4, ColorButton = 0x3C,
 	ColorState = 0x90
 };
+enum item_sprite_s : unsigned char {
+	FrameInventory,
+};
 namespace res {
 enum tokens {
 	NoRes,
@@ -186,11 +189,6 @@ struct attack_info {
 	unsigned char		capacity;
 	item_s				ammo[4];
 };
-struct armor_info {
-	unsigned char		ac;
-	unsigned char		threshold[Explosive + 1];
-	unsigned char		resistance[Explosive + 1];
-};
 struct illness_info {
 	int					fid;
 	const char*			name;
@@ -241,12 +239,14 @@ struct gender_info {
 	const char*			name_short;
 };
 struct item {
+	typedef bool		(item::*proctest)() const;
 	constexpr item() : type(), count(0) {}
 	constexpr item(item_s type) : type(type), count(0) {}
 	item(item_s type, int count) : type(type), count(0) { setcount(count); }
 	constexpr operator bool() const { return type != NoItem; }
 	void				clear();
 	item_s				get() const { return type; }
+	unsigned short		get(item_sprite_s i) const;
 	item_s				getammo() const;
 	item_s				getammo(int index) const;
 	int					getammocount() const;
@@ -254,9 +254,11 @@ struct item {
 	int					getcapacity() const;
 	int					getcount() const;
 	const char*			getdescription() const;
+	res::tokens			getdress(gender_s gender) const;
 	const char*			getname() const;
 	int					getresistance(damage_s id) const;
 	int					getweaponindex() const;
+	bool				isarmor() const;
 	bool				ismatch(const item& it) const;
 	bool				isweapon() const;
 	void				join(item& it);
@@ -333,6 +335,7 @@ struct wearable {
 };
 struct actor : drawable, point, wearable {
 	constexpr actor() : point{0, 0}, action(ActionStand), orientation(0), frame(0), timestart(0) {}
+	static int			byweapon(animation_s action, int weapon);
 	virtual item&		getarmor() const = 0;
 	int					getcicle() const;
 	int					getdistance(const point p1, const point p2);
@@ -359,6 +362,7 @@ private:
 struct creature : actor {
 	creature() { clear(); }
 	void				act(const char* format, ...) {}
+	void				equip(const item& it);
 	void				apply(const pregen_info* pg);
 	void				clear();
 	bool				choose_gender(int x, int y);
@@ -392,6 +396,7 @@ struct creature : actor {
 	int					getskillrate() const;
 	item&				getweapon() const override { return const_cast<creature*>(this)->weapon[current_weapon]; }
 	void				increase(variant, int& points);
+	void				inventory();
 	bool				is(perk_s id) const { return (perks[id / 32] & (1 << (id % 32))) != 0; }
 	bool				is(skill_s id) const { return (skills_tag & (1 << id)) != 0; }
 	bool				is(wound_s id) const { return (wounds & (1 << id)) != 0; }
@@ -477,7 +482,7 @@ int						button(int x, int y, int width, const runable& ev, const char* string, 
 extern point			camera; // Current view on map
 void					dlgerr(const char* title, const char* format, ...);
 void					dlgmsg(const char* title, const char* text);
-void					field(int x, int y, int width, const runable& ev, const char* string);
+void					field(int x, int y, int width, const runable& ev, const char* string, unsigned key = 0);
 void					focusing(const rect& rc, int id);
 const actinfo*			getaction(const sprite* p, int action);
 int						getfocus();
@@ -493,7 +498,7 @@ inline void				image(int x, int y, res::tokens token, int id, int flags = 0, uns
 void					initialize();
 bool					isnext(callback_proc proc);
 bool					ispause();
-void					iteminv(int x, int y, int sx, int sy, int rec, bool resize = false);
+void					iteminv(int x, int y, int sx, int sy, item& it, bool resize = false);
 void					label(int x, int y, int id, const char* temp, bool checked, bool disabled);
 void					modify(color* pal, int index, int start, int count);
 void					number(int x, int y, int digits, int value);

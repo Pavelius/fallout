@@ -95,51 +95,6 @@ void draw::modify(color* pal, int index, int start, int count) {
 		pal[index + i] = c1.mix(colors::black, (count - i) * 16);
 }
 
-//void draw::iteminv(int x, int y, int sx, int sy, int rec, bool resize) {
-//	if(!rec)
-//		return;
-//	auto cl = item::get(rec, Invertory);
-//	if(!cl)
-//		return;
-//	auto ps = gres(res::INVEN);
-//	if(!ps)
-//		return;
-//	auto fr = ps->ganim(cl, 0);
-//	int isx = ps->get(fr).sx;
-//	int isy = ps->get(fr).sy;
-//	if(!resize || (isx <= sx && isy <= sy))
-//		draw::image(x + (sx - isx) / 2, y + (sy - isy) / 2, ps, fr, ImageNoOffset);
-//	else {
-//		int rsx = sx;
-//		int rsy = sy;
-//		if(isx > sx)
-//			rsy = (isy*sx) / isx;
-//		else
-//			rsx = (isx*sy) / isy;
-//		if(rsy > sy) {
-//			rsy = sy;
-//			rsx = (isx*sy) / isy;
-//		}
-//		draw::surface real(rsx, rsy, 32);
-//		if(true) {
-//			draw::surface zoom(isx, isy, 32);
-//			draw::state push;
-//			draw::canvas = &zoom;
-//			draw::setclip();
-//			draw::fore.clear();
-//			draw::fore.a = 255;
-//			draw::rectf({0, 0, isx, isy});
-//			draw::image(0, 0, ps, fr, ImageNoOffset);
-//			draw::blit(real, 0, 0, real.width, real.height, 0, zoom, 0, 0, zoom.width, zoom.height);
-//		}
-//		draw::blit(*draw::canvas,
-//			x + (sx - real.width) / 2,
-//			y + (sy - real.height) / 2,
-//			real.width, real.height,
-//			ImageTransparent, real, 0, 0);
-//	}
-//}
-
 void draw::tiles(point screen) {
 	auto ps = gres(res::TILES);
 	if(!ps)

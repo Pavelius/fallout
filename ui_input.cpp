@@ -320,7 +320,15 @@ void draw::domodal() {
 #ifdef _DEBUG
 	paint_debug();
 #endif
-	image(hot.mouse.x, hot.mouse.y, cursor_sprite, cursor_frame);
+	if(cursor_sprite == res::INVEN) {
+		auto ps = gres(cursor_sprite);
+		if(ps) {
+			int frame = ps->ganim(cursor_frame, getstamp() / 100);
+			auto& fr = ps->get(frame);
+			image(hot.mouse.x, hot.mouse.y + fr.sy/2, ps, frame, 0, 0xFF);
+		}
+	} else
+		image(hot.mouse.x, hot.mouse.y, cursor_sprite, cursor_frame);
 	if(hot.key == InputUpdate && keep_hot) {
 		keep_hot = false;
 		hot = keep_hot_value;

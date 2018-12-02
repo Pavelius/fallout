@@ -1,7 +1,15 @@
 #include "main.h"
 
+using namespace res;
+
 static_assert(sizeof(item) == sizeof(int), "Not valid items count");
 
+struct armor_info {
+	unsigned char	ac;
+	unsigned char	threshold[Explosive + 1];
+	unsigned char	resistance[Explosive + 1];
+	res::tokens		dress[2];
+};
 struct item_info {
 	const char*		name;
 	unsigned short	frame[4];
@@ -13,20 +21,33 @@ struct item_info {
 	const char*		description;
 };
 static item_info item_data[] = {{},
-{"Металлическая броня"},
-{"Пистолет-пулемет 10мм", {}, {}, 2, 100, {{FireSingle, FireBurst}, SmallGuns, {5, 12}, {Ammo10mm}}},
+{"Металлическая броня", {1}, {}, 50, 3000, {}, {30, {}, {}, {HMMETL, HFMETL}}},
+{"Пистолет-пулемет 10мм", {2}, {}, 2, 100, {{FireSingle, FireBurst}, SmallGuns, {5, 12}, {Ammo10mm}}},
 };
+getstr_enum(item);
 
 void item::clear() {
 	*((int*)this) = 0;
+}
+
+unsigned short item::get(item_sprite_s i) const {
+	return item_data[type].frame[i];
 }
 
 bool item::isweapon() const {
 	return item_data[type].weapon.damage.max != 0;
 }
 
+bool item::isarmor() const {
+	return item_data[type].armor.dress[0] != res::NoRes;
+}
+
 int item::getcapacity() const {
 	return item_data[type].weapon.capacity;
+}
+
+res::tokens	item::getdress(gender_s gender) const {
+	return item_data[type].armor.dress[gender];
 }
 
 bool item::ismatch(const item& it) const {
@@ -57,7 +78,7 @@ item_s item::getammo() const {
 }
 
 bool item::setammo(item_s type, int count) {
-	if(type==NoItem || count<=0)
+	if(type == NoItem || count <= 0)
 		return false;
 	auto result_ammo_index = getammoindex(type);
 	if(result_ammo_index == -1)

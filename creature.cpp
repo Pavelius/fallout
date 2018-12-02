@@ -212,15 +212,40 @@ bool creature::reload(item& target, bool run, bool interactive) {
 	auto delta = ammo_cap - ammo_count;
 	if(delta<=0)
 		return false;
-	auto pi = find(target.getammo());
+	auto ammo_type = target.getammo();
+	if(!ammo_type)
+		ammo_type = target.getammo(0);
+	if(!ammo_type)
+		return false;
+	auto pi = find(ammo_type);
 	if(!pi) {
 		if(run && interactive)
-			act("У вас нету патронов.");
+			act("У вас нет %1i.", getstr(ammo_type));
 		return false;
 	}
 	if(delta > pi->getcount())
 		delta = pi->getcount();
-	target.setammo(pi->get(), ammo_count + delta);
-	pi->setcount(pi->getcount() - delta);
+	if(run) {
+		target.setammo(pi->get(), ammo_count + delta);
+		pi->setcount(pi->getcount() - delta);
+	}
 	return true;
+}
+
+void creature::equip(const item& it) {
+	if(it.isweapon()) {
+		if(!weapon[0]) {
+			weapon[0] = it;
+			return;
+		}
+		if(!weapon[1]) {
+			weapon[1] = it;
+			return;
+		}
+	} else if(it.isarmor()) {
+		if(!armor) {
+			armor = it;
+			return;
+		}
+	}
 }
