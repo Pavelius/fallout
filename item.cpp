@@ -3,9 +3,13 @@
 using namespace res;
 
 static_assert(sizeof(item) == sizeof(int), "Not valid items count");
-
+struct ammo_info {
+	short			ac;
+	char			dr;
+	char			dam_mul, dam_div;
+};
 struct armor_info {
-	unsigned char	ac;
+	short			ac;
 	unsigned short	threshold[Explosive + 1];
 	unsigned short	resistance[Explosive + 1];
 	res::tokens		dress[2];
@@ -18,13 +22,14 @@ struct item_info {
 	unsigned short	cost;
 	attack_info		weapon;
 	armor_info		armor;
+	ammo_info		ammunition;
 	const char*		description;
 };
 static item_info item_data[] = {{"Нет предмета"},
 {"Металлическая Броня", {1, 33, 0}, {48}, 35, 1100, {}, {10, {4, 6, 4, 4, 0, 0, 4}, {30, 75, 10, 20, 0, 500, 25}, {HMMETL, HFMETL}}},
-{"10мм ПП", {2, 44, 6}, {48}, 5, 1000, {{}, SmallGuns, {5, 12}, 4, 30}},
+{"10мм ПП", {2, 44, 6}, {48}, 5, 1000, {{}, SmallGuns, {5, 12}, 4, 30, {Ammo10mm}}},
 {"Кожаная броня", {3, 29, 0}, {48}, 8, 700, {}, {15, {2, 0, 0, 0, 0, 0, 0}, {25, 20, 20, 10, 30, 500, 20}, {HMLTHR, HFLTHR}}},
-{"10мм Пистолет", {4, 34, 5}, {48}, 3, 250, {{}, SmallGuns, {5, 12}, 3, 12}},
+{"10мм Пистолет", {4, 34, 5}, {48}, 3, 250, {{}, SmallGuns, {5, 12}, 3, 12, {Ammo10mm}}},
 {"Кувалда", {5, 40, 3}, {48}, 12, 120, {{}, SmallGuns, {4, 9}, 6, 0}},
 {"Пулемет", {6, 31, 9}, {48}, 28, 3800, {{}, SmallGuns, {7, 11}, 7, 120}},
 {"Базука", {7, 37, 10}, {48}, 15, 2300, {{}, SmallGuns, {35, 100}, 6, 1}},

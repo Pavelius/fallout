@@ -122,11 +122,11 @@ private:
 	}
 };
 
-static int itemview(int x, int y, int sx, int sy, item& it, item::proctest test_proc, dragdrop& di, bool allow_begin_drag) {
+static int itemview(int x, int y, int sx, int sy, item& it, item::proctest test_proc, dragdrop& di, bool allow_begin_drag, bool allow_drag_target) {
 	const int dw = 2;
 	rect rc = {x, y, x + sx, y + sy};
 	auto a = area(rc);
-	if(di && (a==AreaHilited || a==AreaHilitedPressed)) {
+	if(allow_drag_target && di && (a==AreaHilited || a==AreaHilitedPressed)) {
 		if(di.isallow(it) && (!test_proc || (di.element.*test_proc)())) {
 			di.type = dragdrop::Item;
 			di.target = &it;
@@ -203,7 +203,7 @@ static void backpack(int x, int y, int width, int height, wearable& player, drag
 	for(auto i = first; i < (int)result.count; i++) {
 		if(y >= rc.y2)
 			break;
-		if(itemview(x, y, width, element_height - 1, *result.data[i], 0, di, allow_begin_drag))
+		if(itemview(x, y, width, element_height - 1, *result.data[i], 0, di, allow_begin_drag, false))
 			y += element_height;
 	}
 }
@@ -296,15 +296,15 @@ void creature::inventory() {
 			itemtext(x + 298, y + 48, 144, 180, *item_info);
 		else
 			chartext(x + 298, y + 48, 144, 180, *this);
-		itemview(x + 152, y + 184, 92, 60, armor, &item::isarmor, di, !info_mode);
-		itemview(x + 152, y + 287, 92, 60, weapon[0], &item::isweapon, di, !info_mode);
-		itemview(x + 245, y + 287, 92, 60, weapon[1], &item::isweapon, di, !info_mode);
+		itemview(x + 152, y + 184, 92, 60, armor, &item::isarmor, di, !info_mode, true);
+		itemview(x + 152, y + 287, 92, 60, weapon[0], &item::isweapon, di, !info_mode, true);
+		itemview(x + 245, y + 287, 92, 60, weapon[1], &item::isweapon, di, !info_mode, true);
 		backpack(x + 42, y + 40, 70, 300, *this, di, !info_mode);
 		if(info_mode && di.hilite) {
 			addaction(Look, action_look);
 			addaction(Drop, action_drop);
-		//	if(item::get(*item_hilite, Ammo))
-		//		zcat(actions, (int)Unload);
+			if(di.hilite->isweapon() && di.hilite->getammocount())
+				addaction(Unload, action_drop);
 		}
 		if(buttonf(x + 432, y + 322, 299, 300, 0)
 			|| (hot.key == KeyEscape || hot.key == (Alpha + 'I')))
