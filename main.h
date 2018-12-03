@@ -208,6 +208,7 @@ enum boost_s : unsigned char {
 	LastBoost = BoostRadiationResistance,
 	// Ёффекты, которые действуют сразу, обновл€€ не временные параметры
 	BoostAge, BoostGender, BoostHP, BoostPoisonLevel, BoostRadiationLevel,
+	Random
 };
 namespace res {
 enum tokens {
