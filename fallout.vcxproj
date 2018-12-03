@@ -136,8 +136,13 @@
     <ClCompile Include="ability.cpp" />
     <ClCompile Include="actor.cpp" />
     <ClCompile Include="lst_criters.cpp" />
+    <ClCompile Include="lst_pro_crit.cpp" />
     <ClCompile Include="lst_pro_item_en.cpp" />
-    <ClCompile Include="lst_pro_item_ru.cpp" />
+    <ClCompile Include="lst_pro_item.cpp" />
+    <ClCompile Include="lst_pro_misc.cpp" />
+    <ClCompile Include="lst_pro_scen.cpp" />
+    <ClCompile Include="lst_pro_tile.cpp" />
+    <ClCompile Include="lst_pro_wall.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="msg_info.cpp" />
     <ClCompile Include="action.cpp" />

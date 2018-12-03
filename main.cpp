@@ -35,13 +35,14 @@ static void show_worldmap() {
 
 static void show_invertory() {
 	creature e("narg");
-	e.add(ArmorMetal);
-	e.add(item(Pistol10mmAuto, 1));
-	e.add(item(Pistol10mm, 1));
-	e.add(ArmorLeather);
-	e.add(ArmorCombat);
-	e.add(ArmorPower);
-	e.add(ArmorReinforced);
+	e.add(Pistol10mm);
+	e.add(IceChest);
+	e.add(IguanaOnAStick);
+	e.add(Minigun);
+	e.add(PowerArmor);
+	e.add(SmallStatuette);
+	e.add(SmallPieceOfMachinery);
+	e.add(Stimpak);
 	e.inventory();
 }
 
@@ -62,11 +63,11 @@ static void mainmenu() {
 
 int main(int argc, char* argv[]) {
 	srand(clock());
-	util_main();
-	//initialize();
-	//setfont(res::FONT1);
-	//setpause(false);
-	//setlayout(mainmenu);
+	//util_main();
+	initialize();
+	setfont(res::FONT1);
+	setpause(false);
+	setlayout(mainmenu);
 	return 0;
 }
 

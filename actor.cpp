@@ -21,35 +21,14 @@ static res::tokens bygender(gender_s gender, res::tokens tm, res::tokens tf) {
 	return (gender == Female) ? tf : tm;
 }
 
-static res::tokens gethuman(item_s armor, gender_s gender) {
-	switch(armor) {
-	case NoItem:
-		return bygender(gender, res::HMJMPS, res::HFJMPS);
-	case ArmorPower:
-	case ArmorReinforced:
-		//return res::HAPOWR;
-		return res::HANPWR;
-	case ArmorAdvance:
-	case ArmorAdvanceII:
-		return res::HAPOWR;
-	case ArmorCombat:
-		return bygender(gender, res::HMCMBT, res::HFCMBT);
-	case ArmorMetal:
-		return bygender(gender, res::HMMETL, res::HFMETL);
-	case ArmorLeather:
-		return bygender(gender, res::HMLTHR, res::HFLTHR);
-	default:
-		return bygender(gender, res::HMMAXX, res::HFMAXX);
-	}
-}
-
 int actor::getcicle() const {
 	int wt = getweapon().getweaponindex();
 	return byweapon(action, wt) * 6 + orientation;
 }
 
 const sprite* actor::getsprite() const {
-	return gres(gethuman(getarmor().get(), getgender()));
+	//return gres(gethuman(getarmor().get(), getgender()));
+	return 0;
 }
 
 rect actor::getrect() const {
