@@ -329,6 +329,7 @@ struct perk_info {
 	const char*			description;
 };
 struct resist_info {
+	const char*			id;
 	int					fid;
 	const char*			name;
 	const char*			name_short;
