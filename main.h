@@ -279,11 +279,11 @@ struct damage_info {
 };
 struct attack_info {
 	adat<action_s, 4>	actions;
-	skill_s				skill;
 	damage_info			damage;
 	unsigned char		minst;
 	unsigned char		capacity;
 	item_s				ammo[4];
+	skill_s				skill;
 };
 struct illness_info {
 	int					fid;
