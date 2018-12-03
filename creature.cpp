@@ -20,6 +20,7 @@ void creature::clear() {
 	memset(perks, 0, sizeof(perks));
 	memset(stats, 5, sizeof(stats));
 	memset(skills, 0, sizeof(skills));
+	memset(boosts, 0, sizeof(boosts));
 }
 
 const datetime& creature::getdate() {
@@ -44,6 +45,7 @@ int creature::get(ability_s value) const {
 			result += 2;
 		break;
 	}
+	result += boosts[BoostStrenght + (value - Strenght)];
 	return result;
 }
 
@@ -78,6 +80,7 @@ int creature::gethpmax() const {
 		result += (level - 1)*get(Endurance) / 2;
 	if(is(Lifegiver))
 		result += 4;
+	result += boosts[BoostHPMax];
 	return result;
 }
 
@@ -87,6 +90,7 @@ int creature::getapmax() const {
 		result++;
 	if(is(Bruiser))
 		result -= 2;
+	result += boosts[BoostAPMax];
 	return result;
 }
 
@@ -223,7 +227,7 @@ bool creature::reload(item& target, bool run, bool interactive) {
 		return false;
 	auto ammo_count = target.getammocount();
 	auto delta = ammo_cap - ammo_count;
-	if(delta<=0)
+	if(delta <= 0)
 		return false;
 	auto ammo_type = target.getammo();
 	if(!ammo_type)

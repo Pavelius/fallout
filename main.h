@@ -79,9 +79,6 @@ enum illness_s : unsigned char {
 	Poison, Radiation,
 	LastIllness = Radiation,
 };
-enum parameter_s : unsigned char {
-	ArmorClass, ActionPoints, CarryWeight, CriticalHit, HealingRate, HitPoints, MeleeDamage, Sequence,
-};
 enum item_type_s : unsigned char {
 	Armor, Drug, Misc, Weapon,
 };
@@ -118,6 +115,21 @@ enum color_s : unsigned char {
 };
 enum item_sprite_s : unsigned char {
 	FrameInventory, FrameGround, FrameWeapon,
+};
+enum parameter_s : unsigned char {
+	ArmorClass, ActionPoints, CarryWeight, CriticalHit, HealingRate, HitPoints, MeleeDamage, Sequence,
+};
+enum boost_s : unsigned char {
+	NoBoost,
+	BoostStrenght, BoostPerception, BoostEndurance, BoostCharisma, BoostIntellegence, BoostAgility, BoostLuck,
+	BoostHPMax, BoostAPMax, BoostAC, BoostDamageUnarmed, BoostDamageMelee, BoostCarryWeight, BoostSequence, BoostHealingLevel,
+	BoostCritical, BoostCriticalTable,
+	BoostPhisycal, BoostLaser, BoostFire, BoostPlasma, BoostElectrical, BoostEMP, BoostExplosive,
+	BoostPhisycalResistance, BoostLaserResistance, BoostFireResistance, BoostPlasmaResistance, BoostElectricalResistance, BoostEMPResistance, BoostExplosiveResistance,
+	BoostPoisonResistance, BoostRadiationResistance,
+	LastBoost = BoostRadiationResistance,
+	// Ёффекты, которые действуют сразу, обновл€€ не временные параметры
+	BoostAge, BoostGender, BoostHP, BoostPoisonLevel, BoostRadiationLevel,
 };
 namespace res {
 enum tokens {
@@ -451,6 +463,7 @@ private:
 	unsigned short		illness[LastIllness + 1];
 	unsigned char		skills[LastSkill + 1];
 	unsigned			perks[1 + LastTraits / 32];
+	short				boosts[LastBoost + 1];
 	unsigned			skills_tag;
 	item				armor, weapon[2];
 	unsigned char		wounds;
