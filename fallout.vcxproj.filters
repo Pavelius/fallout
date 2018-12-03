@@ -127,9 +127,6 @@
     <ClCompile Include="ui_inventory.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui_scenery.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
     <ClCompile Include="ui_ground.cpp">
       <Filter>ui</Filter>
     </ClCompile>

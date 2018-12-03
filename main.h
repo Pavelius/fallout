@@ -176,6 +176,7 @@ struct variant {
 	constexpr operator unsigned short() const { return (type << 8) | perk; }
 	constexpr explicit operator bool() const { return type != NoVariant; }
 	const char*			getnameshort() const;
+	const char*			getnameshortest() const;
 	const char*			getdescription() const;
 	int					getimage() const;
 };
@@ -229,6 +230,7 @@ struct resist_info {
 	int					fid;
 	const char*			name;
 	const char*			name_short;
+	const char*			just_name;
 	const char*			description;
 };
 struct wound_info {
@@ -253,6 +255,7 @@ struct item {
 	item_s				getammo(int index) const;
 	int					getammocount() const;
 	int					getammoindex(item_s ammo_type) const;
+	const attack_info&	getattack() const;
 	int					getcapacity() const;
 	int					getcount() const;
 	const char*			getdescription() const;
@@ -260,6 +263,7 @@ struct item {
 	int					getminst() const;
 	const char*			getname() const;
 	int					getresistance(damage_s id) const;
+	int					getthreshold(damage_s id) const;
 	int					getweaponindex() const;
 	int					getweight() const;
 	bool				isarmor() const;
@@ -365,6 +369,7 @@ private:
 };
 struct creature : actor {
 	creature() { clear(); }
+	creature(const char* id);
 	void				add(const item& it);
 	void				act(const char* format, ...) {}
 	bool				equip(const item& it);
@@ -377,7 +382,7 @@ struct creature : actor {
 	int					get(illness_s id) const { return illness[id]; }
 	int					get(parameter_s id) const;
 	int					get(skill_s id) const;
-	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const;
+	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only, bool show_threshold = false) const;
 	int					getabilitypoints() const;
 	int					getac() const;
 	int					getap() const { return ap; }
@@ -387,6 +392,7 @@ struct creature : actor {
 	int					getcarryweight() const;
 	int					getcritical() const;
 	item*				getequip(const item& it);
+	int					getequipweight() const;
 	static const datetime& getdate();
 	int					gethealrate() const;
 	int					gethp() const { return hp; }
@@ -394,6 +400,7 @@ struct creature : actor {
 	gender_s			getgender() const override { return gender; }
 	int					getmax(parameter_s id) const;
 	int					getmeleedamage() const;
+	const char*			getname() const { return name; }
 	int					getpartylimit() const;
 	int					getperkrate() const;
 	static creature*	getplayer();
@@ -401,7 +408,10 @@ struct creature : actor {
 	int					getresistance(damage_s id) const;
 	int					getsequence() const;
 	int					getskillrate() const;
+	int					getthreshold(damage_s type) const;
 	item&				getweapon() const override { return const_cast<creature*>(this)->weapon[current_weapon]; }
+	item&				getweaponfirst() { return weapon[0]; }
+	item&				getweaponsecond() { return weapon[1]; }
 	void				increase(variant, int& points);
 	void				inventory();
 	bool				is(perk_s id) const { return (perks[id / 32] & (1 << (id % 32))) != 0; }
@@ -411,6 +421,7 @@ struct creature : actor {
 	static void			newgame();
 	void				mark(variant e, int& points);
 	static void			passtime(unsigned minutes);
+	void				random_name() { name = "Вонг"; }
 	bool				reload(item& target, bool run, bool interactive);
 	void				set(perk_s id) { perks[id / 32] |= (1 << (id % 32)); }
 	void				set(skill_s id) { skills_tag |= (1 << id); }
@@ -429,7 +440,7 @@ private:
 	unsigned char		skills[LastSkill + 1];
 	unsigned			perks[1 + LastTraits / 32];
 	unsigned			skills_tag;
-	item				armor, weapon[2], money;
+	item				armor, weapon[2];
 	unsigned char		wounds;
 	unsigned char		current_weapon;
 	int					render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const;
@@ -546,13 +557,6 @@ void					set(short unsigned index, short unsigned fid);
 void					set(rect rc, int landscape);
 short unsigned			moveto(short unsigned index, direction_s d);
 extern int				width;
-}
-namespace game {
-void					additem(int player, int itm);
-void					dropitem(int index, int rec);
-int						getground(int** result, int index);
-int						getwears(int** result, int player);
-int						getwearsweight(int player);
 }
 extern ability_info		ability_data[];
 extern const char*		ability_values[11];

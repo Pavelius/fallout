@@ -23,6 +23,16 @@ const char* variant::getnameshort() const {
 	}
 }
 
+const char* variant::getnameshortest() const {
+	switch(type) {
+	case Abilities: return ability_data[skill].name_short;
+	case Damages: return damage_data[damage].just_name;
+	case Parameters: return parameter_data[parameter].name_short;
+	case Skills: return skill_data[skill].name;
+	default: return "Нет сокращения";
+	}
+}
+
 const char* variant::getdescription() const {
 	switch(type) {
 	case Abilities: return ability_data[skill].description;

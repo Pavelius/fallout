@@ -39,29 +39,23 @@ static void preview(int x, int y, const item& armor, gender_s gender, const item
 
 static void iteminfo(int x, int y, int width, const creature& player, const item& it) {
 	char temp[128];
-//	int type = item::get(itm, Type);
-//	int melee = item::get(itm, MeleeDamage);
-//	if(!itm) {
-//		type = Weapon;
-//		melee = 1;
-//		draw::text(x, y, szt("No item", "Нет предмета"));
-//	} else
-//		draw::text(x, y, item::getname(itm));
-//	y += draw::texth();
-//	switch(type) {
-//	case Weapon:
-//		game::getdamage(player, id, damage);
-//		szprint(temp, "%1: %2i-%3i", szt("Dam.", "Повр."), damage.min, damage.max);
-//		draw::text(x, y, temp);
-//		if(!melee) {
-//			szprint(temp, "%1: %2i", szt("Ran.", "Длн."), item::get(itm, Range));
-//			draw::text(x + width - draw::textw(temp), y, temp);
-//			y += draw::texth();
-//			szprint(temp, "%1: %2i/%3i", szt("Shoot", "Заряд"), item::get(itm, Ammo), item::get(itm, AmmoCapacity));
-//			draw::text(x, y, temp);
-//		}
-//		break;
-//	}
+	auto ai = it.getattack();
+	if(!it)
+		text(x, y, "Нет предмета");
+	else {
+		text(x, y, it.getname());
+		y += draw::texth();
+		auto ai = it.getattack();
+		szprint(temp, zendof(temp), "%1: %2i-%3i", "Повр.", ai.damage.min, ai.damage.max);
+		text(x, y, temp);
+		if(true) {
+			szprint(temp, zendof(temp), "%1: %2i", "Длн.", 10);
+			draw::text(x + width - draw::textw(temp), y, temp);
+			y += draw::texth();
+			szprint(temp, zendof(temp), "%1: %2i/%3i", getstr(ai.ammo[0]), it.getammocount(), ai.capacity);
+			draw::text(x, y, temp);
+		}
+	}
 }
 
 struct dragdrop {
@@ -235,58 +229,45 @@ static void itemtext(int x, int y, int width, int height, const item& it) {
 	rc.y1 += draw::text(rc, temp);
 }
 
-static void chartext(int x, int y, int width, int height, creature& rec) {
-//	char temp[128];
-//	static int values[] = {HP, AC,
-//		DamageNormal, DamageLaser, DamageFire, DamagePlasma, DamageExplosive};
-//	rect rc = {x, y, x + width, y + height};
-//	draw::state push;
-//	draw::setfont(res::FONT1);
-//	draw::setcolor(ColorText);
-//	draw::text(rc.x1, rc.y1, game::getname(temp, rec));
-//	rc.y1 += draw::texth() + line_height - 1;
-//	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
-//	rc.y1 += line_height;
-//	int x1 = rc.x1; int y1 = rc.y1;
-//	for(int id = FirstStat; id <= LastStat; id++, y1 += draw::texth()) {
-//		draw::text(x1, y1, game::getnameshort(id));
-//		sznum(temp, game::get(rec, id));
-//		draw::text(x1 + 32 - draw::textw(temp), y1, temp);
-//	}
-//	x1 = rc.x1 + 44; y1 = rc.y1;
-//	for(int id : values) {
-//		draw::text(x1, y1, game::getnameshort(id));
-//		switch(id) {
-//		case HP:
-//			szprint(temp, "%1i/%2i", game::get(rec, HP), game::get(rec, MaxHP));
-//			break;
-//		case DamageNormal:
-//		case DamageLaser:
-//		case DamageFire:
-//		case DamagePlasma:
-//		case DamageExplosive:
-//			szprint(temp, "%1i/%2i%%", game::get(rec, id), game::get(rec, id - FirstDamageType + FirstDamageResistance));
-//			break;
-//		default:
-//			sznum(temp, game::get(rec, id));
-//			break;
-//		}
-//		draw::text(x1 + 100 - draw::textw(temp), y1, temp);
-//		y1 += draw::texth();
-//	}
-//	rc.y1 = y1 + line_height - 1;
-//	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
-//	rc.y1 += line_height - 1;
-//	iteminfo(rc.x1, rc.y1, rc.width(), rec, Weapon);
-//	rc.y1 += draw::texth() * 3 + line_height - 1;
-//	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
-//	rc.y1 += line_height - 1;
-//	iteminfo(rc.x1, rc.y1, rc.width(), rec, WeaponSecondonary);
-//	rc.y1 += draw::texth() * 3 + line_height - 1;
-//	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
-//	rc.y1 += line_height - 1;
-//	szprint(temp, "Общий вес %1i/%2i", game::getwearsweight(rec), game::get(rec, CarryWeight));
-//	draw::text(rc.x1 + (rc.width() - draw::textw(temp)) / 2, rc.y1, temp);
+static void chartext(int x, int y, int width, int height, creature& player) {
+	char temp[128];
+	static variant values[] = {HitPoints, ActionPoints,
+		Phisycal, Laser, Fire, Plasma, Explosive};
+	rect rc = {x, y, x + width, y + height};
+	draw::state push;
+	draw::setfont(res::FONT1);
+	draw::setcolor(ColorText);
+	draw::text(rc.x1, rc.y1, player.getname());
+	rc.y1 += draw::texth() + line_height - 1;
+	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
+	rc.y1 += line_height;
+	int x1 = rc.x1; int y1 = rc.y1;
+	for(auto id = Strenght; id <= Luck; id = (ability_s)(id+1)) {
+		draw::text(x1, y1, ability_data[id].name_short);
+		sznum(temp, player.get(id));
+		draw::text(x1 + 32 - draw::textw(temp), y1, temp);
+		y1 += draw::texth();
+	}
+	x1 = rc.x1 + 44; y1 = rc.y1;
+	for(auto id : values) {
+		draw::text(x1, y1, id.getnameshortest());
+		player.get(temp, zendof(temp), id, false, true);
+		draw::text(x1 + 100 - draw::textw(temp), y1, temp);
+		y1 += draw::texth();
+	}
+	rc.y1 = y1 + line_height - 1;
+	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
+	rc.y1 += line_height - 1;
+	iteminfo(rc.x1, rc.y1, rc.width(), player, player.getweaponfirst());
+	rc.y1 += draw::texth() * 3 + line_height - 1;
+	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
+	rc.y1 += line_height - 1;
+	iteminfo(rc.x1, rc.y1, rc.width(), player, player.getweaponsecond());
+	rc.y1 += draw::texth() * 3 + line_height - 1;
+	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
+	rc.y1 += line_height - 1;
+	szprint(temp, zendof(temp), "Общий вес %1i/%2i", player.getequipweight(), player.getcarryweight());
+	draw::text(rc.x1 + (rc.width() - draw::textw(temp)) / 2, rc.y1, temp);
 }
 
 static void action_look() {

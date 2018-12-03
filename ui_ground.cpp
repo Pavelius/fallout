@@ -41,23 +41,3 @@ struct ground : public drawable {
 
 };
 static adat<ground, 2048> objects;
-
-int game::getground(int** result, int index) {
-	auto pb = result;
-	auto pe = pb + 1024; // Maximum 1024 items per creature
-	for(auto& e : objects) {
-		if(e.owner != index || !e.object)
-			continue;
-		*pb++ = &e.object;
-		if(pb >= pe)
-			break;
-	}
-	*pb = 0;
-	return pb - result;
-}
-
-void game::dropitem(int index, int rec) {
-	auto pe = objects.add();
-	pe->owner = index;
-	pe->object = rec;
-}

@@ -29,3 +29,10 @@ void creature::apply(const pregen_info* pg) {
 
 	}
 }
+
+creature::creature(const char* id) {
+	clear();
+	auto pg = getpregen(id);
+	if(pg)
+		apply(pg);
+}

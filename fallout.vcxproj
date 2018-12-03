@@ -174,9 +174,6 @@
     <ClCompile Include="pallette.cpp" />
     <ClCompile Include="point.cpp" />
     <ClCompile Include="premade.cpp" />
-    <ClCompile Include="ui_scenery.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="screenshoot.cpp" />
     <ClCompile Include="skill.cpp" />
     <ClCompile Include="stringcreator.cpp" />

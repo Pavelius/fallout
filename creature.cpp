@@ -14,7 +14,6 @@ void creature::clear() {
 	armor.clear();
 	weapon[0].clear();
 	weapon[1].clear();
-	money.clear();
 	current_weapon = 0;
 	memset(illness, 0, sizeof(illness));
 	memset(perks, 0, sizeof(perks));
@@ -100,6 +99,10 @@ int	creature::getmax(parameter_s id) const {
 	return 0;
 }
 
+int	creature::getequipweight() const {
+	return 0;
+}
+
 int creature::getcarryweight() const {
 	int result;
 	if(is(SmallFrame))
@@ -119,6 +122,12 @@ int creature::getcritical() const {
 		result += 10;
 	if(is(MoreCriticals))
 		result += 5;
+	return result;
+}
+
+int creature::getthreshold(damage_s type) const {
+	auto result = 0;
+	result += armor.getthreshold(type);
 	return result;
 }
 
@@ -258,7 +267,7 @@ void creature::add(const item& it) {
 	additem(it1);
 }
 
-char* creature::get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const {
+char* creature::get(char* result, const char* result_maximum, variant id, bool show_maximum_only, bool show_threshold) const {
 	auto pr = "%1i";
 	switch(id.type) {
 	case Parameters:
@@ -272,7 +281,10 @@ char* creature::get(char* result, const char* result_maximum, variant id, bool s
 			szprint(result, result_maximum, pr, get(id.parameter), getmax(id.parameter));
 		break;
 	case Damages:
-		szprint(result, result_maximum, "%1i%%", getresistance(id.damage));
+		if(show_threshold)
+			szprint(result, result_maximum, "%1i/%2i%%", getthreshold(id.damage), getresistance(id.damage));
+		else
+			szprint(result, result_maximum, "%1i%%", getresistance(id.damage));
 		break;
 	case Skills:
 		szprint(result, result_maximum, "%1.2i%%", get(id.skill));
