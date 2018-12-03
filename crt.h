@@ -27,6 +27,7 @@ extern "C" int						rand(void); // Get next random value
 extern "C" void						sleep(unsigned seconds); // Suspend execution for an interval of time
 extern "C" void						srand(unsigned seed); // Set random seed
 extern "C" int						strcmp(const char* s1, const char* s2); // Compare two strings
+extern "C" const char*				strstr(const char * str1, const char * str2);
 extern "C" int						system(const char* command); // Execute system command
 extern "C" long long				time(long long* seconds);
 
