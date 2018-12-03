@@ -101,7 +101,20 @@ static bool ischa(unsigned char u) {
 
 // Work only with english symbols
 const char* sztag(const char* p) {
-	char temp[128];
+	char number[128]; number[0] = 0;
+	if(isnum(*p) || *p=='.') {
+		auto ps = number;
+		auto pe = ps + sizeof(number) - 1;
+		while(*p && *p != ' ') {
+			if(ps < pe) {
+				if(*p!='.')
+					*ps++ = *p;
+			}
+			p++;
+		}
+		*ps = 0;
+	}
+	char temp[256];
 	char* s = temp;
 	bool upper = true;
 	while(*p) {
@@ -116,6 +129,10 @@ const char* sztag(const char* p) {
 		} else
 			*s++ = *p++;
 	}
-	*s++ = 0;
+	*s = 0;
+	if(number[0]) {
+		auto pe = zend(temp);
+		zcpy(pe, number);
+	}
 	return szdup(temp);
 }

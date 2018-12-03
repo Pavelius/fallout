@@ -59,8 +59,9 @@ enum gender_s : unsigned char {
 	Male, Female,
 };
 enum action_s : unsigned char {
-	Punch, Swing, Thrust, Throw,
-	FireSingle, FireBurst, FireAuto, FireFlame,
+	NoAction,
+	ThrowPunch, KickLeg, Swing, Thrust, Throw,
+	FireSingle, FireBurst, FireContinuous,
 	Drop, Look, Talk, Turn, Unload,
 	Use, UseItem, UseSkill
 };
@@ -81,6 +82,9 @@ enum illness_s : unsigned char {
 enum parameter_s : unsigned char {
 	ArmorClass, ActionPoints, CarryWeight, CriticalHit, HealingRate, HitPoints, MeleeDamage, Sequence,
 };
+enum item_type_s : unsigned char {
+	Armor, Drug, Misc, Weapon,
+};
 enum item_s : unsigned short {
 	NoItem,
 	ArmorMetal, Pistol10mmAuto, ArmorLeather, Pistol10mm,
@@ -90,8 +94,7 @@ enum item_s : unsigned short {
 	FirstItem = ArmorMetal, LastItem = Ammo10mm,
 };
 enum material_s : unsigned char {
-	Cement, Glass, Leather, Metal, Plastic, Stone, Wood,
-	FirstMaterial = Cement, LastMaterial = Wood,
+	Glass, Metal, Plastic, Wood, Dirt, Stone, Cement, Leather
 };
 enum direction_s : unsigned char {
 	RightUp, Up, LeftUp, Right, Left, RightDown, Down, LeftDown,
@@ -209,7 +212,16 @@ struct formula {
 	term				a1, a2;
 	const char*			get(char* result, const char* result_maximum) const;
 };
+struct action_info {
+	const char*			id;
+	const char*			name;
+};
+struct material_info {
+	const char*			id;
+	const char*			name;
+};
 struct skill_info {
+	const char*			id;
 	short				fid;
 	const char*			name;
 	formula				base;
@@ -434,7 +446,7 @@ private:
 	gender_s			gender;
 	unsigned short		age;
 	unsigned short		hp;
-	char				ap;
+	char				ap, ap_move;
 	unsigned char		stats[Luck + 1];
 	unsigned short		illness[LastIllness + 1];
 	unsigned char		skills[LastSkill + 1];
@@ -455,6 +467,7 @@ struct parameter_info {
 	int					fid;
 	const char*			name;
 	const char*			name_short;
+	const char*			name_shortest;
 	bool				maximum;
 	bool				percent;
 	int					(creature::*get)() const;
@@ -541,10 +554,10 @@ inline short unsigned	m2i(short unsigned x, short unsigned y) { return (y << 8) 
 inline short unsigned	m2i(point pt) { return m2i(pt.x, pt.y); }
 point					m2s(int x, int y);
 point					m2h(int x, int y);
-inline int				i2x(int index) { return index & 0xFF; }
-inline int				i2y(int index) { return index >> 8; }
-inline point			i2s(int index) { return m2s(i2x(index), i2y(index)); }
-inline point			i2h(int index) { return m2h(i2x(index), i2y(index)); }
+inline int				i2x(short unsigned index) { return index & 0xFF; }
+inline int				i2y(short unsigned index) { return index >> 8; }
+inline point			i2s(short unsigned index) { return m2s(i2x(index), i2y(index)); }
+inline point			i2h(short unsigned index) { return m2h(i2x(index), i2y(index)); }
 namespace map {
 const int				mvc = 24;
 const int				scanline = 256;
@@ -560,10 +573,12 @@ extern int				width;
 }
 extern ability_info		ability_data[];
 extern const char*		ability_values[11];
+extern action_info		action_data[];
 extern adat<creature, 128> creature_data;
 extern gender_info		gender_data[];
 extern resist_info		damage_data[];
 extern illness_info		illness_data[];
+extern material_info	material_data[];
 extern parameter_info	parameter_data[];
 extern perk_info		perk_data[];
 extern skill_info		skill_data[];

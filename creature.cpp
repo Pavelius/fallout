@@ -10,6 +10,7 @@ void creature::clear() {
 	gender = Male;
 	wounds = 0;
 	hp = 0;
+	ap = ap_move = 0;
 	skills_tag = 0;
 	armor.clear();
 	weapon[0].clear();
@@ -100,7 +101,10 @@ int	creature::getmax(parameter_s id) const {
 }
 
 int	creature::getequipweight() const {
-	return 0;
+	auto result = armor.getweight();
+	result += weapon[0].getweight();
+	result += weapon[1].getweight();
+	return result;
 }
 
 int creature::getcarryweight() const {

@@ -136,6 +136,10 @@
     <ClCompile Include="ability.cpp" />
     <ClCompile Include="actor.cpp" />
     <ClCompile Include="lst_criters.cpp" />
+    <ClCompile Include="lst_pro_item_en.cpp" />
+    <ClCompile Include="material.cpp" />
+    <ClCompile Include="msg_info.cpp" />
+    <ClCompile Include="action.cpp" />
     <ClCompile Include="sprite_util.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -179,9 +183,7 @@
     <ClCompile Include="stringcreator.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="ui_creature.cpp" />
-    <ClCompile Include="util.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="util.cpp" />
     <ClCompile Include="variant.cpp" />
     <ClCompile Include="view.cpp" />
     <ClCompile Include="wearable.cpp" />

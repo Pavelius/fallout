@@ -1,11 +1,10 @@
 #include "main.h"
 
-struct ground : public drawable {
-	int				object;
-	short unsigned	owner;
+struct ground : item, drawable {
+	short unsigned	index;
 
 	point getpos() const {
-		return i2h(owner);
+		return i2h(index);
 	}
 
 	rect getrect() const override {

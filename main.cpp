@@ -62,11 +62,11 @@ static void mainmenu() {
 
 int main(int argc, char* argv[]) {
 	srand(clock());
-	//util_main();
-	initialize();
-	setfont(res::FONT1);
-	setpause(false);
-	setlayout(mainmenu);
+	util_main();
+	//initialize();
+	//setfont(res::FONT1);
+	//setpause(false);
+	//setlayout(mainmenu);
 	return 0;
 }
 

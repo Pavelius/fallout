@@ -8,6 +8,11 @@ struct ammo_info {
 	char			dr;
 	char			dam_mul, dam_div;
 };
+struct drug_info {
+	variant			id;
+	short			bonus;
+	unsigned		interval[3];
+};
 struct armor_info {
 	short			ac;
 	unsigned short	threshold[Explosive + 1];
