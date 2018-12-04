@@ -273,10 +273,10 @@ struct attack_info {
 	item_s				ammo[4];
 	skill_s				skill;
 };
-struct illness_info {
-	int					fid;
-	const char*			name;
-	const char*			description;
+struct drug_info {
+	ability_s			id[3]; // Три атрибута
+	short				value[3][3]; // Каждый из них имеет 3 значения
+	unsigned			durations[2]; // Сразу и в двух других временных рамках
 };
 struct formula {
 	struct term {
@@ -471,7 +471,6 @@ struct creature : actor {
 	int					get(ability_s id) const;
 	int					get(skill_s id) const;
 	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const;
-	int					getabilitypoints() const;
 	item&				getarmor() const override { return const_cast<creature*>(this)->armor; }
 	int					getbase(skill_s id) const;
 	int					getequipweight() const;
@@ -482,7 +481,6 @@ struct creature : actor {
 	int					getperkrate() const;
 	static creature*	getplayer();
 	static const pregen_info* getpregen(const char* id);
-	int					getsequence() const;
 	int					getskillrate() const;
 	item&				getweapon() const override { return const_cast<creature*>(this)->weapon[current_weapon]; }
 	item&				getweaponfirst() { return weapon[0]; }
@@ -637,9 +635,8 @@ extern ability_info		ability_data[];
 extern const char*		ability_values[11];
 extern action_info		action_data[];
 extern adat<creature, 128> creature_data;
-extern gender_info		gender_data[];
 extern resist_info		damage_data[];
-extern illness_info		illness_data[];
+extern gender_info		gender_data[];
 extern material_info	material_data[];
 extern perk_info		perk_data[];
 extern skill_info		skill_data[];

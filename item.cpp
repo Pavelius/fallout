@@ -8,11 +8,6 @@ struct ammo_info {
 	short			ac;
 	char			dr, dam_mul, dam_div;
 };
-struct drug_info {
-	ability_s		id[3];
-	short			value[3][3];
-	unsigned		durations[2];
-};
 struct armor_info {
 	short			ac;
 	unsigned short	threshold[Explosive + 1];

@@ -1,7 +1,14 @@
 #include "main.h"
 
-adat<creature, 128>	creature_data;
-static datetime		today;
+struct drug_effect {
+	unsigned			stamp;
+	creature*			owner;
+	item_s				drug;
+};
+
+adat<creature>				creature_data;
+static adat<drug_effect>	drug_effect_data;
+static datetime				today;
 
 void creature::clear() {
 	name = 0;
@@ -165,13 +172,6 @@ int creature::get(ability_s value) const {
 	return result;
 }
 
-int	creature::getabilitypoints() const {
-	auto result = 0;
-	for(auto e : stats)
-		result += e;
-	return result;
-}
-
 int creature::getbase(skill_s value) const {
 	auto& e = skill_data[value].base;
 	auto result = e.modifier;
@@ -205,15 +205,6 @@ int	creature::getperkrate() const {
 	auto result = 3;
 	if(is(Skilled))
 		result++;
-	return result;
-}
-
-int creature::getsequence() const {
-	auto result = get(Perception) * 2;
-	if(is(Kamikaze))
-		result += 5;
-	if(is(EarlierSequence))
-		result += 2;
 	return result;
 }
 
