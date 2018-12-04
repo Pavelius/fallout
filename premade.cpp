@@ -17,14 +17,15 @@ const pregen_info* creature::getpregen(const char* id) {
 }
 
 void creature::apply(const pregen_info* pg) {
-	memcpy(stats, pg->stats, sizeof(stats));
+	for(auto i = Strenght; i <= Luck; i = (ability_s)(i + 1))
+		stats[i] = pg->stats[i-Strenght];
 	for(auto e : pg->perks)
 		set(e);
 	for(auto e : pg->tagged)
 		set(e);
 	name = pg->name;
 	gender = pg->gender;
-	age = pg->age;
+	stats[Age] = pg->age;
 	for(auto e : pg->gears) {
 
 	}

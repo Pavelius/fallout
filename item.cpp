@@ -9,11 +9,8 @@ struct ammo_info {
 	char			dr, dam_mul, dam_div;
 };
 struct drug_info {
-	struct element {
-		boost_s		id;
-		short		v1, v2, v3;
-	};
-	element			stats[3];
+	ability_s		id[3];
+	short			value[3][3];
 	unsigned		durations[2];
 };
 struct armor_info {

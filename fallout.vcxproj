@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="ability.cpp" />
     <ClCompile Include="actor.cpp" />
+    <ClCompile Include="caliber.cpp" />
     <ClCompile Include="lst_criters.cpp" />
     <ClCompile Include="lst_pro_crit.cpp" />
     <ClCompile Include="lst_pro_item_en.cpp" />
@@ -168,8 +169,6 @@
     <ClCompile Include="formula.cpp" />
     <ClCompile Include="gender.cpp" />
     <ClCompile Include="grammar.cpp" />
-    <ClCompile Include="illness.cpp" />
-    <ClCompile Include="parameter.cpp" />
     <ClCompile Include="perk.cpp" />
     <ClCompile Include="ui_ground.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

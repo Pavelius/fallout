@@ -8,6 +8,7 @@
 #endif
 #define assert_enum(e, last) static_assert(sizeof(e##_data) / sizeof(e##_data[0]) == last + 1, "Invalid count of " #e " elements")
 #define getstr_enum(e) template<> const char* getstr<e##_s>(e##_s value) { return e##_data[value].name; }
+#define getsid_enum(e) template<> const char* getsid<e##_s>(e##_s value) { return e##_data[value].id; }
 #define maptbl(t, id) (t[imax((unsigned)0, imin((unsigned)id, (sizeof(t)/sizeof(t[0])-1)))])
 #define maprnd(t) t[rand()%(sizeof(t)/sizeof(t[0]))]
 #define lenghtof(t) (sizeof(t)/sizeof(t[0]))
@@ -38,6 +39,7 @@ const codepages						code = CP1251;
 //
 int									getdigitscount(unsigned number); // Get digits count of number. For example if number=100, result be 3.
 template<class T> const char*		getstr(T e); // Template to return string of small class
+template<class T> const char*		getsid(T e); // Template to return string of small class
 bool								ischa(unsigned u); // is alphabetical character?
 inline bool							isnum(unsigned u) { return u >= '0' && u <= '9'; } // is numeric character?
 void*								loadb(const char* url, int* size = 0, int additional_bytes_alloated = 0); // Load binary file.

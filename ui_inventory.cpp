@@ -231,7 +231,7 @@ static void itemtext(int x, int y, int width, int height, const item& it) {
 
 static void chartext(int x, int y, int width, int height, creature& player) {
 	char temp[128];
-	static variant values[] = {HitPoints, ActionPoints,
+	static variant values[] = {HP, AP,
 		Phisycal, Laser, Fire, Plasma, Explosive};
 	rect rc = {x, y, x + width, y + height};
 	draw::state push;
@@ -243,15 +243,15 @@ static void chartext(int x, int y, int width, int height, creature& player) {
 	rc.y1 += line_height;
 	int x1 = rc.x1; int y1 = rc.y1;
 	for(auto id = Strenght; id <= Luck; id = (ability_s)(id+1)) {
-		draw::text(x1, y1, ability_data[id].name_short);
+		draw::text(x1, y1, ability_data[id].name_abr);
 		sznum(temp, player.get(id));
 		draw::text(x1 + 32 - draw::textw(temp), y1, temp);
 		y1 += draw::texth();
 	}
 	x1 = rc.x1 + 44; y1 = rc.y1;
 	for(auto id : values) {
-		draw::text(x1, y1, id.getnameshortest());
-		player.get(temp, zendof(temp), id, false, true);
+		draw::text(x1, y1, id.getnameabr());
+		player.get(temp, zendof(temp), id, false);
 		draw::text(x1 + 100 - draw::textw(temp), y1, temp);
 		y1 += draw::texth();
 	}
@@ -266,7 +266,7 @@ static void chartext(int x, int y, int width, int height, creature& player) {
 	rc.y1 += draw::texth() * 3 + line_height - 1;
 	draw::line(rc.x1, rc.y1, rc.x2, rc.y1);
 	rc.y1 += line_height - 1;
-	szprint(temp, zendof(temp), "Общий вес %1i/%2i", player.getequipweight(), player.getcarryweight());
+	szprint(temp, zendof(temp), "Общий вес %1i/%2i", player.getequipweight(), player.get(CarryWeight));
 	draw::text(rc.x1 + (rc.width() - draw::textw(temp)) / 2, rc.y1, temp);
 }
 

@@ -158,16 +158,20 @@ int creature::render_stats(int x, int y, int width, aref<variant> elements, bool
 	for(auto id : elements) {
 		get(temp, zendof(temp), id, show_maximum_only);
 		switch(id.type) {
-		case Parameters:
+		case Abilities:
+			if(id.ability == RadiationLevel || id.ability == PoisonLevel)
+				draw::label(x, y, id, ability_data[id.ability].name_short, false, get(id.ability) == 0);
+			else {
+				draw::label(x, y, id, id.getnameshort(), false, false);
+				draw::text(x + width - draw::textw(temp), y, temp);
+			}
+			break;
 		case Damages:
 			draw::label(x, y, id, id.getnameshort(), false, false);
 			draw::text(x + width - draw::textw(temp), y, temp);
 			break;
 		case Wounds:
 			draw::label(x, y, id, getstr(id), false, !is(id.wound));
-			break;
-		case Illness:
-			draw::label(x, y, id, getstr(id), false, get(id.illness) == 0);
 			break;
 		}
 		y += 13;
@@ -180,7 +184,8 @@ static void open_options() {}
 struct cmdk : runable {
 	cmdk() {}
 	cmdk(creature* player, int traits_points, int tag_skill_points, int ability_points) : player(player),
-		traits_points(traits_points), tag_skill_points(tag_skill_points), ability_points(ability_points) {}
+		traits_points(traits_points), tag_skill_points(tag_skill_points), ability_points(ability_points) {
+	}
 	int	getid() const { return (int)player; }
 	static void execute_proc() {
 		if(current.ability_points > 0) {
@@ -198,7 +203,7 @@ struct cmdk : runable {
 		draw::execute(execute_proc);
 	}
 private:
-	creature*	player;
+	creature * player;
 	int			traits_points, tag_skill_points, ability_points;
 	static cmdk	current;
 };
@@ -220,7 +225,7 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 		ev.player = this;
 		// Кнопки игрока
 		buttonp(13, 0, 185, 184, cmd(buttonok), name ? name : "Некто");
-		buttonp(157, 0, 188, 189, cmd(buttonok), szprint(temp, zendof(temp), "%1i лет", age));
+		buttonp(157, 0, 188, 189, cmd(buttonok), szprint(temp, zendof(temp), "%1i лет", get(Age)));
 		buttonp(236, 0, 188, 189, cmd(gender_proc, (int)this), gender_data[getgender()].name_short);
 		// text labels
 		if(true) {
@@ -238,20 +243,20 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 			int value = get(i);
 			ev.element = i;
 			ev.points = &ability_points;
-			if(draw::buttonf(149, 38 + 33 * i, 193, 194, false, false))
+			if(draw::buttonf(149, 38 + 33 * (i - Strenght), 193, 194, false, false))
 				ev.modify(1);
-			if(draw::buttonf(149, 49 + 33 * i, 191, 192, false, false))
+			if(draw::buttonf(149, 49 + 33 * (i - Strenght), 191, 192, false, false))
 				ev.modify(-1);
 			const char* p = maptbl(ability_values, value);
-			draw::label(102, 45 + 33 * i, ev.element, p, false, false);
-			draw::number(59, 37 + 33 * i, 2, value);
+			draw::label(102, 45 + 33 * (i - Strenght), ev.element, p, false, false);
+			draw::number(59, 37 + 33 * (i - Strenght), 2, value);
 		}
 		if(show_ability)
 			draw::number(126, 282, 2, ability_points);
 		// secondanary stats
-		static variant secondanary_stat_health[] = {HitPoints, Poison, Radiation, WoundEye, WoundRightHand, WoundLeftHand, WoundRightLeg, WoundLeftLeg};
+		static variant secondanary_stat_health[] = {HP, PoisonLevel, RadiationLevel, WoundEye, WoundRightHand, WoundLeftHand, WoundRightLeg, WoundLeftLeg};
 		render_stats(194, 46, 120, secondanary_stat_health, show_maximum_only);
-		static variant secondanary_stat_other[] = {ArmorClass, ActionPoints, CarryWeight, MeleeDamage, Phisycal, PoisonResistance, RadiationResistance, Sequence, HealingRate, CriticalHit};
+		static variant secondanary_stat_other[] = {AC, AP, CarryWeight, DamageMelee, PhisycalResistance, PoisonResistance, RadiationResistance, Sequence, HealingRate, CriticalHit};
 		render_stats(194, 182, 120, secondanary_stat_other, show_maximum_only);
 		// traits
 		for(int i = 0; i < 16; i++) {
@@ -392,9 +397,9 @@ void creature::newgame() {
 			draw::text(x1 + w1 + w2, y1, maptbl(ability_values, value));
 			y1 += draw::texth();
 		}
-		y1 += draw::texth()/2;
+		y1 += draw::texth() / 2;
 		x1 += 20;
-		static variant fast_info[] = {HitPoints, ArmorClass, ActionPoints, MeleeDamage};
+		static variant fast_info[] = {HPMax, AC, AP, DamageMelee};
 		for(auto id : fast_info) {
 			const char* p = id.getnameshort();
 			draw::text(x1 + w1 + w2 - 4 - draw::textw(p), y1, p);

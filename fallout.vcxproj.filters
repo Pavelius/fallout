@@ -91,12 +91,6 @@
     <ClCompile Include="wound.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="illness.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="parameter.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="damage.cpp">
       <Filter>logic</Filter>
     </ClCompile>
@@ -174,6 +168,9 @@
     </ClCompile>
     <ClCompile Include="lst_pro_wall.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="caliber.cpp">
+      <Filter>logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

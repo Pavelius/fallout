@@ -8,8 +8,16 @@
 
 #pragma once
 
-enum ability_s : unsigned char {
-	Strenght, Perception, Endurance, Charisma, Intellegence, Agility, Luck
+enum ability_s : unsigned char {NoStat,
+	Strenght, Perception, Endurance, Charisma, Intellegence, Agility, Luck,
+	HPMax, APMax, AC, DamageUnarmed, DamageMelee, CarryWeight, Sequence, HealingRate,
+	CriticalHit, CriticalHitTable,
+	PhisycalThreshold, LaserThreshold, FireThreshold, PlasmaThreshold, ElectricalThreshold, EMPThreshold, ExplosiveThreshold,
+	PhisycalResistance, LaserResistance, FireResistance, PlasmaResistance, ElectricalResistance, EMPResistance, ExplosiveResistance,
+	RadiationResistance, PoisonResistance,
+	Age, Gender, HP,
+	PoisonLevel, RadiationLevel,
+	AP,
 };
 enum perk_s : unsigned char {
 	Awareness, BonusHtHAttacks, BonusHtHDamage, BonusMove, BonusRangedDamage, BonusROF,
@@ -72,15 +80,15 @@ enum wound_s : unsigned char {
 };
 enum damage_s : unsigned char {
 	Phisycal, Laser, Fire, Plasma, Electrical, EMP, Explosive,
-	PoisonResistance, RadiationResistance,
-	FirstDamageType = Phisycal, LastDamageType = RadiationResistance,
-};
-enum illness_s : unsigned char {
-	Poison, Radiation,
-	LastIllness = Radiation,
 };
 enum item_type_s : unsigned char {
 	Armor, Drug, Misc, Weapon,
+};
+enum caliber_s : unsigned char {
+	NoAmmo,
+	CaliberRocket, CaliberGas, CaliberEnergyC, CaliberEnergyD,
+	Caliber233, Caliber5mm, Caliber40, Caliber10mm, Caliber44, Caliber14mm, CaliberFract,
+	Caliber9mm, CaliberBB, Caliber45, Caliber2mm, Caliber47mm, CaliberXH, Caliber762
 };
 enum item_s : unsigned short {
 	NoItem,
@@ -137,7 +145,7 @@ enum item_s : unsigned short {
 	LynetteHolodisk, WestinHolodisk, NCRSpyHolodisk, DoctorSPapers, PresidentialPass,
 	RangerPin, RangerSMap, AdvancedPowerArmor, AdvPowerArmorMKII, Bozar,
 	FNFAL, HKG11, XL70E3, PancorJackhammer, LightSupportWeapon,
-	ComputerVoiceModule, Caliber45, EC2mm, Caseless47mm, Ammo9mm,
+	ComputerVoiceModule, Ammo45, EC2mm, Caseless47mm, Ammo9mm,
 	HNNeedlerCartridge, HNAPNeedlerCartridge, Ammo762mm, RobotMotivator, PlantSpike,
 	GECK, Claw, Claw1, Vault15Keycard, Vault15ComputerParts,
 	Cookie, LeatherArmorMarkII, MetalArmorMarkII, CombatArmorMarkII, FlamethrowerFuelMKII,
@@ -176,7 +184,6 @@ enum direction_s : unsigned char {
 };
 enum settlement_s : unsigned char {
 	SettlementArojo, SettlementDen, SettlementKlamath,
-	FirstSettlement = SettlementArojo, LastSettlement = SettlementKlamath,
 };
 enum animation_s : unsigned char {
 	ActionStand, ActionWalk, ActionClimb, ActionPickup, ActionUse, ActionDodge,
@@ -193,22 +200,6 @@ enum color_s : unsigned char {
 };
 enum item_sprite_s : unsigned char {
 	FrameInventory, FrameGround, FrameWeapon,
-};
-enum parameter_s : unsigned char {
-	ArmorClass, ActionPoints, CarryWeight, CriticalHit, HealingRate, HitPoints, MeleeDamage, Sequence,
-};
-enum boost_s : unsigned char {
-	NoBoost,
-	BoostStrenght, BoostPerception, BoostEndurance, BoostCharisma, BoostIntellegence, BoostAgility, BoostLuck,
-	BoostHPMax, BoostAPMax, BoostAC, BoostDamageUnarmed, BoostDamageMelee, BoostCarryWeight, BoostSequence, BoostHealingLevel,
-	BoostCritical, BoostCriticalTable,
-	BoostPhisycal, BoostLaser, BoostFire, BoostPlasma, BoostElectrical, BoostEMP, BoostExplosive,
-	BoostPhisycalResistance, BoostLaserResistance, BoostFireResistance, BoostPlasmaResistance, BoostElectricalResistance, BoostEMPResistance, BoostExplosiveResistance,
-	BoostPoisonResistance, BoostRadiationResistance,
-	LastBoost = BoostRadiationResistance,
-	// Ёффекты, которые действуют сразу, обновл€€ не временные параметры
-	BoostAge, BoostGender, BoostHP, BoostPoisonLevel, BoostRadiationLevel,
-	Random
 };
 namespace res {
 enum tokens {
@@ -245,15 +236,13 @@ enum tokens {
 }
 enum variant_s : unsigned char {
 	NoVariant,
-	Abilities, Damages, Illness, Parameters, Perks, Skills, Wounds,
+	Abilities, Damages, Parameters, Perks, Skills, Wounds,
 };
 struct variant {
 	variant_s			type;
 	union {
 		ability_s		ability;
 		damage_s		damage;
-		illness_s		illness;
-		parameter_s		parameter;
 		perk_s			perk;
 		skill_s			skill;
 		wound_s			wound;
@@ -262,15 +251,13 @@ struct variant {
 	constexpr variant(unsigned short v) : type((variant_s)(v >> 8)), perk(perk_s(v & 0xFF)) {}
 	constexpr variant(ability_s v) : type(Abilities), ability(v) {}
 	constexpr variant(damage_s v) : type(Damages), damage(v) {}
-	constexpr variant(illness_s v) : type(Illness), illness(v) {}
-	constexpr variant(parameter_s v) : type(Parameters), parameter(v) {}
 	constexpr variant(perk_s v) : type(Perks), perk(v) {}
 	constexpr variant(skill_s v) : type(Skills), skill(v) {}
 	constexpr variant(wound_s v) : type(Wounds), wound(v) {}
 	constexpr operator unsigned short() const { return (type << 8) | perk; }
 	constexpr explicit operator bool() const { return type != NoVariant; }
 	const char*			getnameshort() const;
-	const char*			getnameshortest() const;
+	const char*			getnameabr() const;
 	const char*			getdescription() const;
 	int					getimage() const;
 };
@@ -322,6 +309,8 @@ struct ability_info {
 	short				fid;
 	const char*			name;
 	const char*			name_short;
+	const char*			name_abr;
+	bool				percent;
 	const char*			description;
 };
 struct perk_info {
@@ -331,10 +320,7 @@ struct perk_info {
 };
 struct resist_info {
 	const char*			id;
-	int					fid;
 	const char*			name;
-	const char*			name_short;
-	const char*			just_name;
 	const char*			description;
 };
 struct wound_info {
@@ -483,36 +469,21 @@ struct creature : actor {
 	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points);
 	void				decrease(variant, int& points);
 	int					get(ability_s id) const;
-	int					get(illness_s id) const { return illness[id]; }
-	int					get(parameter_s id) const;
 	int					get(skill_s id) const;
-	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only, bool show_threshold = false) const;
+	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const;
 	int					getabilitypoints() const;
-	int					getac() const;
-	int					getap() const { return ap; }
-	int					getapmax() const;
 	item&				getarmor() const override { return const_cast<creature*>(this)->armor; }
 	int					getbase(skill_s id) const;
-	int					getcarryweight() const;
-	int					getcritical() const;
-	item*				getequip(const item& it);
 	int					getequipweight() const;
 	static const datetime& getdate();
-	int					gethealrate() const;
-	int					gethp() const { return hp; }
-	int					gethpmax() const;
 	gender_s			getgender() const override { return gender; }
-	int					getmax(parameter_s id) const;
-	int					getmeleedamage() const;
 	const char*			getname() const { return name; }
 	int					getpartylimit() const;
 	int					getperkrate() const;
 	static creature*	getplayer();
 	static const pregen_info* getpregen(const char* id);
-	int					getresistance(damage_s id) const;
 	int					getsequence() const;
 	int					getskillrate() const;
-	int					getthreshold(damage_s type) const;
 	item&				getweapon() const override { return const_cast<creature*>(this)->weapon[current_weapon]; }
 	item&				getweaponfirst() { return weapon[0]; }
 	item&				getweaponsecond() { return weapon[1]; }
@@ -527,6 +498,7 @@ struct creature : actor {
 	static void			passtime(unsigned minutes);
 	void				random_name() { name = "¬онг"; }
 	bool				reload(item& target, bool run, bool interactive);
+	void				set(ability_s id, int value) { stats[id] = value; }
 	void				set(perk_s id) { perks[id / 32] |= (1 << (id % 32)); }
 	void				set(skill_s id) { skills_tag |= (1 << id); }
 	void				remove(perk_s id) { perks[id / 32] &= ~(1 << (id % 32)); }
@@ -536,14 +508,11 @@ private:
 	const char*			name;
 	unsigned char		level;
 	gender_s			gender;
-	unsigned short		age;
-	unsigned short		hp;
-	char				ap, ap_move;
-	unsigned char		stats[Luck + 1];
-	unsigned short		illness[LastIllness + 1];
+	char				ap;
+	unsigned short		stats[AP + 1];
+	unsigned short		stats_boost[AP + 1];
 	unsigned char		skills[LastSkill + 1];
 	unsigned			perks[1 + LastTraits / 32];
-	short				boosts[LastBoost + 1];
 	unsigned			skills_tag;
 	item				armor, weapon[2];
 	unsigned char		wounds;
@@ -672,7 +641,6 @@ extern gender_info		gender_data[];
 extern resist_info		damage_data[];
 extern illness_info		illness_data[];
 extern material_info	material_data[];
-extern parameter_info	parameter_data[];
 extern perk_info		perk_data[];
 extern skill_info		skill_data[];
 wound_info				wound_data[];
