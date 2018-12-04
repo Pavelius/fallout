@@ -17,7 +17,9 @@ enum ability_s : unsigned char {NoStat,
 	RadiationResistance, PoisonResistance,
 	Age, Gender, HP,
 	PoisonLevel, RadiationLevel,
+	// Не вошедшие в основной движек
 	AP,
+	Random,
 };
 enum perk_s : unsigned char {
 	Awareness, BonusHtHAttacks, BonusHtHDamage, BonusMove, BonusRangedDamage, BonusROF,
@@ -82,7 +84,7 @@ enum damage_s : unsigned char {
 	Phisycal, Laser, Fire, Plasma, Electrical, EMP, Explosive,
 };
 enum item_type_s : unsigned char {
-	Armor, Drug, Misc, Weapon,
+	Armor, Container, Drug, Weapon, Ammo, Misc, KeyIt
 };
 enum caliber_s : unsigned char {
 	NoAmmo,
@@ -270,7 +272,6 @@ struct attack_info {
 	damage_info			damage;
 	unsigned char		minst;
 	unsigned char		capacity;
-	item_s				ammo[4];
 	caliber_s			cliber;
 	skill_s				skill;
 };
@@ -283,6 +284,9 @@ struct drug_info {
 	ability_s			id[3]; // Три атрибута
 	short				value[3][3]; // Каждый из них имеет 3 значения
 	unsigned			durations[2]; // Сразу и в двух других временных рамках
+	char				addiction_chance;
+	int					addiction_perk;
+	unsigned			addiction_duration;
 };
 struct formula {
 	struct term {
@@ -515,8 +519,8 @@ private:
 	unsigned char		level;
 	gender_s			gender;
 	char				ap;
-	short				stats[AP + 1];
-	short				stats_boost[AP + 1];
+	short				stats[Random];
+	short				stats_boost[Random];
 	unsigned char		skills[LastSkill + 1];
 	unsigned			perks[1 + LastTraits / 32];
 	unsigned			skills_tag;

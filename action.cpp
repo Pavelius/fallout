@@ -18,3 +18,4 @@ action_info action_data[] = {{"NoAction"},
 {"UseItem"},
 {"UseSkill"},
 };
+getsid_enum(action);

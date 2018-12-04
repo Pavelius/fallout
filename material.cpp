@@ -10,3 +10,4 @@ material_info material_data[] = {{"Glass"},
 {"Leather"},
 };
 assert_enum(material, Leather);
+getsid_enum(material);

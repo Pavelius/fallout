@@ -50,11 +50,10 @@ static void test_animate() {
 	static item weapons[] = {NoItem, Spear, Pistol10mm, Flamer, Shotgun, SMG10mm, Knife, Club};
 	auto weapon = 0;
 	auto orientation = 2;
-	item armor = LeatherArmor;
 	while(ismodal()) {
 		rectf({0, 0, getwidth(), getheight()}, colors::gray);
 		auto x = 100, y = 100;
-		actor::preview(100, 100, Male, armor, weapons[weapon], orientation%6);
+		actor::preview(100, 100, Male, LeatherArmor, weapons[weapon], orientation%6);
 		line(x - 4, y, x + 4, y, colors::red);
 		line(x, y - 4, x, y + 4, colors::red);
 		domodal();

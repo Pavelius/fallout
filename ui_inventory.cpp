@@ -28,7 +28,7 @@ static void iteminfo(int x, int y, int width, const creature& player, const item
 			szprint(temp, zendof(temp), "%1: %2i", "ƒлн.", 10);
 			draw::text(x + width - draw::textw(temp), y, temp);
 			y += draw::texth();
-			szprint(temp, zendof(temp), "%1: %2i/%3i", getstr(ai.ammo[0]), it.getammocount(), ai.capacity);
+			szprint(temp, zendof(temp), "%1: %2i/%3i", getstr(it.getammo()), it.getammocount(), ai.capacity);
 			draw::text(x, y, temp);
 		}
 	}

@@ -10,3 +10,4 @@ resist_info damage_data[] = {{"Phisycal", "Урон", "На указанный процент уменьшаю
 };
 assert_enum(damage, Explosive);
 getstr_enum(damage);
+getsid_enum(damage);
