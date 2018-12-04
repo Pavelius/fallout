@@ -26,6 +26,7 @@ struct item_info {
 	armor_info		armor;
 	ammo_info		ammunition;
 	const char*		description;
+	drug_info		drug;
 };
 static item_info item_data[] = {{"Нет предмета"},
 {"MetalArmor", "Металлическая Броня", Metal, {1, 33, 0}, {48}, 35, 1100, {}, {10, {4, 6, 4, 4, 0, 0, 4}, {30, 75, 10, 20, 0, 500, 25}, {HMMETL, HFMETL}}, {}, "Полированые металлические пластины формируют защитный костюм."},

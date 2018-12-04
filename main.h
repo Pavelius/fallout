@@ -271,7 +271,13 @@ struct attack_info {
 	unsigned char		minst;
 	unsigned char		capacity;
 	item_s				ammo[4];
+	caliber_s			cliber;
 	skill_s				skill;
+};
+struct caliber_info {
+	const char*			id;
+	const char*			name;
+	item_s				items[4];
 };
 struct drug_info {
 	ability_s			id[3]; // Три атрибута
@@ -306,6 +312,7 @@ struct skill_info {
 	const char*			description;
 };
 struct ability_info {
+	const char*			id;
 	short				fid;
 	const char*			name;
 	const char*			name_short;
@@ -635,6 +642,7 @@ extern int				width;
 extern ability_info		ability_data[];
 extern const char*		ability_values[11];
 extern action_info		action_data[];
+extern caliber_info		caliber_data[];
 extern adat<creature, 128> creature_data;
 extern resist_info		damage_data[];
 extern gender_info		gender_data[];

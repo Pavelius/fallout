@@ -47,7 +47,7 @@ static void show_invertory() {
 }
 
 static void test_animate() {
-	static item weapons[] = {NoItem, Pistol10mm, Flamer, Shotgun, SMG10mm, Knife, Club};
+	static item weapons[] = {NoItem, Spear, Pistol10mm, Flamer, Shotgun, SMG10mm, Knife, Club};
 	auto weapon = 0;
 	auto orientation = 2;
 	item armor = LeatherArmor;
@@ -95,10 +95,10 @@ static void mainmenu() {
 int main(int argc, char* argv[]) {
 	srand(clock());
 	util_main();
-	initialize();
-	setfont(res::FONT1);
-	setpause(false);
-	setlayout(mainmenu);
+	//initialize();
+	//setfont(res::FONT1);
+	//setpause(false);
+	//setlayout(mainmenu);
 	return 0;
 }
 

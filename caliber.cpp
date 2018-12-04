@@ -1,10 +1,5 @@
 #include "main.h"
 
-struct caliber_info {
-	const char*		id;
-	const char*		name;
-	item_s			items[4];
-};
 caliber_info caliber_data[] = {{"NoAmmo", "Нет"},
 {"CaliberRocket", "Ракета"},
 {"CaliberGas", "Топливо огнемета"},
