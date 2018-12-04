@@ -43,6 +43,7 @@ static void show_invertory() {
 	e.add(SmallStatuette);
 	e.add(SmallPieceOfMachinery);
 	e.add(Stimpak);
+	e.add({Money, 2100});
 	e.inventory();
 }
 
@@ -94,10 +95,10 @@ static void mainmenu() {
 int main(int argc, char* argv[]) {
 	srand(clock());
 	util_main();
-	//initialize();
-	//setfont(res::FONT1);
-	//setpause(false);
-	//setlayout(mainmenu);
+	initialize();
+	setfont(res::FONT1);
+	setpause(false);
+	setlayout(mainmenu);
 	return 0;
 }
 

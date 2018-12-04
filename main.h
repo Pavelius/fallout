@@ -268,11 +268,16 @@ struct damage_info {
 	damage_s			type;
 };
 struct attack_info {
-	adat<action_s, 4>	actions;
+	action_s			actions[2];
 	damage_info			damage;
 	unsigned char		minst;
 	unsigned char		capacity;
 	caliber_s			cliber;
+	unsigned short		range[2];
+	unsigned char		ap[2];
+	short				critical_fail;
+	int					perk;
+	unsigned char		burst;
 	skill_s				skill;
 };
 struct caliber_info {
