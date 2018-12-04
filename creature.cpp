@@ -22,6 +22,7 @@ void creature::clear() {
 	weapon[1].clear();
 	current_weapon = 0;
 	memset(stats, 0, sizeof(stats));
+	memset(stats_boost, 0, sizeof(stats_boost));
 	memset(perks, 0, sizeof(perks));
 	memset(skills, 0, sizeof(skills));
 	for(auto i = Strenght; i<=Luck; i = (ability_s)(i+1))

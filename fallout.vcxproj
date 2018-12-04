@@ -147,9 +147,7 @@
     <ClCompile Include="material.cpp" />
     <ClCompile Include="msg_info.cpp" />
     <ClCompile Include="action.cpp" />
-    <ClCompile Include="sprite_util.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="sprite_util.cpp" />
     <ClCompile Include="szdup.cpp" />
     <ClCompile Include="ui_adventure.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
