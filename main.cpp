@@ -46,6 +46,36 @@ static void show_invertory() {
 	e.inventory();
 }
 
+static void test_animate() {
+	static item weapons[] = {NoItem, Pistol10mm, Flamer, Shotgun, SMG10mm, Knife, Club};
+	auto weapon = 0;
+	auto orientation = 2;
+	item armor = LeatherArmor;
+	while(ismodal()) {
+		rectf({0, 0, getwidth(), getheight()}, colors::gray);
+		auto x = 100, y = 100;
+		actor::preview(100, 100, Male, armor, weapons[weapon], orientation%6);
+		line(x - 4, y, x + 4, y, colors::red);
+		line(x, y - 4, x, y + 4, colors::red);
+		domodal();
+		switch(hot.key) {
+		case KeyEscape: breakmodal(0); break;
+		case KeyUp:
+			weapon++;
+			if(weapon >= sizeof(weapons) / sizeof(weapons[0]))
+				weapon = 0;
+			break;
+		case KeyDown:
+			weapon--;
+			if(weapon < 0)
+				weapon = sizeof(weapons) / sizeof(weapons[0]) - 1;
+			break;
+		case KeyLeft: orientation--; break;
+		case KeyRight: orientation++; break;
+		}
+	}
+}
+
 static void mainmenu() {
 	while(ismodal()) {
 		background(140);
@@ -56,6 +86,7 @@ static void mainmenu() {
 			field(x, y, 100, cmd(new_game), "История"); y += 41;
 			field(x, y, 100, cmd(show_worldmap), "Загрузить"); y += 41;
 			field(x, y, 100, cmd(show_invertory), "Предметы", Alpha + 'I'); y += 41;
+			field(x, y, 100, cmd(test_animate), "Анимация", Alpha + 'A'); y += 41;
 		}
 		domodal();
 	}

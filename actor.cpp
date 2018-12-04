@@ -31,6 +31,31 @@ const sprite* actor::getsprite() const {
 	return 0;
 }
 
+void actor::preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation) {
+	res::tokens icn = armor.getdress(gender);
+	if(icn == res::NoRes) {
+		if(gender == Male)
+			icn = res::HMWARR;
+		else
+			icn = res::HFPRIM;
+	}
+	auto ps = gres(icn);
+	if(!ps)
+		return;
+	if(orientation == -1)
+		orientation = (getstamp() / 300) % 6;
+	auto wp = weapon.get(FrameWeapon);
+	auto cl = actor::byweapon(ActionStand, wp) * 6 + orientation;
+	auto pa = draw::getaction(ps, cl / 6);
+	if(!pa)
+		return;
+	auto fr = ps->ganim(cl, 0);
+	auto pf = ps->get(fr);
+	draw::state push;
+	draw::setclip({x - 40, y - 100, x + 40, y + 30});
+	draw::image(x, y, ps, fr, 0);
+}
+
 rect actor::getrect() const {
 	auto pos = getposition();
 	return{pos.x - 100, pos.y - 100, pos.x + 100, pos.y + 64};

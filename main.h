@@ -447,6 +447,7 @@ struct actor : drawable, point, wearable {
 	bool				hittest(point position) const override { return false; }
 	void				moveto(point position, int run);
 	void				painting(point screen) const override;
+	static void			preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation = -1);
 	void				setaction(animation_s value) { action = value; }
 	void				setorientation(unsigned char value) { orientation = value; }
 	void				setposition(point value) { x = value.x; x = value.y; }
@@ -507,12 +508,12 @@ private:
 	unsigned char		level;
 	gender_s			gender;
 	char				ap;
-	unsigned short		stats[AP + 1];
-	unsigned short		stats_boost[AP + 1];
+	short				stats[AP + 1];
+	short				stats_boost[AP + 1];
 	unsigned char		skills[LastSkill + 1];
 	unsigned			perks[1 + LastTraits / 32];
 	unsigned			skills_tag;
-	item				armor, weapon[2];
+	item				armor, weapon[2], money;
 	unsigned char		wounds;
 	unsigned char		current_weapon;
 	int					render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const;

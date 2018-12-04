@@ -13,30 +13,6 @@ static int compare(const void* p1, const void* p2) {
 	return strcmp(t1, t2);
 }
 
-static void preview(int x, int y, const item& armor, gender_s gender, const item& weapon) {
-	res::tokens icn = armor.getdress(gender);
-	if(icn == res::NoRes) {
-		if(gender == Male)
-			icn = res::HMWARR;
-		else
-			icn = res::HFPRIM;
-	}
-	auto ps = gres(icn);
-	if(!ps)
-		return;
-	auto or = (getstamp() / 300) % 6;
-	auto wp = weapon.get(FrameWeapon);
-	auto cl = actor::byweapon(ActionStand, wp) * 6 + or ;
-	auto pa = draw::getaction(ps, cl / 6);
-	if(!pa)
-		return;
-	auto fr = ps->ganim(cl, 0);
-	auto pf = ps->get(fr);
-	draw::state push;
-	draw::setclip({x - 40, y - 100, x + 40, y + 30});
-	draw::image(x, y, ps, fr, 0);
-}
-
 static void iteminfo(int x, int y, int width, const creature& player, const item& it) {
 	char temp[128];
 	auto ai = it.getattack();
@@ -291,7 +267,7 @@ void creature::inventory() {
 		auto x = (draw::getwidth() - ps->get(fr).sx) / 2;
 		auto y = imax(0, (draw::getheight() - ps->get(fr).sy - 100) / 2);
 		image(x, y, ps, fr, ImageNoOffset);
-		preview(x + 206, y + 116, getarmor(), getgender(), getweapon());
+		preview(x + 206, y + 116, getgender(), getarmor(), getweapon(), -1);
 		if(info_mode && item_info)
 			itemtext(x + 298, y + 48, 144, 180, *item_info);
 		else
