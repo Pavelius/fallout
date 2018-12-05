@@ -31,7 +31,7 @@ const sprite* actor::getsprite() const {
 	return 0;
 }
 
-void actor::preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation) {
+void actor::preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation, unsigned tick) {
 	res::tokens icn = armor.getdress(gender);
 	if(icn == res::NoRes) {
 		if(gender == Male)
@@ -49,7 +49,7 @@ void actor::preview(int x, int y, gender_s gender, const item& armor, const item
 	auto pa = draw::getaction(ps, cl / 6);
 	if(!pa)
 		return;
-	auto fr = ps->ganim(cl, 0);
+	auto fr = ps->ganim(cl, tick);
 	auto pf = ps->get(fr);
 	draw::state push;
 	draw::setclip({x - 40, y - 100, x + 40, y + 30});
