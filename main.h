@@ -463,7 +463,7 @@ struct actor : drawable, point, wearable {
 	bool				hittest(point position) const override { return false; }
 	void				moveto(point position, int run);
 	void				painting(point screen) const override;
-	static void			preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation = -1, unsigned tick = 0);
+	static void			preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation = -1, animation_s action = ActionStand, unsigned tick = 0);
 	void				setaction(animation_s value) { action = value; }
 	void				setorientation(unsigned char value) { orientation = value; }
 	void				setposition(point value) { x = value.x; x = value.y; }

@@ -47,29 +47,50 @@ static void show_invertory() {
 	e.inventory();
 }
 
+static void mmax(int& v, int min, int max) {
+	if(v > max)
+		v = max;
+	if(v < 0)
+		v = 0;
+}
+
 static void test_animate() {
-	static item weapons[] = {NoItem, Pistol10mm, SMG10mm, Flamer, Shotgun, Spear, Knife, Club};
-	auto weapon = 0;
-	auto orientation = 2;
+	static int offset_lt[] = {0, 0, -1, -3, 8, -1, 8, 3, -1, -1};
+	static int offset_am[] = {4, 6, 4, 4};
+	static animation_s actions[] = {ActionStand, ActionShoot};
+	static item weapons[] = {NoItem, Club, Pistol10mm, SMG10mm, Flamer, RocketLauncher, Minigun, Shotgun, Spear, Knife, Sledgehammer};
+	static item armors[] = {LeatherArmor, PowerArmor, CombatArmor, LeatherJacket};
+	int weapon = 0, armor = 0, action = 0, orientation = 2;
 	while(ismodal()) {
+		mmax(orientation, 0, 5);
+		mmax(action, 0, sizeof(actions) / sizeof(actions[0]) - 1);
+		mmax(weapon, 0, sizeof(weapons) / sizeof(weapons[0]) - 1);
+		mmax(armor, 0, sizeof(armors) / sizeof(armors[0]) - 1);
 		rectf({0, 0, getwidth(), getheight()}, colors::gray);
-		auto x = 100, y = 100;
-		actor::preview(100, 100, Male, LeatherArmor, weapons[weapon], orientation%6, getstamp()/200);
+		short x = 100, y = 100;
+		point pt = {x, y};
+		point pz = {-1, 4};
+		pt.x += offset_lt[weapon];
+		if(weapon) {
+			pt.y += offset_am[armor];
+			switch(weapons[weapon].get()) {
+			//case Club: pt.y++; break;
+			case Minigun: pt.y += offset_am[armor] + 1; break;
+			}
+		}
+		pt = pt + pz;
+		actor::preview(pt.x, pt.y, Male, armors[armor], weapons[weapon], orientation % 6, actions[action], getstamp() / 200);
 		line(x - 4, y, x + 4, y, colors::red);
 		line(x, y - 4, x, y + 4, colors::red);
 		domodal();
 		switch(hot.key) {
 		case KeyEscape: breakmodal(0); break;
-		case KeyUp:
-			weapon++;
-			if(weapon >= sizeof(weapons) / sizeof(weapons[0]))
-				weapon = 0;
-			break;
-		case KeyDown:
-			weapon--;
-			if(weapon < 0)
-				weapon = sizeof(weapons) / sizeof(weapons[0]) - 1;
-			break;
+		case Alpha + '1': armor--; break;
+		case Alpha + '2': armor++; break;
+		case Alpha + 'A': action--; break;
+		case Alpha + 'S': action++; break;
+		case KeyUp: weapon++; break;
+		case KeyDown: weapon--; break;
 		case KeyLeft: orientation--; break;
 		case KeyRight: orientation++; break;
 		}

@@ -31,7 +31,7 @@ const sprite* actor::getsprite() const {
 	return 0;
 }
 
-void actor::preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation, unsigned tick) {
+void actor::preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation, animation_s action, unsigned tick) {
 	res::tokens icn = armor.getdress(gender);
 	if(icn == res::NoRes) {
 		if(gender == Male)
@@ -45,8 +45,9 @@ void actor::preview(int x, int y, gender_s gender, const item& armor, const item
 	if(orientation == -1)
 		orientation = (getstamp() / 300) % 6;
 	auto wp = weapon.get(FrameWeapon);
-	auto cl = actor::byweapon(ActionStand, wp) * 6 + orientation;
-	auto pa = draw::getaction(ps, cl / 6);
+	auto c0 = actor::byweapon(action, wp);
+	auto cl = c0 * 6 + orientation;
+	auto pa = draw::getaction(ps, c0);
 	if(!pa)
 		return;
 	auto fr = ps->ganim(cl, tick);
