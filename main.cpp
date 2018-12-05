@@ -57,7 +57,7 @@ static void mmax(int& v, int min, int max) {
 static void test_animate() {
 	static int offset_lt[] = {0, 0, -1, -3, 8, -1, 8, 3, -1, -1};
 	static int offset_am[] = {4, 6, 4, 4};
-	static animation_s actions[] = {ActionStand, ActionShoot};
+	static animation_s actions[] = {AnimateStand};
 	static item weapons[] = {NoItem, Club, Pistol10mm, SMG10mm, Flamer, RocketLauncher, Minigun, Shotgun, Spear, Knife, Sledgehammer};
 	static item armors[] = {LeatherArmor, PowerArmor, CombatArmor, LeatherJacket};
 	int weapon = 0, armor = 0, action = 0, orientation = 2;
@@ -79,7 +79,7 @@ static void test_animate() {
 			}
 		}
 		pt = pt + pz;
-		actor::preview(pt.x, pt.y, Male, armors[armor], weapons[weapon], orientation % 6, actions[action], getstamp() / 200);
+		actor::preview(pt.x, pt.y, Male, armors[armor], weapons[weapon], orientation % 6, actions[action], getstamp() / 200, {-140, -200, 140, 60});
 		line(x - 4, y, x + 4, y, colors::red);
 		line(x, y - 4, x, y + 4, colors::red);
 		domodal();

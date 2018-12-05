@@ -2,19 +2,21 @@
 
 using namespace draw;
 
-static int modify_weapon_base[] = {
-	49, 50, -1, -1, -1, 53,
-	-1, -1,
-	54, 55, 61, -1, -1, -1,
-	-1, -1,
-	52, 52,
-	56, 58, 59, 57,
+static animation_s modify_weapon_base[] = {
+	AnimateWeaponStand, AnimateWeaponWalk, AnimatePickup, AnimateUse, AnimateWeaponDodge,
+	AnimateDamaged, AnimateDamagedRear,
+	AnimateWeaponThrust, AnimateWeaponSwing, AnimateWeaponThrow, AnimateRun,
 };
 
 int actor::byweapon(animation_s action, int weapon_index) {
-	if(!weapon_index || modify_weapon_base[action] == -1)
+	if(!weapon_index)
 		return action;
-	return modify_weapon_base[action] + (weapon_index-1) * 13;
+	auto a1 = action;
+	if(action <= AnimateRun)
+		a1 = modify_weapon_base[action];
+	if(a1 >= AnimateWeaponStand)
+		return a1 + (weapon_index - 1) * (AnimateWeaponThrow - AnimateWeaponStand + 1);
+	return a1;
 }
 
 static res::tokens bygender(gender_s gender, res::tokens tm, res::tokens tf) {
@@ -31,7 +33,7 @@ const sprite* actor::getsprite() const {
 	return 0;
 }
 
-void actor::preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation, animation_s action, unsigned tick) {
+void actor::preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation, animation_s action, unsigned tick, const rect& clip) {
 	res::tokens icn = armor.getdress(gender);
 	if(icn == res::NoRes) {
 		if(gender == Male)
@@ -53,7 +55,7 @@ void actor::preview(int x, int y, gender_s gender, const item& armor, const item
 	auto fr = ps->ganim(cl, tick);
 	auto pf = ps->get(fr);
 	draw::state push;
-	draw::setclip({x - 40, y - 100, x + 40, y + 30});
+	draw::setclip({x + clip.x1, y + clip.y1, x + clip.x2, y + clip.y2});
 	draw::image(x, y, ps, fr, 0);
 }
 
@@ -73,7 +75,7 @@ void actor::painting(point camera) const {
 	if(!pc->count)
 		return;
 	point pt = getposition() - camera;
-	if(action == ActionRun || action == ActionWalk) {
+	if(action == AnimateRun || action == AnimateWalk) {
 		auto pa = draw::getaction(source, cicle / 6);
 		if(!pa)
 			return;
@@ -87,13 +89,6 @@ void actor::painting(point camera) const {
 }
 
 char actor::getorientation(point from, point to) {
-	//static const char orientations[25] = {
-	//	5, 5, 0, 0, 0,
-	//	5, 5, 0, 0, 0,
-	//	4, 4, 2, 1, 1,
-	//	3, 3, 2, 2, 2,
-	//	3, 3, 3, 2, 2
-	//};
 	static const char orientations[25] = {
 		5, 5, 0, 0, 0,
 		5, 5, 0, 0, 0,

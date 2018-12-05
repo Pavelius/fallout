@@ -188,13 +188,28 @@ enum settlement_s : unsigned char {
 	SettlementArojo, SettlementDen, SettlementKlamath,
 };
 enum animation_s : unsigned char {
-	ActionStand, ActionWalk, ActionClimb, ActionPickup, ActionUse, ActionDodge,
-	ActionDamaged, ActionDamagedRear,
-	ActionUnarmed1, ActionUnarmed2, ActionThrown, ActionRun, ActionHandsUp, ActionCloackOff,
-	ActionKnockOutBack, ActionKnockOutForward,
-	LastAction = ActionKnockOutForward,
-	ActionHideWeapon, ActionPrepareWeapon,
-	ActionPrepareShoot, ActionShoot, ActionShootAuto, ActionEndShoot,
+	AnimateStand, AnimateWalk, AnimatePickup, AnimateUse, AnimateDodge,
+	AnimateDamaged, AnimateDamagedRear,
+	AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
+	AnimateKnockOutBack, AnimateKnockOutForward,
+	AnimateKilledChest, AnimateKilledElectro,
+	AnimateKilledBurstInHead, AnimateKilledBurstInChest,
+	AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
+	AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
+	AnimateKilledBack, AnimateKilledForward,
+	AnimateStandUpForward, AnimasteStandUpBack,
+	AnimateDeadBackNoBlood, AnimateDeadForwardNoBlood,
+	AnimateDeadChest, AnimateDeadElectro,
+	AnimateDeadBurstInHead, AnimateDeadBurstInChest,
+	AnimateDeadImmolate, AnimateDeadLaser, AnimateDeadElectroChest,
+	AnimateDeadBlowup, AnimateDeadMelt, AnimateDeadFired,
+	AnimateDeadBack, AnimateDeadForward,
+	// Weapon Block
+	AnimateWeaponStand, AnimateWeaponWalk, AnimateWeaponTakeOn, AnimateWeaponTakeOff, AnimateWeaponDodge,
+	AnimateWeaponThrust, AnimateWeaponSwing,
+	AnimateWeaponAim, AnimateWeaponAttack,
+	AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
+	AnimateWeaponThrow,
 };
 enum color_s : unsigned char {
 	ColorDisable = 0x60, ColorText = 0xD7, ColorCheck = 0x03, ColorInfo = 0xE4, ColorButton = 0x3C,
@@ -448,7 +463,7 @@ struct wearable {
 	aref<item*>			select(aref<item*> source) const;
 };
 struct actor : drawable, point, wearable {
-	constexpr actor() : point{0, 0}, action(ActionStand), orientation(0), frame(0), timestart(0) {}
+	constexpr actor() : point{0, 0}, action(AnimateStand), orientation(0), frame(0), timestart(0) {}
 	static int			byweapon(animation_s action, int weapon);
 	virtual item&		getarmor() const = 0;
 	int					getcicle() const;
@@ -463,7 +478,7 @@ struct actor : drawable, point, wearable {
 	bool				hittest(point position) const override { return false; }
 	void				moveto(point position, int run);
 	void				painting(point screen) const override;
-	static void			preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation = -1, animation_s action = ActionStand, unsigned tick = 0);
+	static void			preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation = -1, animation_s action = AnimateStand, unsigned tick = 0, const rect& clip = {-40, -100, 40, 30});
 	void				setaction(animation_s value) { action = value; }
 	void				setorientation(unsigned char value) { orientation = value; }
 	void				setposition(point value) { x = value.x; x = value.y; }
