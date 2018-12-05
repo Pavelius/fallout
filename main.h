@@ -187,6 +187,22 @@ enum direction_s : unsigned char {
 enum settlement_s : unsigned char {
 	SettlementArojo, SettlementDen, SettlementKlamath,
 };
+enum light_flag {
+	NorthSouth = 0,
+	EastWest = 0x0800,
+	NorthCorner = 0x1000,
+	SouthCorner = 0x2000,
+	EastCorner = 0x4000,
+	WestCorner = 0x8000
+};
+enum action_flag {
+	KneelDownWhenUsing = 0x0001,
+	CanBeUsed = 0x0008,
+	UseOnSomething = 0x0010,
+	CanLookAt = 0x0020,
+	CanTalkWith = 0x0040,
+	CanPickUp = 0x0080,
+};
 enum animation_s : unsigned char {
 	AnimateStand, AnimateWalk, AnimatePickup, AnimateUse, AnimateDodge,
 	AnimateDamaged, AnimateDamagedRear,
@@ -362,6 +378,19 @@ struct gender_info {
 	const char*			id;
 	const char*			name;
 	const char*			name_short;
+};
+struct tile_info {
+	int					fid;
+	const char*			name;
+	material_s			material;
+};
+struct wall_info {
+	int					id;
+	int					fid;
+	const char*			name;
+	material_s			material;
+	unsigned			light;
+	unsigned			action;
 };
 struct item {
 	typedef bool		(item::*proctest)() const;
@@ -673,4 +702,6 @@ extern gender_info		gender_data[];
 extern material_info	material_data[];
 extern perk_info		perk_data[];
 extern skill_info		skill_data[];
+extern tile_info		tile_data[];
+extern wall_info		wall_data[];
 wound_info				wound_data[];

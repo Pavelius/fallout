@@ -149,6 +149,7 @@
     <ClCompile Include="action.cpp" />
     <ClCompile Include="sprite_util.cpp" />
     <ClCompile Include="szdup.cpp" />
+    <ClCompile Include="tile.cpp" />
     <ClCompile Include="ui_adventure.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -189,6 +190,7 @@
     <ClCompile Include="util.cpp" />
     <ClCompile Include="variant.cpp" />
     <ClCompile Include="view.cpp" />
+    <ClCompile Include="wall.cpp" />
     <ClCompile Include="wearable.cpp" />
     <ClCompile Include="win_draw.cpp" />
     <ClCompile Include="win_io_file.cpp" />

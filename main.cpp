@@ -97,6 +97,45 @@ static void test_animate() {
 	}
 }
 
+static void test_tile() {
+	static short map[] = {1, 2, 3, 4, 5,
+		6,7,8,9,10,
+		11,12,13,14,15
+	};
+	static short maw[] = {0, 0, 5, 0, 0, 0, 0, 0, 0,
+		0, 0, 6, 0, 0, 0, 0, 0, 0,
+		0, 0, 6, 0, 0, 26, 0, 0, 0,
+		0, 0, 1, 2, 3, 26, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0,
+	};
+	while(ismodal()) {
+		rectf({0, 0, getwidth(), getheight()}, colors::gray);
+		point camera = {50, 200};
+		auto sr = gres(res::TILES);
+		for(auto y = 0; y < 3; y++) {
+			for(auto x = 0; x < 5; x++) {
+				auto pt = m2s(x, y) + camera;
+				draw::image(pt.x, pt.y, sr, tile_data[map[y*5+x]].fid, 0);
+			}
+		}
+		sr = gres(res::WALLS);
+		for(auto y = 0; y < 5; y++) {
+			for(auto x = 0; x < 9; x++) {
+				auto pt = m2h(x, y) + camera;
+				auto v = maw[y * 9 + x];
+				if(v) {
+					//pt = pt + wall_data[v].pos;
+					draw::image(pt.x, pt.y, sr, wall_data[v].fid, 0);
+				}
+			}
+		}
+		domodal();
+		switch(hot.key) {
+		case KeyEscape: breakmodal(0); break;
+		}
+	}
+}
+
 static void mainmenu() {
 	while(ismodal()) {
 		background(140);
@@ -108,6 +147,7 @@ static void mainmenu() {
 			field(x, y, 100, cmd(show_worldmap), "Загрузить"); y += 41;
 			field(x, y, 100, cmd(show_invertory), "Предметы", Alpha + 'I'); y += 41;
 			field(x, y, 100, cmd(test_animate), "Анимация", Alpha + 'A'); y += 41;
+			field(x, y, 100, cmd(test_tile), "Тайлы", Alpha + 'T'); y += 41;
 		}
 		domodal();
 	}
@@ -119,7 +159,7 @@ int main(int argc, char* argv[]) {
 	initialize();
 	setfont(res::FONT1);
 	setpause(false);
-	setlayout(test_animate);
+	setlayout(mainmenu);
 	return 0;
 }
 
