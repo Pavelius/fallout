@@ -2,20 +2,6 @@
 
 #pragma once
 
-enum flag_all {
-	Flat = 0x00000008,
-	NoBlock = 0x00000010, // doesn't block the tile
-	MultiHex = 0x00000800,
-	NoHighlight = 0x00001000, // doesn't highlight the border; used for containers
-	TransRed = 0x00004000,
-	TransNone = 0x00008000, // opaque
-	TransWall = 0x00010000,
-	TransGlass = 0x00020000,
-	TransSteam = 0x00040000,
-	TransEnergy = 0x00080000,
-	LightThru = 0x20000000,
-	ShootThru = 0x80000000 // Можно стрелять через него
-};
 enum flags_ex_item {
 	HiddenItem = 0x08000000,
 	UseCanBe = 0x00000800, // can be used

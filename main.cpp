@@ -40,6 +40,9 @@ static void show_invertory() {
 	e.add(IguanaOnAStick);
 	e.add(Minigun);
 	e.add(PowerArmor);
+	e.add(AdvancedPowerArmor);
+	e.add(CombatArmor);
+	e.add(LeatherJacket);
 	e.add(SmallStatuette);
 	e.add(SmallPieceOfMachinery);
 	e.add(Stimpak);
@@ -102,10 +105,10 @@ static void test_tile() {
 		6,7,8,9,10,
 		11,12,13,14,15
 	};
-	static short maw[] = {0, 0, 5, 0, 0, 0, 0, 0, 0,
-		0, 0, 6, 0, 0, 0, 0, 0, 0,
+	static short maw[] = {0, 0, 5, 0, 0, 26, 0, 0, 0,
 		0, 0, 6, 0, 0, 26, 0, 0, 0,
-		0, 0, 1, 2, 3, 26, 0, 0, 0,
+		0, 0, 6, 0, 0, 26, 0, 0, 0,
+		0, 0, 1, 2, 0, 7, 8, 9, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0,
 	};
 	while(ismodal()) {
@@ -120,7 +123,7 @@ static void test_tile() {
 		}
 		sr = gres(res::WALLS);
 		for(auto y = 0; y < 5; y++) {
-			for(auto x = 0; x < 9; x++) {
+			for(auto x = 9; x >= 0; x--) {
 				auto pt = m2h(x, y) + camera;
 				auto v = maw[y * 9 + x];
 				if(v) {
