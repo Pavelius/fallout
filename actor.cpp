@@ -53,7 +53,6 @@ void actor::preview(int x, int y, gender_s gender, const item& armor, const item
 	if(!pa)
 		return;
 	auto fr = ps->ganim(cl, tick);
-	auto pf = ps->get(fr);
 	draw::state push;
 	draw::setclip({x + clip.x1, y + clip.y1, x + clip.x2, y + clip.y2});
 	draw::image(x, y, ps, fr, 0);

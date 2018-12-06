@@ -8,7 +8,8 @@
 
 #pragma once
 
-enum ability_s : unsigned char {NoStat,
+enum ability_s : unsigned char {
+	NoStat,
 	Strenght, Perception, Endurance, Charisma, Intellegence, Agility, Luck,
 	HPMax, APMax, AC, DamageUnarmed, DamageMelee, CarryWeight, Sequence, HealingRate,
 	CriticalHit, CriticalHitTable,
@@ -222,12 +223,14 @@ enum animation_s : unsigned char {
 	AnimateDamaged, AnimateDamagedRear,
 	AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
 	AnimateKnockOutBack, AnimateKnockOutForward,
+	// Kill animation
 	AnimateKilledChest, AnimateKilledElectro,
 	AnimateKilledBurstInHead, AnimateKilledBurstInChest,
 	AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
 	AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
 	AnimateKilledBack, AnimateKilledForward,
 	AnimateStandUpForward, AnimasteStandUpBack,
+	// Dead body (1 frame animation)
 	AnimateDeadBackNoBlood, AnimateDeadForwardNoBlood,
 	AnimateDeadChest, AnimateDeadElectro,
 	AnimateDeadBurstInHead, AnimateDeadBurstInChest,
@@ -240,6 +243,16 @@ enum animation_s : unsigned char {
 	AnimateWeaponAim, AnimateWeaponAttack,
 	AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
 	AnimateWeaponThrow,
+	AnimateClub,
+	AnimateHammer = AnimateClub + 13,
+	AnimateSpear = AnimateHammer + 13,
+	AnimatePistol = AnimateSpear + 13,
+	AnimateSMG = AnimatePistol + 13,
+	AnimateRifle = AnimateSMG + 13,
+	AnimateHeavyGun = AnimateSMG + 13,
+	AnimateMachineGun = AnimateHeavyGun + 13,
+	AnimateRocketLauncher = AnimateMachineGun + 13,
+	LastAnimation = AnimateRocketLauncher + 13
 };
 enum color_s : unsigned char {
 	ColorDisable = 0x60, ColorText = 0xD7, ColorCheck = 0x03, ColorInfo = 0xE4, ColorButton = 0x3C,

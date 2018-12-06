@@ -1,8 +1,6 @@
-#include "main.h"
+#include "util.h"
 
 using namespace draw;
-
-void util_main();
 
 void test_game() {
 	map::create();
@@ -58,46 +56,67 @@ static void mmax(int& v, int min, int max) {
 }
 
 static void test_animate() {
-	static int offset_lt[] = {0, 0, -1, -3, 8, -1, 8, 3, -1, -1};
-	static int offset_am[] = {4, 6, 4, 4};
-	static animation_s actions[] = {AnimateStand};
-	static item weapons[] = {NoItem, Club, Pistol10mm, SMG10mm, Flamer, RocketLauncher, Minigun, Shotgun, Spear, Knife, Sledgehammer};
-	static item armors[] = {LeatherArmor, PowerArmor, CombatArmor, LeatherJacket};
-	int weapon = 0, armor = 0, action = 0, orientation = 2;
+	char temp[260];
+	anm_info ai = {};
+	static animation_s actions[] = {AnimateStand, AnimatePickup, AnimateUse, AnimateDodge,
+		AnimateDamaged, AnimateDamagedRear,
+		AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
+		AnimateKnockOutBack, AnimateKnockOutForward,
+		AnimatePistol, AnimateSMG, AnimateClub, AnimateRifle, AnimateWeaponStand, AnimateHammer, AnimateSpear,
+		AnimateHeavyGun, AnimateMachineGun, AnimateRocketLauncher};
+	static res::tokens resources[] = {res::HMLTHR, res::HMCMBT};
+	int resource = 0, action = 0, orientation = 2;
+	bool fast_stand = false;
+	bool freezy_frame = false;
+	res::tokens last_id = res::NoRes;
 	while(ismodal()) {
 		mmax(orientation, 0, 5);
 		mmax(action, 0, sizeof(actions) / sizeof(actions[0]) - 1);
-		mmax(weapon, 0, sizeof(weapons) / sizeof(weapons[0]) - 1);
-		mmax(armor, 0, sizeof(armors) / sizeof(armors[0]) - 1);
+		mmax(resource, 0, sizeof(resources) / sizeof(resources[0]) - 1);
+		if(last_id != resources[resource]) {
+			ai.serialize(last_id, true);
+			last_id = resources[resource];
+			ai.serialize(last_id, false);
+		}
 		rectf({0, 0, getwidth(), getheight()}, colors::gray);
 		short x = 100, y = 100;
 		point pt = {x, y};
-		point pz = {-1, 4};
-		pt.x += offset_lt[weapon];
-		if(weapon) {
-			pt.y += offset_am[armor];
-			switch(weapons[weapon].get()) {
-			//case Club: pt.y++; break;
-			case Minigun: pt.y += offset_am[armor] + 1; break;
-			}
-		}
-		pt = pt + pz;
-		actor::preview(pt.x, pt.y, Male, armors[armor], weapons[weapon], orientation % 6, actions[action], getstamp() / 200, {-140, -200, 140, 60});
+		auto a = actions[action];
+		if(fast_stand)
+			a = AnimateStand;
+		auto* pa = ai.points + (a * 6 + orientation);
+		pt = pt + *pa;
+		szprint(temp, zendof(temp), "{%1i, %2i}", pa->x, pa->y);
+		if(fast_stand)
+			szprint(zend(temp), zendof(temp), " stand");
+		if(freezy_frame)
+			szprint(zend(temp), zendof(temp), " freezy");
+		text(10, 10, temp);
+		auto ps = gres(resources[resource]);
+		auto tick = getstamp() / 200;
+		auto c1 = a * 6 + orientation;
+		auto fr = ps->ganim(c1, freezy_frame ? 0 : tick);
+		image(pt.x, pt.y, ps, fr, 0);
 		line(x - 4, y, x + 4, y, colors::red);
 		line(x, y - 4, x, y + 4, colors::red);
 		domodal();
 		switch(hot.key) {
 		case KeyEscape: breakmodal(0); break;
-		case Alpha + '1': armor--; break;
-		case Alpha + '2': armor++; break;
-		case Alpha + 'A': action--; break;
-		case Alpha + 'S': action++; break;
-		case KeyUp: weapon++; break;
-		case KeyDown: weapon--; break;
-		case KeyLeft: orientation--; break;
-		case KeyRight: orientation++; break;
+		case Alpha + 'Q': resource--; break;
+		case Alpha + 'W': resource++; break;
+		case Alpha + 'D': orientation--; break;
+		case Alpha + 'F': orientation++; break;
+		case Alpha + 'A': action--; ai.serialize(last_id, true); break;
+		case Alpha + 'S': action++; ai.serialize(last_id, true); break;
+		case Alpha + 'Z': fast_stand = !fast_stand; break;
+		case Alpha + 'X': freezy_frame = !freezy_frame; break;
+		case KeyLeft: pa->x--; break;
+		case KeyRight: pa->x++; break;
+		case KeyUp: pa->y--; break;
+		case KeyDown: pa->y++; break;
 		}
 	}
+	ai.serialize(last_id, true);
 }
 
 static void redmark(point pt) {

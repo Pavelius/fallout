@@ -178,6 +178,9 @@
     <ClCompile Include="wall.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="anm_info.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h">

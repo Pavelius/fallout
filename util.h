@@ -1,4 +1,5 @@
 #include "main.h"
+#include "io.h"
 
 #pragma once
 
@@ -21,6 +22,10 @@ struct lst_info {
 	int				count;
 	res::tokens		token;
 };
+struct anm_info {
+	point			points[LastAnimation * 6];
+	void			serialize(res::tokens id, bool write);
+};
 lst_info			criters_lst[];
 msg_info			lst_pro_crit[];
 msg_info			lst_pro_item[];
@@ -29,3 +34,4 @@ msg_info			lst_pro_misc[];
 msg_info			lst_pro_scen[];
 msg_info			lst_pro_tile[];
 msg_info			lst_pro_wall[];
+void				util_main();
