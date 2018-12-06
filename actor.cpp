@@ -79,10 +79,10 @@ void actor::painting(point camera) const {
 		if(!pa)
 			return;
 		auto pf = source->get(frame);
-		draw::image(
-			pt.x - pf.sx / 2 + pa->offset[orientation].x,
-			pt.y - pf.sy + pa->offset[orientation].y,
-			source, frame, ImageNoOffset);
+		//draw::image(
+		//	pt.x - pf.sx / 2 + pa->offset[orientation].x,
+		//	pt.y - pf.sy + pa->offset[orientation].y,
+		//	source, frame, ImageNoOffset);
 	} else
 		draw::image(pt.x, pt.y, source, frame, 0);
 }

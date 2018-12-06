@@ -148,6 +148,7 @@
     <ClCompile Include="material.cpp" />
     <ClCompile Include="msg_info.cpp" />
     <ClCompile Include="action.cpp" />
+    <ClCompile Include="scale2x.c" />
     <ClCompile Include="sprite_util.cpp" />
     <ClCompile Include="szdup.cpp" />
     <ClCompile Include="tile.cpp" />

@@ -627,7 +627,6 @@ struct actinfo {
 	unsigned short		speed;
 	unsigned short		action;
 	int					count;
-	point				offset[6];
 };
 struct command_info {
 	action_s			action;

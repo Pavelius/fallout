@@ -181,6 +181,9 @@
     <ClCompile Include="anm_info.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="scale2x.c">
+      <Filter>draw</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h">
