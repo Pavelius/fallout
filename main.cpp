@@ -100,15 +100,20 @@ static void test_animate() {
 	}
 }
 
+static void redmark(point pt) {
+	line(pt.x - 3, pt.y, pt.x + 3, pt.y, colors::red);
+	line(pt.x, pt.y - 3, pt.x, pt.y + 3, colors::red);
+}
+
 static void test_tile() {
 	static short map[] = {1, 2, 3, 4, 5,
 		6,7,8,9,10,
 		11,12,13,14,15
 	};
-	static short maw[] = {0, 0, 5, 0, 0, 26, 0, 0, 0,
-		0, 0, 6, 0, 0, 26, 0, 0, 0,
-		0, 0, 6, 0, 0, 26, 0, 0, 0,
-		0, 0, 1, 2, 0, 7, 8, 9, 0,
+	static short maw[] = {0, 0, 5, 0, 0, 0, 0, 0, 0,
+		0, 0, 6, 0, 0, 0, 0, 0, 0,
+		0, 0, 6, 0, 0, 0, 0, 0, 0,
+		0, 0, 86, 87, 88, 89, 90, 91, 92,
 		0, 0, 0, 0, 0, 0, 0, 0, 0,
 	};
 	while(ismodal()) {
@@ -129,6 +134,7 @@ static void test_tile() {
 				if(v) {
 					//pt = pt + wall_data[v].pos;
 					draw::image(pt.x, pt.y, sr, wall_data[v].fid, 0);
+					redmark(pt);
 				}
 			}
 		}
