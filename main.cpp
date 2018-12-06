@@ -89,6 +89,9 @@ static void test_animate() {
 	int resource = 0, action = 0, orientation = 2;
 	bool fast_stand = false;
 	bool freezy_frame = false;
+	bool show_red = true;
+	bool lock_stand = true;
+	bool normal_mode = false;
 	res::tokens last_id = res::NoRes;
 	auto rsin = gres(res::INTRFACE);
 	while(ismodal()) {
@@ -107,21 +110,26 @@ static void test_animate() {
 		if(fast_stand)
 			a = AnimateStand;
 		auto* pa = ai.points + (a * 6 + orientation);
-		pt = pt + *pa;
 		szprint(temp, zendof(temp), "{%1i, %2i}", pa->x, pa->y);
 		if(fast_stand)
 			szprint(zend(temp), zendof(temp), " stand");
 		if(freezy_frame)
 			szprint(zend(temp), zendof(temp), " freezy");
+		if(!lock_stand)
+			szprint(zend(temp), zendof(temp), " unlocked");
 		text(10, 10, temp);
 		auto ps = gres(resources[resource]);
 		auto tick = getstamp() / 200;
 		auto c1 = a * 6 + orientation;
 		auto fr = ps->ganim(c1, freezy_frame ? 0 : tick);
 		image(x - 32 / 2, y - 16 / 2, rsin, 1, ImageNoOffset);
+		if(!normal_mode)
+			pt = pt + *pa;
 		image(pt.x, pt.y, ps, fr, 0);
-		line(x - 4, y, x + 4, y, colors::red);
-		line(x, y - 4, x, y + 4, colors::red);
+		if(show_red) {
+			line(x - 4, y, x + 4, y, colors::red);
+			line(x, y - 4, x, y + 4, colors::red);
+		}
 		domodal();
 		switch(hot.key) {
 		case KeyEscape: breakmodal(0); break;
@@ -133,11 +141,30 @@ static void test_animate() {
 		case Alpha + 'S': action++; ai.serialize(last_id, true); break;
 		case Alpha + 'Z': fast_stand = !fast_stand; break;
 		case Alpha + 'X': freezy_frame = !freezy_frame; break;
+		case Alpha + 'R': show_red = !show_red; break;
+		case Alpha + 'U': lock_stand = !lock_stand; break;
+		case Alpha + 'N': normal_mode = !normal_mode; break;
 		case Alpha + 'V': ai.validate(); break;
-		case KeyLeft: pa->x--; break;
-		case KeyRight: pa->x++; break;
-		case KeyUp: pa->y--; break;
-		case KeyDown: pa->y++; break;
+		case KeyLeft:
+			if(actions[action] == AnimateStand && lock_stand)
+				break;
+			pa->x--;
+			break;
+		case KeyRight:
+			if(actions[action] == AnimateStand && lock_stand)
+				break;
+			pa->x++;
+			break;
+		case KeyUp:
+			if(actions[action] == AnimateStand && lock_stand)
+				break;
+			pa->y--;
+			break;
+		case KeyDown:
+			if(actions[action] == AnimateStand && lock_stand)
+				break;
+			pa->y++;
+			break;
 		}
 	}
 	ai.serialize(last_id, true);
