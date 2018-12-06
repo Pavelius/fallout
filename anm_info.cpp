@@ -16,3 +16,36 @@ void anm_info::serialize(res::tokens id, bool write) {
 			file.read(this, sizeof(*this));
 	}
 }
+
+void anm_info::validate() {
+	static animation_s copied[] = {
+		AnimatePickup, AnimateUse, AnimateDodge,
+		AnimateDamaged, AnimateDamagedRear,
+		AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
+		AnimateKnockOutBack, AnimateKnockOutForward,
+		//
+		AnimateKilledChest, AnimateKilledElectro,
+		AnimateKilledBurstInHead, AnimateKilledBurstInChest,
+		AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
+		AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
+	};
+	static animation_s copied_weapon[] = {
+		AnimateWeaponTakeOn, AnimateWeaponTakeOff, AnimateWeaponDodge,
+		AnimateWeaponThrust, AnimateWeaponSwing,
+		AnimateWeaponAim, AnimateWeaponAttack,
+		AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
+		AnimateWeaponThrow,
+	};
+	for(auto i = 0; i < 6; i++) {
+		for(auto id : copied)
+			points[id*6 + i] = points[AnimateUse*6 + i];
+		for(auto w = 0; w < 10; w++) {
+			for(auto id : copied_weapon) {
+				auto b = animation_s(AnimateWeaponStand + w * 13);
+				auto a1 = (b + (id - AnimateWeaponStand)) * 6 + i;
+				auto a2 = (b + (AnimateWeaponStand - AnimateWeaponStand)) * 6 + i;
+				points[a1] = points[a2];
+			}
+		}
+	}
+}

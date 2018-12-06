@@ -25,6 +25,7 @@ struct lst_info {
 struct anm_info {
 	point			points[LastAnimation * 6];
 	void			serialize(res::tokens id, bool write);
+	void			validate();
 };
 lst_info			criters_lst[];
 msg_info			lst_pro_crit[];

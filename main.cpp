@@ -55,6 +55,10 @@ static void mmax(int& v, int min, int max) {
 		v = 0;
 }
 
+constexpr animation_s ganm(animation_s w, animation_s a) {
+	return animation_s(w + (a - AnimateWeaponStand));
+}
+
 static void test_animate() {
 	char temp[260];
 	anm_info ai = {};
@@ -62,13 +66,31 @@ static void test_animate() {
 		AnimateDamaged, AnimateDamagedRear,
 		AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
 		AnimateKnockOutBack, AnimateKnockOutForward,
-		AnimatePistol, AnimateSMG, AnimateClub, AnimateRifle, AnimateWeaponStand, AnimateHammer, AnimateSpear,
-		AnimateHeavyGun, AnimateMachineGun, AnimateRocketLauncher};
-	static res::tokens resources[] = {res::HMLTHR, res::HMCMBT};
+		//
+		AnimatePistol, ganm(AnimatePistol, AnimateWeaponAim), ganm(AnimatePistol, AnimateWeaponSingle),
+		AnimateSMG, AnimateClub, AnimateRifle, AnimateWeaponStand, AnimateHammer, AnimateSpear,
+		AnimateHeavyGun, AnimateMachineGun, AnimateRocketLauncher,
+		//
+		AnimateKilledChest, AnimateKilledElectro,
+		AnimateKilledBurstInHead, AnimateKilledBurstInChest,
+		AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
+		AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
+		AnimateBloodedBack, AnimateBloodedForward,
+		AnimateStandUpForward, AnimasteStandUpBack,
+		//
+		AnimateDeadBackNoBlood, AnimateDeadForwardNoBlood,
+		AnimateDeadChest, AnimateDeadElectro,
+		AnimateDeadBurstInHead, AnimateDeadBurstInChest,
+		AnimateDeadImmolate, AnimateDeadLaser, AnimateDeadElectroChest,
+		AnimateDeadBlowup, AnimateDeadMelt, AnimateDeadFired,
+		AnimateDeadBack, AnimateDeadForward,
+	};
+	static res::tokens resources[] = {res::HMLTHR, res::HMCMBT, res::HFLTHR};
 	int resource = 0, action = 0, orientation = 2;
 	bool fast_stand = false;
 	bool freezy_frame = false;
 	res::tokens last_id = res::NoRes;
+	auto rsin = gres(res::INTRFACE);
 	while(ismodal()) {
 		mmax(orientation, 0, 5);
 		mmax(action, 0, sizeof(actions) / sizeof(actions[0]) - 1);
@@ -96,6 +118,7 @@ static void test_animate() {
 		auto tick = getstamp() / 200;
 		auto c1 = a * 6 + orientation;
 		auto fr = ps->ganim(c1, freezy_frame ? 0 : tick);
+		image(x - 32 / 2, y - 16 / 2, rsin, 1, ImageNoOffset);
 		image(pt.x, pt.y, ps, fr, 0);
 		line(x - 4, y, x + 4, y, colors::red);
 		line(x, y - 4, x, y + 4, colors::red);
@@ -110,6 +133,7 @@ static void test_animate() {
 		case Alpha + 'S': action++; ai.serialize(last_id, true); break;
 		case Alpha + 'Z': fast_stand = !fast_stand; break;
 		case Alpha + 'X': freezy_frame = !freezy_frame; break;
+		case Alpha + 'V': ai.validate(); break;
 		case KeyLeft: pa->x--; break;
 		case KeyRight: pa->x++; break;
 		case KeyUp: pa->y--; break;
@@ -187,7 +211,8 @@ int main(int argc, char* argv[]) {
 	initialize();
 	setfont(res::FONT1);
 	setpause(false);
-	setlayout(mainmenu);
+	//setlayout(test_animate);
+	test_animate();
 	return 0;
 }
 

@@ -228,7 +228,7 @@ enum animation_s : unsigned char {
 	AnimateKilledBurstInHead, AnimateKilledBurstInChest,
 	AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
 	AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
-	AnimateKilledBack, AnimateKilledForward,
+	AnimateBloodedBack, AnimateBloodedForward,
 	AnimateStandUpForward, AnimasteStandUpBack,
 	// Dead body (1 frame animation)
 	AnimateDeadBackNoBlood, AnimateDeadForwardNoBlood,
@@ -249,7 +249,7 @@ enum animation_s : unsigned char {
 	AnimatePistol = AnimateSpear + 13,
 	AnimateSMG = AnimatePistol + 13,
 	AnimateRifle = AnimateSMG + 13,
-	AnimateHeavyGun = AnimateSMG + 13,
+	AnimateHeavyGun = AnimateRifle + 13,
 	AnimateMachineGun = AnimateHeavyGun + 13,
 	AnimateRocketLauncher = AnimateMachineGun + 13,
 	LastAnimation = AnimateRocketLauncher + 13
