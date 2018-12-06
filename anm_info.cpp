@@ -70,7 +70,7 @@ void test_animate() {
 		AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
 		AnimateKnockOutBack, AnimateKnockOutForward,
 		//
-		AnimatePistol, ganm(AnimatePistol, AnimateWeaponAim), ganm(AnimatePistol, AnimateWeaponSingle),
+		AnimatePistol, ganm(AnimatePistol, AnimateWeaponWalk), ganm(AnimatePistol, AnimateWeaponDodge), ganm(AnimatePistol, AnimateWeaponAim), ganm(AnimatePistol, AnimateWeaponSingle),
 		AnimateSMG, AnimateClub, AnimateRifle, AnimateWeaponStand, AnimateHammer, AnimateSpear,
 		AnimateHeavyGun, AnimateMachineGun, AnimateRocketLauncher,
 		//
