@@ -117,6 +117,8 @@ static void test_animate() {
 			szprint(zend(temp), zendof(temp), " freezy");
 		if(!lock_stand)
 			szprint(zend(temp), zendof(temp), " unlocked");
+		if(normal_mode)
+			szprint(zend(temp), zendof(temp), " normal");
 		text(10, 10, temp);
 		auto ps = gres(resources[resource]);
 		auto tick = getstamp() / 200;
