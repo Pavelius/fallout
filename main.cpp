@@ -93,6 +93,11 @@ static void test_tile() {
 	}
 }
 
+static void test_adventure() {
+	player.create("narg");
+	player.adventure();
+}
+
 static void mainmenu() {
 	while(ismodal()) {
 		background(140);
@@ -105,6 +110,7 @@ static void mainmenu() {
 			field(x, y, 100, cmd(show_invertory), "Предметы", Alpha + 'I'); y += 41;
 			field(x, y, 100, cmd(test_animate), "Анимация", Alpha + 'A'); y += 41;
 			field(x, y, 100, cmd(test_tile), "Тайлы", Alpha + 'T'); y += 41;
+			field(x, y, 100, cmd(test_adventure), "Приключения", Alpha + 'G'); y += 41;
 		}
 		domodal();
 	}
@@ -116,7 +122,7 @@ int main(int argc, char* argv[]) {
 	initialize();
 	setfont(res::FONT1);
 	setpause(false);
-	test_animate();
+	setlayout(mainmenu);
 	return 0;
 }
 

@@ -6,6 +6,7 @@ struct drug_effect {
 	item_s				drug;
 };
 
+creature					player;
 adat<creature>				creature_data;
 static adat<drug_effect>	drug_effect_data;
 static datetime				today;

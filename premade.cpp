@@ -31,9 +31,10 @@ void creature::apply(const pregen_info* pg) {
 	}
 }
 
-creature::creature(const char* id) {
+void creature::create(const char* id) {
 	clear();
 	auto pg = getpregen(id);
 	if(pg)
 		apply(pg);
+	set(HP, get(HPMax));
 }

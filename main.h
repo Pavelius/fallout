@@ -547,12 +547,14 @@ private:
 };
 struct creature : actor {
 	creature() { clear(); }
-	creature(const char* id);
+	creature(const char* id) { create(id); }
 	void				add(const item& it);
 	void				act(const char* format, ...) {}
+	static void			adventure();
 	bool				equip(const item& it);
 	void				apply(const pregen_info* pg);
 	void				clear();
+	void				create(const char* id);
 	bool				choose_gender(int x, int y);
 	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points);
 	void				decrease(variant, int& points);
@@ -578,6 +580,7 @@ struct creature : actor {
 	bool				is(perk_s id) const { return (perks[id / 32] & (1 << (id % 32))) != 0; }
 	bool				is(skill_s id) const { return (skills_tag & (1 << id)) != 0; }
 	bool				is(wound_s id) const { return (wounds & (1 << id)) != 0; }
+	bool				isalive() const { return get(HP) >= 0; }
 	bool				isplayer() const;
 	static void			newgame();
 	void				mark(variant e, int& points);
@@ -604,6 +607,7 @@ private:
 	unsigned char		wounds;
 	unsigned char		current_weapon;
 	int					render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const;
+	void				render_actions();
 };
 struct settlement {
 	const char*			name;
@@ -722,6 +726,7 @@ extern ability_info		ability_data[];
 extern const char*		ability_values[11];
 extern action_info		action_data[];
 extern caliber_info		caliber_data[];
+extern creature			player;
 extern adat<creature, 128> creature_data;
 extern resist_info		damage_data[];
 extern gender_info		gender_data[];
