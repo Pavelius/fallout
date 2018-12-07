@@ -2,24 +2,6 @@
 
 using namespace draw;
 
-void test_game() {
-	map::create();
-	draw::setcamera(i2s(m2i(14, 14)));
-	//game::generate::scenery(8, m2i(20, 20));
-	//game::generate::scenery(9, m2i(24, 28));
-	//game::generate::scenery(34, m2i(10, 10));
-	//game::generate::scenery(90, m2i(30, 30));
-	//game::generate::scenery(128, m2i(40, 40));
-	//game::generate::scenery(199, m2i(8, 8));
-	//game::generate::scenery(230, m2i(18, 18));
-	map::set({3, 3, 6, 6}, 0);
-	map::set({8, 3, 16, 10}, 1);
-	map::set({10, 5, 14, 8}, 2);
-	map::set({3, 17, 6, 20}, 3);
-	map::set({8, 12, 16, 20}, 1);
-	map::set({10, 14, 14, 18}, 4);
-}
-
 static void new_game() {
 	creature e;
 	//e.choose_stats(2, 3, 10);
@@ -95,6 +77,7 @@ static void test_tile() {
 
 static void test_adventure() {
 	player.create("narg");
+	player.add(LeatherArmor);
 	player.adventure();
 }
 
@@ -122,7 +105,8 @@ int main(int argc, char* argv[]) {
 	initialize();
 	setfont(res::FONT1);
 	setpause(false);
-	setlayout(mainmenu);
+	//setlayout(mainmenu);
+	//stest_tile();
 	return 0;
 }
 

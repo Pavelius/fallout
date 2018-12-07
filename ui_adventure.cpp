@@ -2,26 +2,6 @@
 
 using namespace draw;
 
-//static void game_action(int x, int y, int id, int player) {
-//	auto ps = gres(res::INTRFACE);
-//	if(!ps)
-//		return;
-//	auto fr = ps->ganim(32, 0);
-//	auto pf = ps->get(fr);
-//	rect rc = {x, y, x + pf.sx - 4, y + pf.sy - 4};
-//	if(draw::buttonf(rc.x1, rc.y1, 32, 31, 0, false))
-//		draw::execute(id);
-//	int w = bsget(player, id);
-//	if(hot.mouse.in(rc) && hot.pressed)
-//		draw::iteminv(rc.x1, rc.y1 - 2, rc.width(), rc.height(), bsget(player, id), false);
-//	else
-//		draw::iteminv(rc.x1, rc.y1, rc.width(), rc.height(), bsget(player, id), false);
-//}
-//
-//static void tsrect(int x, int y, int w, int h) {
-//	draw::rectb({x, y, x + w, y + h}, colors::green);
-//}
-
 //static void game_map(rect& rc, cursorset& cursor) {
 //	static bool info_mode;
 //	game_index = 0;
@@ -58,7 +38,7 @@ using namespace draw;
 //		}
 //	}
 //}
-//
+
 //static void show_combat_animation(bool finish = false) {
 //	game::state push;
 //	auto ps = gres(res::INTRFACE);
@@ -87,7 +67,7 @@ using namespace draw;
 //		}
 //	}
 //}
-//
+
 //static void wait(int player) {
 //	draw::state push;
 //	draw::mouseinput = false;
@@ -111,6 +91,22 @@ static void open_invertory() {
 	player.inventory();
 }
 
+static void render_item(int x, int y) {
+	auto ps = gres(res::INTRFACE);
+	if(!ps)
+		return;
+	auto fr = ps->ganim(32, 0);
+	auto pf = ps->get(fr);
+	rect rc = {x, y, x + pf.sx - 4, y + pf.sy - 4};
+	if(draw::buttonf(rc.x1, rc.y1, 32, 31, 0, false)) {
+		//draw::execute(id);
+	}
+	if(hot.mouse.in(rc) && hot.pressed)
+		draw::iteminv(rc.x1, rc.y1 - 2, rc.width(), rc.height(), player.getweapon(), false);
+	else
+		draw::iteminv(rc.x1, rc.y1, rc.width(), rc.height(), player.getweapon(), false);
+}
+
 void creature::render_actions() {
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
@@ -125,7 +121,7 @@ void creature::render_actions() {
 	if(draw::buttonf(x + 210, y + 60, 18, 17, 0) || (hot.key == KeyEscape)) {
 		//draw::execute(Options);
 	}
-	//game_action(x + 265, y + 29, Weapon, player);
+	render_item(x + 265, y + 29);
 	if(draw::buttonf(x + 526, y + 38, 13, 10, 0)) {
 		//draw::execute(Map);
 	}
@@ -149,7 +145,8 @@ void creature::render_actions() {
 void creature::adventure() {
 	cursorset cursor;
 	while(ismodal() && player.isalive()) {
-		//rect rc = {0, 0, draw::getwidth(), draw::getheight()};
+		rect rc = {0, 0, draw::getwidth(), draw::getheight()};
+		rectf(rc, colors::gray);
 		player.render_actions();
 		domodal();
 		switch(hot.key) {

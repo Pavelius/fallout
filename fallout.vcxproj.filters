@@ -184,6 +184,9 @@
     <ClCompile Include="scale2x.c">
       <Filter>draw</Filter>
     </ClCompile>
+    <ClCompile Include="ui_dialog.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h">

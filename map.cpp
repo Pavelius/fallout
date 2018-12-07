@@ -3,22 +3,6 @@
 const unsigned short	Blocked = 0xFFFF;
 const int				stx = tile_width / 5; // 16 - Ширина юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 const int				sty = tile_height / 3; // 12 - Высота юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
-int						map::width;
-int						map::height;
-static short unsigned	floors[256 * 256];
-
-static struct landscape {
-	unsigned short		limits[2];
-	unsigned short		sides[8];
-	unsigned short		center[4];
-	unsigned short		corners[4];
-} landscapes[] = {{{2, 17}, {8, 6, 7, 4, 5, 3, 9, 10}, {2, 15, 16, 17}, {14, 11, 12, 13}}, // Внутренняя часть дома
-{{117, 171}, {131, 129, 130, 124, 127, 117, 118, 126}, {132, 133, 134, 135}},
-//
-{{0, 0}, {136, 146, 137, 140, 142, 139, 144, 138}, {151, 149, 148}},
-{{0, 0}, {1053, 1054, 1056, 1057, 1060, 1065, 1066, 1068}, {1062, 1063}},
-{{0, 0}, {171, 122, 168, 127, 160, 170, 164, 169}, {1062, 1063}},
-};
 
 // Получение координаты тайла(x,y) на экране
 point m2s(int x, int y) {
@@ -64,134 +48,80 @@ point h2m(point pt) {
 	return{(short)x, (short)y};
 }
 
-void map::create() {
-	width = 128;
-	height = 128;
-	memset(floors, 0, sizeof(floors));
+short unsigned map_info::geti(int x, int y) const {
+	if(((unsigned)x) >= width || ((unsigned)y) >= height)
+		return Blocked;
+	return y * width + x;
+}
+
+void map_info::settile(short unsigned index, short unsigned value) {
+	if(index == Blocked)
+		return;
+	tiles[index] = value;
+}
+
+void map_info::setwall(unsigned char index, short unsigned value) {
+	if(index == Blocked)
+		return;
+	walls[index] = value;
+}
+
+void map_info::clear() {
+	memset(tiles, 0, sizeof(tiles));
 	for(int y = 0; y <= height; y++) {
 		for(int x = 0; x < width; x++)
-			floors[y*scanline + x] = 172 + rand() % (190 - 172);
+			settile(geti(x, y), 172 + rand() % (190 - 172));
 	}
 }
 
-int get_type(short unsigned value) {
-	for(int i = 0; i < sizeof(landscapes) / sizeof(landscapes[0]); i++) {
-		for(auto m : landscapes[i].sides) {
-			if(m == value)
-				return i;
-		}
-		for(auto m : landscapes[i].corners) {
-			if(m == value)
-				return i;
-		}
-		for(auto m : landscapes[i].center) {
-			if(m == value)
-				return i;
-		}
-	}
-	return 0;
-}
-
-short unsigned get_tile(int index) {
-	return index;
-}
-
-void map::set(rect rc, int id) {
-	if(rc.width() < 2 || rc.height() < 2)
-		return;
-	auto& e = landscapes[id];
-	for(int y = rc.y1; y <= rc.y2; y++) {
-		for(int x = rc.x1; x <= rc.x2; x++) {
-			int i = m2i(x, y);
-			if(y == rc.y1) {
-				if(x == rc.x1)
-					set(i, e.sides[0]);
-				else if(x == rc.x2)
-					set(i, e.sides[2]);
-				else
-					set(i, e.sides[1]);
-			} else if(y == rc.y2) {
-				if(x == rc.x1)
-					set(i, e.sides[5]);
-				else if(x == rc.x2)
-					set(i, e.sides[7]);
-				else
-					set(i, e.sides[6]);
-			} else {
-				if(x == rc.x1)
-					set(i, e.sides[3]);
-				else if(x == rc.x2)
-					set(i, e.sides[4]);
-				else {
-					if(e.center[1] && d100() < 30) {
-						if(e.center[2] && d100() < 50) {
-							int count = zlen(e.center + 2);
-							set(i, e.center[2 + rand() % count]);
-						} else
-							set(i, e.center[1]);
-					} else
-						set(i, e.center[0]);
-				}
-			}
-		}
-	}
-}
-
-void map::set(short unsigned i, short unsigned fid) {
-	if(i == Blocked)
-		return;
-	floors[i] = fid;
-}
-
-short unsigned map::get(short unsigned i) {
-	if(i == Blocked)
-		return 0;
-	return floors[i];
-}
-
-short unsigned map::moveto(short unsigned index, direction_s d) {
+short unsigned map_info::moveto(short unsigned index, direction_s d) {
+	if(index == Blocked)
+		return index;
+	auto x = index % width;
+	auto y = index / width;
+	auto s = width;
 	switch(d) {
 	case Left:
-		if(i2x(index) == 0)
+		if(x == 0)
 			return Blocked;
 		return index - 1;
 	case Right:
-		if(i2x(index + 1) == 0)
+		if(x >= (width-1))
 			return Blocked;
 		return index + 1;
 	case Up:
-		if(i2y(index) == 0)
+		if(y == 0)
 			return Blocked;
-		return index - scanline;
+		return index - s;
 	case Down:
 		if((1 + i2y(index)) == height)
 			return Blocked;
-		return index + scanline;
-	case RightDown:
-		if(((index + 1) % scanline) == 0)
-			return Blocked;
-		if((1 + index / scanline) == width)
-			return Blocked;
-		return index + scanline + 1;
-	case RightUp:
-		if(((index + 1) % scanline) == 0)
-			return Blocked;
-		if((index / scanline) == 0)
-			return Blocked;
-		return index - scanline + 1;
-	case LeftUp:
-		if((index%scanline) == 0)
-			return Blocked;
-		if((index / scanline) == 0)
-			return Blocked;
-		return index - scanline - 1;
-	case LeftDown:
-		if((index%scanline) == 0)
-			return Blocked;
-		if((index / scanline) == 0)
-			return Blocked;
-		return index + scanline - 1;
+		return index + s;
 	default:
 		return Blocked;
+	}
+}
+
+void map_info::render_tiles(point screen, point camera) {
+	auto ps = draw::gres(res::TILES);
+	if(!ps)
+		return;
+	auto a = draw::getstamp() / 100;
+	auto pm = s2m(camera);
+	int x1 = pm.x - 8; int x2 = x1 + 8 + 11;
+	int y1 = pm.y; int y2 = y1 + 18;
+	for(auto y = y1; y < y2; y++) {
+		if(y < 0 || y >= height)
+			continue;
+		for(int x = x1; x < x2; x++) {
+			if(x < 0 || x >= width)
+				continue;
+			auto tv = geti(x, y);
+			if(tv > 1) {
+				point pt = m2s(x, y);
+				point pz = pt + screen - camera;
+				draw::image(pz.x, pz.y + tile_height / 2, ps, ps->ganim(tv, a), 0);
+			}
+		}
 	}
 }

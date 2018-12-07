@@ -615,16 +615,18 @@ struct settlement {
 	char				size;
 	unsigned			flags;
 };
-struct parameter_info {
-	int					fid;
-	const char*			name;
-	const char*			name_short;
-	const char*			name_shortest;
-	bool				maximum;
-	bool				percent;
-	int					(creature::*get)() const;
-	int					(creature::*getmax)() const;
-	const char*			description;
+struct map_info {
+	static const unsigned height = 100;
+	static const unsigned width = 100;
+	void				clear();
+	short unsigned		geti(int x, int y) const;
+	short unsigned		moveto(short unsigned index, direction_s d);
+	void				render_tiles(point screen, point camera);
+	void				settile(short unsigned index, short unsigned value);
+	void				setwall(unsigned char index, short unsigned value);
+private:
+	unsigned short		tiles[width*height];
+	unsigned short		walls[width*height * 4];
 };
 namespace draw {
 struct actinfo {
@@ -709,19 +711,12 @@ inline int				i2x(short unsigned index) { return index & 0xFF; }
 inline int				i2y(short unsigned index) { return index >> 8; }
 inline point			i2s(short unsigned index) { return m2s(i2x(index), i2y(index)); }
 inline point			i2h(short unsigned index) { return m2h(i2x(index), i2y(index)); }
-namespace map {
-const int				mvc = 24;
-const int				scanline = 256;
-const int				gridw = 32;
-const int				gridh = 16;
-void					create();
-extern int				height;
-short unsigned			get(short unsigned index);
-void					set(short unsigned index, short unsigned fid);
-void					set(rect rc, int landscape);
-short unsigned			moveto(short unsigned index, direction_s d);
-extern int				width;
-}
+//namespace map {
+//const int				mvc = 24;
+//const int				scanline = 256;
+//const int				gridw = 32;
+//const int				gridh = 16;
+//}
 extern ability_info		ability_data[];
 extern const char*		ability_values[11];
 extern action_info		action_data[];

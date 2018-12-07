@@ -169,6 +169,7 @@
     <ClCompile Include="gender.cpp" />
     <ClCompile Include="grammar.cpp" />
     <ClCompile Include="perk.cpp" />
+    <ClCompile Include="ui_dialog.cpp" />
     <ClCompile Include="ui_ground.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
