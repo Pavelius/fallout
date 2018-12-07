@@ -2,6 +2,9 @@
 
 using namespace draw;
 
+static int info_mode;
+static int current_skill;
+
 static int gtv(int value) {
 	return (value <= 1) ? 0 : ((value <= 2) ? 1 : 2);
 }
@@ -184,8 +187,7 @@ static void open_options() {}
 struct cmdk : runable {
 	cmdk() {}
 	cmdk(creature* player, int traits_points, int tag_skill_points, int ability_points) : player(player),
-		traits_points(traits_points), tag_skill_points(tag_skill_points), ability_points(ability_points) {
-	}
+		traits_points(traits_points), tag_skill_points(tag_skill_points), ability_points(ability_points) {}
 	int	getid() const { return (int)player; }
 	static void execute_proc() {
 		if(current.ability_points > 0) {
@@ -209,7 +211,7 @@ private:
 };
 cmdk cmdk::current;
 
-bool creature::choose_stats(int traits_points, int tag_skill_points, int ability_points) {
+bool creature::choose_stats(int traits_points, int tag_skill_points, int ability_points, bool charsheet_mode) {
 	char temp[260];
 	draw::state push;
 	draw::setcolor(ColorText);
@@ -218,8 +220,17 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 	auto show_tag = (traits_points > 0);
 	auto show_maximum_only = true;
 	setfocus(variant(Strenght));
+	if(!current_skill)
+		current_skill = SmallGuns;
 	while(ismodal()) {
-		draw::background(169);
+		if(charsheet_mode) {
+			draw::background(177);
+			variant id = getfocus();
+			if(id.type==Skills)
+				current_skill = id.skill;
+		}
+		else
+			draw::background(169);
 		// Заполнение команды
 		cmd_creature ev;
 		ev.player = this;
@@ -232,10 +243,15 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 			draw::state push;
 			draw::setfont(res::FONT3);
 			draw::setcolor(ColorButton);
-			draw::text(50, 326, "Особенности");
-			draw::text(18, 286, "Очки хар.");
+			if(!charsheet_mode) {
+				draw::text(50, 326, "Особенности");
+				draw::text(18, 286, "Очки хар.");
+			}
 			draw::text(383, 5, "Навыки");
-			draw::text(428, 233, "Метки");
+			if(charsheet_mode)
+				draw::text(390, 233, "Очки умений");
+			else
+				draw::text(428, 233, "Метки");
 		}
 		// stats
 		for(auto i = Strenght; i <= Luck; i = (ability_s)(i + 1)) {
@@ -243,44 +259,68 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 			int value = get(i);
 			ev.element = i;
 			ev.points = &ability_points;
-			if(draw::buttonf(149, 38 + 33 * (i - Strenght), 193, 194, false, false))
-				ev.modify(1);
-			if(draw::buttonf(149, 49 + 33 * (i - Strenght), 191, 192, false, false))
-				ev.modify(-1);
+			if(show_ability) {
+				if(draw::buttonf(149, 38 + 33 * (i - Strenght), 193, 194, false, false))
+					ev.modify(1);
+				if(draw::buttonf(149, 49 + 33 * (i - Strenght), 191, 192, false, false))
+					ev.modify(-1);
+			}
 			const char* p = maptbl(ability_values, value);
-			draw::label(102, 45 + 33 * (i - Strenght), ev.element, p, false, false);
+			//rectb({102, 45 + 33 * (i - Strenght), 102 + 54, 45 + 33 * (i - Strenght) + 12}, colors::red);
+			if(charsheet_mode)
+				draw::label(102 + (54 - textw(p)) / 2, 45 + 33 * (i - Strenght), ev.element, p, false, false);
+			else
+				draw::label(102, 45 + 33 * (i - Strenght), ev.element, p, false, false);
 			draw::number(59, 37 + 33 * (i - Strenght), 2, value);
 		}
-		if(show_ability)
-			draw::number(126, 282, 2, ability_points);
+		if(charsheet_mode) {
+
+		} else {
+			if(show_ability)
+				draw::number(126, 282, 2, ability_points);
+		}
 		// secondanary stats
 		static variant secondanary_stat_health[] = {HP, PoisonLevel, RadiationLevel, WoundEye, WoundRightHand, WoundLeftHand, WoundRightLeg, WoundLeftLeg};
 		render_stats(194, 46, 120, secondanary_stat_health, show_maximum_only);
 		static variant secondanary_stat_other[] = {AC, AP, CarryWeight, DamageMelee, PhisycalResistance, PoisonResistance, RadiationResistance, Sequence, HealingRate, CriticalHit};
 		render_stats(194, 182, 120, secondanary_stat_other, show_maximum_only);
 		// traits
-		for(int i = 0; i < 16; i++) {
-			ev.element = (perk_s)(FirstTraits + i);
-			ev.checked = is(ev.element.perk);
-			ev.points = &traits_points;
-			if(i > 7) {
-				radio(299, 352 + 13 * (i - 8), ev, 215);
-				label(189, 353 + 13 * (i - 8), ev.element, getstr(ev.element.perk), ev.checked, false);
-			} else {
-				radio(23, 352 + 13 * i, ev, 215);
-				label(48, 353 + 13 * i, ev.element, getstr(ev.element.perk), ev.checked, false);
+		if(!charsheet_mode) {
+			for(int i = 0; i < 16; i++) {
+				ev.element = (perk_s)(FirstTraits + i);
+				ev.checked = is(ev.element.perk);
+				ev.points = &traits_points;
+				if(i > 7) {
+					radio(299, 352 + 13 * (i - 8), ev, 215);
+					label(189, 353 + 13 * (i - 8), ev.element, getstr(ev.element.perk), ev.checked, false);
+				} else {
+					radio(23, 352 + 13 * i, ev, 215);
+					label(48, 353 + 13 * i, ev.element, getstr(ev.element.perk), ev.checked, false);
+				}
 			}
+		} else {
+			static int info_mode_frame[] = {180, 178, 179};
+			image(10, 326, res::INTRFACE, maptbl(info_mode_frame, info_mode), ImageNoOffset);
 		}
 		// skills
-		auto w1 = 240;
+		auto w1 = 220;
 		for(auto i = FirstSkill; i <= LastSkill; i = skill_s(i + 1)) {
 			ev.element = i;
 			ev.checked = is(i);
 			ev.points = &tag_skill_points;
-			draw::radio(347, 27 + 11 * (i - FirstSkill), ev, 215);
 			draw::label(377, 27 + 11 * (i - FirstSkill), ev.element, getstr(ev.element.skill), ev.checked, false);
 			auto s1 = szprint(temp, zendof(temp), "%1i%%", get(i));
 			draw::text(377 + w1 - draw::textw(s1), 27 + 11 * (i - FirstSkill), s1);
+			if(!charsheet_mode)
+				draw::radio(347, 27 + 11 * (i - FirstSkill), ev, 215);
+		}
+		if(charsheet_mode) {
+			auto x = 634;
+			auto y = 32 + 11 * (current_skill - FirstSkill);
+			draw::image(x, y, res::INTRFACE, 190);
+			if(draw::buttonf(x - 20, y - 12, 193, 194, false, false)) {
+			}
+			if(draw::buttonf(x-20, y, 191, 192, false, false)) {}
 		}
 		if(show_tag)
 			draw::number(522, 228, 2, tag_skill_points);

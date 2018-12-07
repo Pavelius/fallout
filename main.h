@@ -556,7 +556,7 @@ struct creature : actor {
 	void				clear();
 	void				create(const char* id);
 	bool				choose_gender(int x, int y);
-	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points);
+	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points, bool explore_mode = false);
 	void				decrease(variant, int& points);
 	int					get(ability_s id) const;
 	int					get(skill_s id) const;

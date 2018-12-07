@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 	initialize();
 	setfont(res::FONT1);
 	setpause(false);
-	//setlayout(mainmenu);
+	setlayout(mainmenu);
 	//stest_tile();
 	return 0;
 }

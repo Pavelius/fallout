@@ -107,6 +107,10 @@ static void render_item(int x, int y) {
 		draw::iteminv(rc.x1, rc.y1, rc.width(), rc.height(), player.getweapon(), false);
 }
 
+static void open_charsheet() {
+	player.choose_stats(0, 0, 0, true);
+}
+
 void creature::render_actions() {
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
@@ -125,9 +129,8 @@ void creature::render_actions() {
 	if(draw::buttonf(x + 526, y + 38, 13, 10, 0)) {
 		//draw::execute(Map);
 	}
-	if(draw::buttonf(x + 526, y + 58, 57, 56, 0)) {
-		//draw::execute(Charsheet);
-	}
+	if(draw::buttonf(x + 526, y + 58, 57, 56, 0) || (hot.key==Alpha + 'C'))
+		execute(open_charsheet);
 	if(draw::buttonf(x + 526, y + 78, 59, 58, 0)) {
 		//draw::execute(Charsheet);
 	}
@@ -135,6 +138,7 @@ void creature::render_actions() {
 		//draw::execute(ChangeWeapon);
 	}
 	if(draw::buttonf(x + 523, y + 6, 6, 7, 0)) {
+		//Sprites: 119, 120, 121
 		//draw::execute(Skills);
 	}
 	draw::numbersm(x + 472, y + 38, 4, get(HP));
