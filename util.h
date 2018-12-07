@@ -26,6 +26,7 @@ struct anm_info {
 	point			points[LastAnimation * 6];
 	void			serialize(res::tokens id, bool write);
 	void			validate(int dir);
+	void			validate_weapon(int dir, int w);
 };
 lst_info			criters_lst[];
 msg_info			lst_pro_crit[];

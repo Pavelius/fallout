@@ -19,10 +19,6 @@ int actor::byweapon(animation_s action, int weapon_index) {
 	return a1;
 }
 
-static res::tokens bygender(gender_s gender, res::tokens tm, res::tokens tf) {
-	return (gender == Female) ? tf : tm;
-}
-
 int actor::getcicle() const {
 	int wt = getweapon().getweaponindex();
 	return byweapon(action, wt) * 6 + orientation;

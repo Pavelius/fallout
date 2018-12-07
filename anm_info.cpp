@@ -32,6 +32,13 @@ void anm_info::validate(int i) {
 		AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
 		AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
 	};
+	for(auto id : copied)
+		points[id * 6 + i] = points[AnimateUse * 6 + i];
+	for(auto w = 0; w < 10; w++)
+		validate_weapon(i, w);
+}
+
+void anm_info::validate_weapon(int i, int w) {
 	static animation_s copied_weapon[] = {
 		AnimateWeaponTakeOn, AnimateWeaponTakeOff, AnimateWeaponDodge,
 		AnimateWeaponThrust, AnimateWeaponSwing,
@@ -39,9 +46,7 @@ void anm_info::validate(int i) {
 		AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
 		AnimateWeaponThrow,
 	};
-	for(auto id : copied)
-		points[id * 6 + i] = points[AnimateUse * 6 + i];
-	for(auto w = 0; w < 10; w++) {
+	if(w<10) {
 		for(auto id : copied_weapon) {
 			auto b = animation_s(AnimateWeaponStand + w * 13);
 			auto a1 = (b + (id - AnimateWeaponStand)) * 6 + i;
@@ -70,9 +75,8 @@ void test_animate() {
 		AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
 		AnimateKnockOutBack, AnimateKnockOutForward,
 		//
-		AnimatePistol, ganm(AnimatePistol, AnimateWeaponWalk), ganm(AnimatePistol, AnimateWeaponDodge), ganm(AnimatePistol, AnimateWeaponAim), ganm(AnimatePistol, AnimateWeaponSingle),
-		AnimateSMG, AnimateClub, AnimateRifle, AnimateWeaponStand, AnimateHammer, AnimateSpear,
-		AnimateHeavyGun, AnimateMachineGun, AnimateRocketLauncher,
+		AnimatePistol, AnimateSMG, AnimateClub, AnimateRifle, AnimateWeaponStand,
+		AnimateHammer, AnimateSpear, AnimateHeavyGun, AnimateMachineGun, AnimateRocketLauncher,
 		//
 		AnimateKilledChest, AnimateKilledElectro,
 		AnimateKilledBurstInHead, AnimateKilledBurstInChest,
@@ -89,13 +93,13 @@ void test_animate() {
 		AnimateDeadBack, AnimateDeadForward,
 	};
 	static res::tokens resources[] = {res::HMLTHR, res::HMCMBT, res::HFLTHR};
-	int resource = 0, action = 0, orientation = 2;
+	int resource = 0, action = 0, orientation = 2, weapon = 0;
 	bool fast_stand = false;
-	int lying_scene = 0;
 	bool freezy_frame = false;
 	bool show_red = true;
 	bool lock_stand = true;
 	bool normal_mode = false;
+	animation_s am = AnimateStand;
 	res::tokens last_id = res::NoRes;
 	auto rsin = gres(res::INTRFACE);
 	draw::surface original(320, 240, 32);
@@ -103,7 +107,7 @@ void test_animate() {
 		mmax(orientation, 0, 5);
 		mmax(action, 0, sizeof(actions) / sizeof(actions[0]) - 1);
 		mmax(resource, 0, sizeof(resources) / sizeof(resources[0]) - 1);
-		lying_scene = lying_scene % 2;
+		mmax(weapon, 0, 13 - 1);
 		if(last_id != resources[resource]) {
 			ai.serialize(last_id, true);
 			last_id = resources[resource];
@@ -114,11 +118,9 @@ void test_animate() {
 		point pt = {x, y};
 		auto a = actions[action];
 		if(fast_stand)
-			a = AnimateStand;
-		else switch(lying_scene) {
-		case 1: a = AnimateBloodedBack; break;
-		case 2: a = AnimateBloodedForward; break;
-		}
+			a = am;
+		if(a >= AnimateWeaponStand)
+			a = animation_s(a + weapon);
 		auto* pa = ai.points + (a * 6 + orientation);
 		szprint(temp, zendof(temp), "{%1i, %2i}", pa->x, pa->y);
 		if(fast_stand)
@@ -129,26 +131,27 @@ void test_animate() {
 			szprint(zend(temp), zendof(temp), " unlocked");
 		if(normal_mode)
 			szprint(zend(temp), zendof(temp), " normal");
-		switch(lying_scene) {
-		case 1: szprint(zend(temp), zendof(temp), " lying up"); break;
-		case 2: szprint(zend(temp), zendof(temp), " lying down"); break;
-		}
+		if(am!=AnimateStand)
+			szprint(zend(temp), zendof(temp), " custom");
 		auto ps = gres(resources[resource]);
 		auto tick = getstamp() / 200;
 		auto c1 = a * 6 + orientation;
-		auto fr = ps->ganim(c1, freezy_frame ? 0 : tick);
-		auto push_canvas = canvas;
-		canvas = &original;
-		rectf({0, 0, getwidth(), getheight()}, colors::gray);
-		image(x - 32 / 2, y - 16 / 2, rsin, 1, ImageNoOffset);
-		if(!normal_mode)
-			pt = pt + *pa;
-		image(pt.x, pt.y, ps, fr, 0);
-		if(show_red) {
-			line(x - 4, y, x + 4, y, colors::red);
-			line(x, y - 4, x, y + 4, colors::red);
+		auto fi = ps->ganim(c1, freezy_frame ? 0 : tick);
+		auto& fr = ps->get(fi);
+		if(true) {
+			draw::state push;
+			canvas = &original; setclip();
+			rectf({0, 0, getwidth(), getheight()}, colors::gray);
+			szprint(zend(temp), zendof(temp), " {%1i, %2i}, {%3i, %4i}", fr.sx, fr.sy, fr.ox, fr.oy);
+			image(x - 32 / 2, y - 16 / 2, rsin, 1, ImageNoOffset);
+			if(!normal_mode)
+				pt = pt + *pa;
+			image(pt.x, pt.y, ps, fi, 0);
+			if(show_red) {
+				line(x - 4, y, x + 4, y, colors::red);
+				line(x, y - 4, x, y + 4, colors::red);
+			}
 		}
-		canvas = push_canvas;
 		scale2x(canvas->ptr(0, 0), canvas->scanline,
 			original.ptr(0, 0), original.scanline,
 			original.width, original.height);
@@ -162,13 +165,32 @@ void test_animate() {
 		case Alpha + 'F': orientation++; break;
 		case Alpha + 'A': action--; ai.serialize(last_id, true); break;
 		case Alpha + 'S': action++; ai.serialize(last_id, true); break;
-		case Alpha + 'L': lying_scene++; break;
+		case Alpha + 'Y': weapon++; ai.serialize(last_id, true); break;
+		case Alpha + 'T': weapon--; ai.serialize(last_id, true); break;
 		case Alpha + 'Z': fast_stand = !fast_stand; break;
 		case Alpha + 'X': freezy_frame = !freezy_frame; break;
 		case Alpha + 'R': show_red = !show_red; break;
 		case Alpha + 'U': lock_stand = !lock_stand; break;
 		case Alpha + 'N': normal_mode = !normal_mode; break;
-		case Alpha + 'V': ai.validate(orientation); break;
+		case Alpha + 'O': am = AnimateStand; break;
+		case Alpha + 'L': am = a; break;
+		case Alpha + 'V':
+			if(!lock_stand) {
+				ai.validate(orientation);
+				lock_stand = true;
+			} else
+				dlgmsg("Защита", "Необходимо разлочить клавишей 'U'");
+			break;
+		case Alpha + 'B':
+			if(!lock_stand) {
+				if(a >= AnimateWeaponStand) {
+					auto w = (a - AnimateWeaponStand) / 13;
+					ai.validate_weapon(orientation, w);
+				}
+				lock_stand = true;
+			} else
+				dlgmsg("Защита", "Необходимо разлочить клавишей 'U'");
+			break;
 		case KeyLeft:
 			if((pa == (ai.points + orientation)) && lock_stand)
 				break;

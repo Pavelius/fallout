@@ -116,7 +116,6 @@ int main(int argc, char* argv[]) {
 	initialize();
 	setfont(res::FONT1);
 	setpause(false);
-	//setlayout(test_animate);
 	test_animate();
 	return 0;
 }
