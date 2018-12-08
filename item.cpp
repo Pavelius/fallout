@@ -3,12 +3,6 @@
 using namespace res;
 
 static_assert(sizeof(item) == sizeof(int), "Not valid items count");
-struct ammo_info {
-	caliber_s		caliber;
-	unsigned char	count;
-	char			ac;
-	char			dr, dam_mul, dam_div;
-};
 struct armor_info {
 	char			ac;
 	char			threshold[Explosive + 1];
@@ -24,7 +18,7 @@ struct item_info {
 	unsigned short	size, weight, cost;
 	attack_info		weapon;
 	armor_info		armor;
-	ammo_info		ammunition;
+	ammo_info		ammo;
 	drug_info		drug;
 	const char*		description;
 };
@@ -471,14 +465,6 @@ unsigned short item::get(item_sprite_s i) const {
 	return item_data[type].frame[i];
 }
 
-bool item::isweapon() const {
-	return item_data[type].weapon.damage.max != 0;
-}
-
-bool item::isarmor() const {
-	return item_data[type].armor.dress[0] != res::NoRes;
-}
-
 int item::getcapacity() const {
 	return item_data[type].weapon.capacity;
 }
@@ -491,8 +477,56 @@ res::tokens	item::getdress(gender_s gender) const {
 	return item_data[type].armor.dress[gender];
 }
 
+item_type_s	item::getgroup() const {
+	return item_data[type].type;
+}
+
 int	item::getminst() const {
 	return item_data[type].weapon.minst;
+}
+
+bool item::ismelee() const {
+	if(!isweapon())
+		return false;
+	switch(getweaponanimation()) {
+	case AnimateWeaponStand:
+	case AnimateClub:
+	case AnimateHammer:
+	case AnimateSpear:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool item::isbig() const {
+	switch(getgroup()) {
+	case Weapon:
+		switch(getweaponanimation()) {
+		case AnimateRocketLauncher:
+		case AnimateMachineGun:
+		case AnimateHeavyGun:
+			return true;
+		default:
+			return false;
+		}
+		break;
+	default:
+		return false;
+	}
+}
+
+bool item::istwohanded() const {
+	switch(getweaponanimation()) {
+	case AnimateRocketLauncher:
+	case AnimateMachineGun:
+	case AnimateHeavyGun:
+	case AnimateRifle:
+	case AnimateHammer:
+		return true;
+	default:
+		return false;
+	}
 }
 
 bool item::ismatch(const item& it) const {
@@ -583,6 +617,13 @@ int item::getweaponindex() const {
 	return item_data[type].frame[FrameWeapon];
 }
 
+animation_s item::getweaponanimation() const {
+	auto wi = getweaponindex();
+	if(!wi)
+		return AnimateStand;
+	return (animation_s)(AnimateWeaponStand + (wi - 1) * 13);
+}
+
 int	item::getresistance(damage_s id) const {
 	return item_data[type].armor.resistance[id];
 }
@@ -595,6 +636,10 @@ const attack_info& item::getattack() const {
 	return item_data[type].weapon;
 }
 
+const ammo_info& item::getammoinfo() const {
+	return item_data[type].ammo;
+}
+
 int	item::getammoindex(item_s ammo_type) const {
 	const auto im = sizeof(caliber_data[0].items) / sizeof(caliber_data[0].items);
 	const auto ic = item_data[type].weapon.cliber;
@@ -603,4 +648,29 @@ int	item::getammoindex(item_s ammo_type) const {
 			return i;
 	}
 	return -1;
+}
+
+skill_s item::getskill(action_s id) const {
+	switch(id) {
+	case Throw:
+		return Throwing;
+	case ThrowPunch:
+	case KickLeg:
+		return Unarmed;
+	case Swing:
+	case Thrust:
+		return MeleeWeapon;
+	case FireSingle:
+	case FireBurst:
+		switch(item_data[type].weapon.damage.type) {
+		case Laser:
+		case Plasma:
+			return EnergyWeapon;
+		}
+		if(isbig())
+			return BigGuns;
+		return SmallGuns;
+	default:
+		return Unarmed;
+	}
 }

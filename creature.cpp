@@ -313,3 +313,34 @@ char* creature::get(char* result, const char* result_maximum, variant id, bool s
 int	creature::getnextlevel() const {
 	return 1000;
 }
+
+void creature::get(hit_info& hi, const item weapon, action_s id) const {
+	hi.attack = weapon.getattack();
+	hi.ammo = weapon.getammoinfo();
+	hi.skill = weapon.getskill(id);
+	if(weapon.ismelee()) {
+		hi.attack.damage.max += get(DamageMelee);
+		if(is(HeavyHanded))
+			hi.critical.effect -= 30;
+	} else {
+		if(is(Finesse))
+			hi.ammo.dam_resist += 30;
+	}
+	hi.ammo.ac += get(hi.skill);
+	if(is(WoundLeftHand) && weapon.istwohanded())
+		hi.ammo.ac -= 30;
+	if(is(WoundRightHand))
+		hi.ammo.ac -= 20;
+	if(is(WoundEye))
+		hi.ammo.ac -= 25;
+	if(is(Jinxed))
+		hi.critical.miss += 20;
+	if(is(OneHanded)) {
+		if(!weapon.istwohanded())
+			hi.ammo.ac += 20;
+		else
+			hi.ammo.ac -= 40;
+	}
+	hi.critical.hit += get(CriticalHit);
+	hi.critical.effect += get(CriticalHitTable);
+}

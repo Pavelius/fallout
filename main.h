@@ -340,6 +340,20 @@ struct attack_info {
 	short				critical_fail;
 	int					perk;
 	unsigned char		burst;
+};
+struct ammo_info {
+	caliber_s			caliber;
+	unsigned char		count;
+	char				ac;
+	char				dam_resist, dam_mul, dam_div;
+};
+struct roll_info {
+	short				hit, miss, effect;
+};
+struct hit_info {
+	attack_info			attack;
+	ammo_info			ammo;
+	roll_info			critical;
 	skill_s				skill;
 };
 struct caliber_info {
@@ -436,22 +450,28 @@ struct item {
 	item_s				getammo(int index) const;
 	int					getammocount() const;
 	int					getammoindex(item_s ammo_type) const;
+	const ammo_info&	getammoinfo() const;
 	const attack_info&	getattack() const;
 	int					getcapacity() const;
 	int					getcount() const;
 	const char*			getdescription() const;
 	res::tokens			getdress(gender_s gender) const;
+	item_type_s			getgroup() const;
 	int					getminst() const;
 	const char*			getname() const;
 	int					getresistance(damage_s id) const;
+	skill_s				getskill(action_s id) const;
 	int					getthreshold(damage_s id) const;
 	int					getweaponindex() const;
+	animation_s			getweaponanimation() const;
 	int					getweight() const;
-	bool				isarmor() const;
+	bool				isarmor() const { return getgroup() == Armor; }
+	bool				isbig() const;
 	bool				ismatch(const item& it) const;
-	bool				isweapon() const;
+	bool				ismelee() const;
+	bool				istwohanded() const;
+	bool				isweapon() const { return getgroup() == Weapon; }
 	void				join(item& it);
-	bool				reload(item& it);
 	bool				setammo(item_s type, int count);
 	void				setammocount(int value);
 	void				setcount(int value);
@@ -562,6 +582,7 @@ struct creature : actor {
 	bool				choose_gender(int x, int y);
 	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points, bool explore_mode = false, int skill_points = 0);
 	void				decrease(variant, int& points);
+	void				get(hit_info& ai, const item weapon, action_s id ) const;
 	int					get(ability_s id) const;
 	int					get(parameter_s id) const;
 	int					get(skill_s id) const;

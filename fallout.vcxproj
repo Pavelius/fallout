@@ -136,6 +136,7 @@
     <ClCompile Include="ability.cpp" />
     <ClCompile Include="actor.cpp" />
     <ClCompile Include="anm_info.cpp" />
+    <ClCompile Include="attack.cpp" />
     <ClCompile Include="caliber.cpp" />
     <ClCompile Include="lst_criters.cpp" />
     <ClCompile Include="lst_pro_crit.cpp" />

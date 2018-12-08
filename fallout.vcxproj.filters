@@ -190,6 +190,9 @@
     <ClCompile Include="parameter.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="attack.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h">
