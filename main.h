@@ -601,7 +601,7 @@ struct creature : actor {
 	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points, bool explore_mode = false, int skill_points = 0);
 	void				damage(const damage_info& di);
 	void				decrease(variant, int& points);
-	void				get(hit_info& ai, const item weapon, action_s id ) const;
+	void				get(hit_info& ai, const item weapon, action_s id) const;
 	int					get(ability_s id) const;
 	int					get(parameter_s id) const;
 	int					get(skill_s id) const;

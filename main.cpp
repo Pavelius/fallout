@@ -78,6 +78,10 @@ static void test_tile() {
 static void test_adventure() {
 	player.create("narg");
 	player.add(LeatherArmor);
+	player.add(Pistol10mm);
+	player.add(Knife);
+	player.add(Sledgehammer);
+	player.add(LaserRifle);
 	player.adventure();
 }
 
@@ -106,7 +110,8 @@ int main(int argc, char* argv[]) {
 	setfont(res::FONT1);
 	setpause(false);
 	setlayout(mainmenu);
-	//stest_tile();
+	//test_tile();
+	//test_animate();
 	return 0;
 }
 

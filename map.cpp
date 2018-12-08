@@ -94,7 +94,7 @@ short unsigned map_info::moveto(short unsigned index, direction_s d) {
 			return Blocked;
 		return index - s;
 	case Down:
-		if((1 + i2y(index)) == height)
+		if(y >= (height-1))
 			return Blocked;
 		return index + s;
 	default:
