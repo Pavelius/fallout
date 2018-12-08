@@ -221,6 +221,21 @@ enum flag_all {
 	LightThru = 0x20000000,
 	ShootThru = 0x80000000 // Можно стрелять через него
 };
+enum critical_effect_s : unsigned {
+	KnockOut = 0x10000000,
+	KnockDown = 0x02000000,
+	CrippledLeftLeg = 0x04000000,
+	CrippledRightLeg = 0x08000000,
+	CrippledLeftArm = 0x10000000,
+	CrippledRightArm = 0x20000000,
+	Blinded = 0x40000000,
+	InstantDeath = 0x80000000,
+	FireDeath = 0x00040000,
+	BypassArmor = 0x00080000,
+	DroppedWeapon = 0x00400000,
+	LoseNextTurn = 0x00800000,
+	RandomCriticalEffect = 0x00002000
+};
 enum animation_s : unsigned char {
 	AnimateStand, AnimateWalk, AnimatePickup, AnimateUse, AnimateDodge,
 	AnimateDamaged, AnimateDamagedRear,
@@ -347,8 +362,11 @@ struct ammo_info {
 	char				ac;
 	char				dam_resist, dam_mul, dam_div;
 };
+struct result_info {
+	short				chance, effect;
+};
 struct roll_info {
-	short				hit, miss, effect;
+	result_info			hit, miss;
 };
 struct hit_info {
 	attack_info			attack;
@@ -581,6 +599,7 @@ struct creature : actor {
 	void				create(const char* id);
 	bool				choose_gender(int x, int y);
 	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points, bool explore_mode = false, int skill_points = 0);
+	void				damage(const damage_info& di);
 	void				decrease(variant, int& points);
 	void				get(hit_info& ai, const item weapon, action_s id ) const;
 	int					get(ability_s id) const;
@@ -589,6 +608,7 @@ struct creature : actor {
 	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const;
 	item&				getarmor() const override { return const_cast<creature*>(this)->armor; }
 	int					getbase(skill_s id) const;
+	int					getcriticalmiss() const;
 	int					getequipweight() const;
 	int					getexperience() const { return experience; }
 	static const datetime& getdate();

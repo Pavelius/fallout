@@ -185,6 +185,24 @@ int creature::getbase(skill_s value) const {
 		result -= 10;
 	if(is(value))
 		result += 20;
+	switch(value) {
+	case FirstAid:
+	case Doctor:
+	case Speech:
+	case Barter:
+		if(is(GoodNatured))
+			result += 15;
+		break;
+	case BigGuns:
+	case SmallGuns:
+	case EnergyWeapon:
+	case Throwing:
+	case MeleeWeapon:
+	case Unarmed:
+		if(is(GoodNatured))
+			result -= 10;
+		break;
+	}
 	return result;
 }
 
@@ -321,7 +339,7 @@ void creature::get(hit_info& hi, const item weapon, action_s id) const {
 	if(weapon.ismelee()) {
 		hi.attack.damage.max += get(DamageMelee);
 		if(is(HeavyHanded))
-			hi.critical.effect -= 30;
+			hi.critical.hit.effect -= 30;
 	} else {
 		if(is(Finesse))
 			hi.ammo.dam_resist += 30;
@@ -333,14 +351,24 @@ void creature::get(hit_info& hi, const item weapon, action_s id) const {
 		hi.ammo.ac -= 20;
 	if(is(WoundEye))
 		hi.ammo.ac -= 25;
-	if(is(Jinxed))
-		hi.critical.miss += 20;
 	if(is(OneHanded)) {
 		if(!weapon.istwohanded())
 			hi.ammo.ac += 20;
 		else
 			hi.ammo.ac -= 40;
 	}
-	hi.critical.hit += get(CriticalHit);
-	hi.critical.effect += get(CriticalHitTable);
+	hi.critical.miss.chance += getcriticalmiss();
+	hi.critical.hit.chance += get(CriticalHit);
+	hi.critical.hit.effect += get(CriticalHitTable);
+}
+
+int	creature::getcriticalmiss() const {
+	auto result = 13 - get(Luck);
+	if(is(Jinxed))
+		result += 20;
+	return result;
+}
+
+void creature::damage(const damage_info& di) {
+	auto value = di.min + (rand() % (di.max - di.min));
 }
