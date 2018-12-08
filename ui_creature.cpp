@@ -14,7 +14,12 @@ static const char* szscore(int value) {
 	return score_text[gtv(value)];
 }
 
+static void set_info_mode() {
+	info_mode = hot.param;
+}
+
 void creature::decrease(variant e, int& points) {
+	int k;
 	switch(e.type) {
 	case Abilities:
 		if(stats[e.ability] > 1) {
@@ -22,10 +27,18 @@ void creature::decrease(variant e, int& points) {
 			points++;
 		}
 		break;
+	case Skills:
+		k = 1;
+		if(skills[e.skill] >= 1) {
+			skills[e.skill]--;
+			points += k;
+		}
+		break;
 	}
 }
 
 void creature::increase(variant e, int& points) {
+	int k;
 	if(!points)
 		return;
 	switch(e.type) {
@@ -33,6 +46,15 @@ void creature::increase(variant e, int& points) {
 		if(stats[e.ability] < 10) {
 			stats[e.ability]++;
 			points--;
+		}
+		break;
+	case Skills:
+		k = 1;
+		if(points < k)
+			return;
+		if(skills[e.skill] < 150) {
+			skills[e.skill]++;
+			points -= k;
 		}
 		break;
 	}
@@ -155,6 +177,23 @@ static void gender_proc() {
 	((creature*)hot.param)->choose_gender(188, 1);
 }
 
+static int render_stat(int x, int y, int width, variant id) {
+	draw::label(x, y, id, getstr(id), false, false);
+	return texth();
+}
+
+static int render_stat(int x, int y, int width, variant id, const char* value) {
+	char temp[260]; szprint(temp, zendof(temp), "%1:", getstr(id));
+	draw::label(x, y, id, temp, false, false);
+	draw::text(x + width - draw::textw(value), y, value);
+	return texth();
+}
+
+static int render_stat(int x, int y, int width, variant id, int value, const char* format) {
+	char temp[260]; szprint(temp, zendof(temp), format, value);
+	return render_stat(x, y, width, id, temp);
+}
+
 int creature::render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const {
 	auto y0 = y;
 	char temp[260];
@@ -211,14 +250,14 @@ private:
 };
 cmdk cmdk::current;
 
-bool creature::choose_stats(int traits_points, int tag_skill_points, int ability_points, bool charsheet_mode) {
+bool creature::choose_stats(int traits_points, int tag_skill_points, int ability_points, bool charsheet_mode, int skill_points) {
 	char temp[260];
 	draw::state push;
 	draw::setcolor(ColorText);
 	draw::setfont(res::FONT1);
 	auto show_ability = (ability_points > 0);
 	auto show_tag = (traits_points > 0);
-	auto show_maximum_only = true;
+	auto show_maximum_only = !charsheet_mode;
 	setfocus(variant(Strenght));
 	if(!current_skill)
 		current_skill = SmallGuns;
@@ -226,10 +265,9 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 		if(charsheet_mode) {
 			draw::background(177);
 			variant id = getfocus();
-			if(id.type==Skills)
+			if(id.type == Skills)
 				current_skill = id.skill;
-		}
-		else
+		} else
 			draw::background(169);
 		// Заполнение команды
 		cmd_creature ev;
@@ -246,6 +284,20 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 			if(!charsheet_mode) {
 				draw::text(50, 326, "Особенности");
 				draw::text(18, 286, "Очки хар.");
+			} else {
+				static int info_mode_frame[] = {180, 178, 179};
+				auto x = 10, y = 326, w = 100;
+				image(x, y, res::INTRFACE, maptbl(info_mode_frame, info_mode), ImageNoOffset);
+				static const char* names[] = {"Бонуса", "Карма", "Убито"};
+				for(auto i = 0; i < 3; i++) {
+					auto x1 = x + w * i + 10;
+					rect rc = {x1 + 4, y, x1 + w - 4, y + 28};
+					//rectb(rc, colors::red);
+					if((areb(rc) && hot.key == MouseLeft && hot.pressed)
+						|| (hot.key == (Alpha + '1' + i)))
+						execute(set_info_mode, i);
+					text(x1 + (w - textw(names[i])) / 2, y + ((i==info_mode) ? 4 : 6), names[i]);
+				}
 			}
 			draw::text(383, 5, "Навыки");
 			if(charsheet_mode)
@@ -274,7 +326,21 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 			draw::number(59, 37 + 33 * (i - Strenght), 2, value);
 		}
 		if(charsheet_mode) {
-
+			auto x = 30, y = 282, w =120;
+			y += render_stat(x, y, 120, Level, get(Level), "%1i");
+			y += render_stat(x, y, 120, Experience, get(Experience), "%1i");
+			y += render_stat(x, y, 120, NextLevelExperience, get(NextLevelExperience), "%1i");
+			y = 366;
+			switch(info_mode) {
+			case 0:
+				for(auto i = FirstPerk; i <= LastTraits; i = (perk_s)(i + 1)) {
+					if(y >= clipping.y2)
+						break;
+					if(is(i))
+						y += render_stat(x, y, 120, i);
+				}
+				break;
+			}
 		} else {
 			if(show_ability)
 				draw::number(126, 282, 2, ability_points);
@@ -282,7 +348,7 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 		// secondanary stats
 		static variant secondanary_stat_health[] = {HP, PoisonLevel, RadiationLevel, WoundEye, WoundRightHand, WoundLeftHand, WoundRightLeg, WoundLeftLeg};
 		render_stats(194, 46, 120, secondanary_stat_health, show_maximum_only);
-		static variant secondanary_stat_other[] = {AC, AP, CarryWeight, DamageMelee, PhisycalResistance, PoisonResistance, RadiationResistance, Sequence, HealingRate, CriticalHit};
+		static variant secondanary_stat_other[] = {AC, APMax, CarryWeight, DamageMelee, PhisycalResistance, PoisonResistance, RadiationResistance, Sequence, HealingRate, CriticalHit};
 		render_stats(194, 182, 120, secondanary_stat_other, show_maximum_only);
 		// traits
 		if(!charsheet_mode) {
@@ -298,9 +364,6 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 					label(48, 353 + 13 * i, ev.element, getstr(ev.element.perk), ev.checked, false);
 				}
 			}
-		} else {
-			static int info_mode_frame[] = {180, 178, 179};
-			image(10, 326, res::INTRFACE, maptbl(info_mode_frame, info_mode), ImageNoOffset);
 		}
 		// skills
 		auto w1 = 220;
@@ -318,12 +381,17 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 			auto x = 634;
 			auto y = 32 + 11 * (current_skill - FirstSkill);
 			draw::image(x, y, res::INTRFACE, 190);
-			if(draw::buttonf(x - 20, y - 12, 193, 194, false, false)) {
-			}
-			if(draw::buttonf(x-20, y, 191, 192, false, false)) {}
+			ev.element = (skill_s)current_skill;
+			ev.points = &skill_points;
+			if(draw::buttonf(x - 20, y - 12, 193, 194, false, false) || (hot.key == Alpha + '+'))
+				ev.modify(1);
+			if(draw::buttonf(x - 20, y, 191, 192, false, false) || (hot.key == Alpha + '-'))
+				ev.modify(-1);
 		}
-		if(show_tag)
-			draw::number(522, 228, 2, tag_skill_points);
+		if(charsheet_mode)
+			draw::number(524, 228, 2, skill_points);
+		else
+			draw::number(524, 228, 2, tag_skill_points);
 		// description
 		variant focus = draw::getfocus();
 		if(focus) {
@@ -332,7 +400,7 @@ bool creature::choose_stats(int traits_points, int tag_skill_points, int ability
 			setcolor(ColorInfo);
 			line(350, 300, 620, 300);
 			line(350, 301, 620, 301);
-			image(483, 308, res::SKILLDEX, focus.getimage(), ImageNoOffset);
+			image(483, 308, res::SKILLDEX, getfid(focus), ImageNoOffset);
 			auto p = getstr(focus);
 			auto w1 = draw::textw(p);
 			draw::text(350, 275, p);

@@ -50,10 +50,18 @@ static int get_action_cicle(int action) {
 
 #ifdef _DEBUG
 static void paint_debug() {
+	static bool show_mouse;
 	draw::state push;
 	setfont(res::FONT1);
 	setcolor(ColorText);
-	//char temp[260];
+	char temp[260];
+	auto x = 10, y = 10;
+	if(hot.key == (Ctrl + Alpha + 'D'))
+		show_mouse = !show_mouse;
+	if(show_mouse) {
+		text(x, y, szprint(temp, zendof(temp), "%1i, %2i", hot.mouse.x, hot.mouse.y));
+		y += texth();
+	}
 }
 #endif
 

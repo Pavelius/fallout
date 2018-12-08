@@ -108,7 +108,7 @@ static void render_item(int x, int y) {
 }
 
 static void open_charsheet() {
-	player.choose_stats(0, 0, 0, true);
+	player.choose_stats(0, 0, 0, true, player.getskillrate());
 }
 
 void creature::render_actions() {

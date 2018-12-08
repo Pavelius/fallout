@@ -22,6 +22,9 @@ enum ability_s : unsigned char {
 	AP,
 	Random,
 };
+enum parameter_s : unsigned char {
+	Level, Experience, NextLevelExperience,
+};
 enum perk_s : unsigned char {
 	Awareness, BonusHtHAttacks, BonusHtHDamage, BonusMove, BonusRangedDamage, BonusROF,
 	EarlierSequence, FasterHealing, MoreCriticals, NightVision, Presence, RadResistance,
@@ -306,11 +309,13 @@ struct variant {
 		perk_s			perk;
 		skill_s			skill;
 		wound_s			wound;
+		parameter_s		parameter;
 	};
 	constexpr variant() : type(NoVariant), perk(FirstPerk) {}
 	constexpr variant(unsigned short v) : type((variant_s)(v >> 8)), perk(perk_s(v & 0xFF)) {}
 	constexpr variant(ability_s v) : type(Abilities), ability(v) {}
 	constexpr variant(damage_s v) : type(Damages), damage(v) {}
+	constexpr variant(parameter_s v) : type(Parameters), parameter(v) {}
 	constexpr variant(perk_s v) : type(Perks), perk(v) {}
 	constexpr variant(skill_s v) : type(Skills), skill(v) {}
 	constexpr variant(wound_s v) : type(Wounds), wound(v) {}
@@ -319,7 +324,6 @@ struct variant {
 	const char*			getnameshort() const;
 	const char*			getnameabr() const;
 	const char*			getdescription() const;
-	int					getimage() const;
 };
 struct damage_info {
 	unsigned char		min, max;
@@ -556,17 +560,22 @@ struct creature : actor {
 	void				clear();
 	void				create(const char* id);
 	bool				choose_gender(int x, int y);
-	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points, bool explore_mode = false);
+	bool				choose_stats(int trait_points, int tag_skill_points, int ability_points, bool explore_mode = false, int skill_points = 0);
 	void				decrease(variant, int& points);
 	int					get(ability_s id) const;
+	int					get(parameter_s id) const;
 	int					get(skill_s id) const;
 	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const;
 	item&				getarmor() const override { return const_cast<creature*>(this)->armor; }
 	int					getbase(skill_s id) const;
 	int					getequipweight() const;
+	int					getexperience() const { return experience; }
 	static const datetime& getdate();
 	gender_s			getgender() const override { return gender; }
+	int					getlevel() const { return level; }
+	static ability_s	getmaximum(ability_s id);
 	const char*			getname() const { return name; }
+	int					getnextlevel() const;
 	int					getpartylimit() const;
 	int					getperkrate() const;
 	static creature*	getplayer();
@@ -606,6 +615,7 @@ private:
 	item				armor, weapon[2], money;
 	unsigned char		wounds;
 	unsigned char		current_weapon;
+	unsigned			experience;
 	int					render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const;
 	void				render_actions();
 };
@@ -664,6 +674,7 @@ bool					buttonf(int x, int y, int cicles_normal, int cicle_pressed, bool checke
 void					buttonp(int x, int y, int circle_normal, int circle_pressed, const runable& ev, const char* string, int ty = 6);
 int						button(int x, int y, int width, const runable& ev, const char* string, unsigned key = 0);
 extern point			camera; // Current view on map
+void					debuginfo();
 void					dlgerr(const char* title, const char* format, ...);
 void					dlgmsg(const char* title, const char* text);
 void					field(int x, int y, int width, const runable& ev, const char* string, unsigned key = 0);

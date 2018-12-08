@@ -4,6 +4,7 @@ template<> const char* getstr<variant>(variant value) {
 	switch(value.type) {
 	case Abilities: return getstr(value.ability);
 	case Damages: return getstr(value.damage);
+	case Parameters: return getstr(value.parameter);
 	case Perks: return getstr(value.perk);
 	case Skills: return getstr(value.skill);
 	case Wounds: return getstr(value.wound);
@@ -39,12 +40,13 @@ const char* variant::getdescription() const {
 	}
 }
 
-int variant::getimage() const {
-	switch(type) {
-	case Abilities: return ability_data[skill].fid;
-	case Perks: return perk_data[perk].fid;
-	case Skills: return skill_data[skill].fid;
-	case Wounds: return wound_data[wound].fid;
+template<> int getfid<variant>(variant value) {
+	switch(value.type) {
+	case Abilities: return getfid(value.ability);
+	case Parameters: return getfid(value.parameter);
+	case Perks: return perk_data[value.perk].fid;
+	case Skills: return getfid(value.skill);
+	case Wounds: return wound_data[value.wound].fid;
 	default: return 0;
 	}
 }

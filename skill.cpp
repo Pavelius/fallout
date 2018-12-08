@@ -23,3 +23,4 @@ skill_info skill_data[] = {{"SmallGuns", 28, "Ручное оружие", {5, {Agility, 4}},
 };
 assert_enum(skill, LastSkill);
 getstr_enum(skill);
+getfid_enum(skill);

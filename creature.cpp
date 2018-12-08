@@ -281,19 +281,24 @@ void creature::add(const item& it) {
 
 char* creature::get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const {
 	auto pr = "%1i";
+	ability_s max_ability;
 	switch(id.type) {
 	case Abilities:
 		if(ability_data[id.ability].percent)
 			pr = "%1i%%";
-		if(id.ability == HP && show_maximum_only)
-			id.ability = HPMax;
-		if(id.ability==HP)
-			szprint(result, result_maximum, "%1i/%2i", get(HP), get(HPMax));
+		max_ability = getmaximum(id.ability);
+		if(max_ability && show_maximum_only)
+			id.ability = max_ability;
+		if(max_ability && !show_maximum_only)
+			szprint(result, result_maximum, "%1i/%2i", get(id.ability), get(max_ability));
 		else
 			szprint(result, result_maximum, pr, get(id.ability));
 		break;
 	case Skills:
 		szprint(result, result_maximum, "%1.2i%%", get(id.skill));
+		break;
+	case Parameters:
+		szprint(result, result_maximum, "%1i", get(id.parameter));
 		break;
 	case Damages:
 		szprint(result, result_maximum, "%1i/%2i%%", get((ability_s)(PhisycalThreshold + id.damage)), get((ability_s)(PhisycalResistance + id.damage)));
@@ -303,4 +308,8 @@ char* creature::get(char* result, const char* result_maximum, variant id, bool s
 		break;
 	}
 	return result;
+}
+
+int	creature::getnextlevel() const {
+	return 1000;
 }

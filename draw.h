@@ -8,7 +8,7 @@ static textplugin control_name##_plugin(#control_name, control_name);\
 static int control_name(int x, int y, int width, const char* id, int value, const char* label, const char* tips)
 extern "C" int strcmp(const char* s1, const char* s2); // Compare two strings
 
-enum draw_event_s {
+enum draw_event_s : unsigned {
 	// input events
 	InputSymbol = 0xED00, InputTimer, InputIdle, InputUpdate, InputNoUpdate, InputExecute,
 	// Keyboard and mouse input (can be overrided by flags)
