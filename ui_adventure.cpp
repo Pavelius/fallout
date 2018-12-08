@@ -91,6 +91,50 @@ static void open_invertory() {
 	player.inventory();
 }
 
+static void use_action() {
+	animate(608, 477, gres(res::INTRFACE), 104);
+	animate(608, 477, gres(res::INTRFACE), 104, 6, -2, -1);
+}
+
+struct weaponwear {
+	weaponable&			weapons;
+	adat<action_s, 8>	actions;
+	weaponwear(weaponable& source, const item& it) : weapons(source) {
+		for(auto a : it.getattack().actions) {
+			if(!a)
+				continue;
+			actions.add(a);
+		}
+		correct();
+	}
+	void correct() {
+		if(weapons.weapon_action[weapons.weapon] >= (int)actions.count)
+			weapons.weapon_action[weapons.weapon] = 0;
+	}
+	int getindex() const {
+		return weapons.weapon_action[weapons.weapon];
+	}
+	action_s getaction() const {
+		if(!actions)
+			return NoAction;
+		return actions[getindex()];
+	}
+};
+
+static void correct_weapon_action() {
+	weaponwear ww(player, player.getweapon());
+	ww.correct();
+}
+
+static void change_weapon_action() {
+	player.weapon_action[player.weapon]++;
+	correct_weapon_action();
+}
+
+static void render_area() {
+	player.painting(camera);
+}
+
 static void render_item(int x, int y) {
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
@@ -98,20 +142,42 @@ static void render_item(int x, int y) {
 	auto fr = ps->ganim(32, 0);
 	auto pf = ps->get(fr);
 	rect rc = {x, y, x + pf.sx - 4, y + pf.sy - 4};
-	if(draw::buttonf(rc.x1, rc.y1, 32, 31, 0, false)) {
-		//draw::execute(id);
+	if(draw::buttonf(rc.x1, rc.y1, 32, 31, 0, false))
+		execute(use_action);
+	auto wp = player.getweapon();
+	auto a = area(rc);
+	if(hot.mouse.in(rc) && hot.pressed) {
+		rc.y1 -= 2;
+		rc.y2 -= 2;
+		rc.x1 += 1;
+		rc.x2 += 1;
 	}
-	if(hot.mouse.in(rc) && hot.pressed)
-		draw::iteminv(rc.x1, rc.y1 - 2, rc.width(), rc.height(), player.getweapon(), false);
-	else
-		draw::iteminv(rc.x1, rc.y1, rc.width(), rc.height(), player.getweapon(), false);
+	draw::iteminv(rc.x1, rc.y1, rc.width(), rc.height(), wp, false);
+	weaponwear ww(player, wp);
+	auto ac = ww.getaction();
+	if(ac) {
+		draw::image(rc.x1 + rc.width() - 30, rc.y1 + 16,
+			ps, ps->ganim(action_data[ac].fid, getstamp()), 0);
+		if((a == AreaHilited || a == AreaHilitedPressed) && hot.key == MouseRight && !hot.pressed)
+			execute(change_weapon_action);
+		hit_info hi = {}; player.get(hi, wp, ac);
+		draw::image(rc.x1 + 16, rc.y1 + 56, ps, ps->ganim(289, getstamp()), 0);
+	}
 }
 
 static void open_charsheet() {
 	player.choose_stats(0, 0, 0, true, player.getskillrate());
 }
 
-void creature::render_actions() {
+static void open_pipboy() {}
+
+static void change_weapon_proc() {
+	player.setaction(AnimateWeaponTakeOn);
+	player.change_weapon();
+	correct_weapon_action();
+}
+
+static void render_actions() {
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
 		return;
@@ -120,7 +186,7 @@ void creature::render_actions() {
 	int x = (draw::getwidth() - ps->get(fr).sx) / 2;
 	int y = draw::getheight() - dy;
 	draw::image(x, y, ps, fr, ImageNoOffset);
-	if(draw::buttonf(x + 210, y + 40, 47, 46, 0) || (hot.key==Alpha + 'I'))
+	if(draw::buttonf(x + 210, y + 40, 47, 46, 0) || (hot.key == Alpha + 'I'))
 		draw::execute(open_invertory);
 	if(draw::buttonf(x + 210, y + 60, 18, 17, 0) || (hot.key == KeyEscape)) {
 		//draw::execute(Options);
@@ -129,39 +195,91 @@ void creature::render_actions() {
 	if(draw::buttonf(x + 526, y + 38, 13, 10, 0)) {
 		//draw::execute(Map);
 	}
-	if(draw::buttonf(x + 526, y + 58, 57, 56, 0) || (hot.key==Alpha + 'C'))
+	if(buttonf(x + 526, y + 58, 57, 56, 0) || (hot.key == Alpha + 'C'))
 		execute(open_charsheet);
-	if(draw::buttonf(x + 526, y + 78, 59, 58, 0)) {
-		//draw::execute(Charsheet);
-	}
-	if(draw::buttonf(x + 218, y + 6, 6, 7, 0)) {
-		//draw::execute(ChangeWeapon);
-	}
-	if(draw::buttonf(x + 523, y + 6, 6, 7, 0)) {
+	if(buttonf(x + 526, y + 78, 59, 58, 0))
+		execute(open_pipboy);
+	if(buttonf(x + 218, y + 6, 6, 7, 0))
+		execute(change_weapon_proc);
+	if(buttonf(x + 523, y + 6, 6, 7, 0)) {
 		//Sprites: 119, 120, 121
 		//draw::execute(Skills);
 	}
-	draw::numbersm(x + 472, y + 38, 4, get(HP));
-	draw::numbersm(x + 472, y + 76, 4, get(AC));
+	numbersm(x + 472, y + 38, 4, player.get(HP));
+	numbersm(x + 472, y + 76, 4, player.get(AC));
 	//console(x1 + 28, y1 + 35, 155, 50, "Ёто длинна€ строка по идее должна разбитьс€ на несколько коротких строчек с переносом. „тобы еще добавить? ќна должна скроллитьс€. »нтеллект отвечает за пам€ть, скорость реакции и способность оценивать событи€. ¬ысокий »нтеллект важен дл€ всех. ¬ли€ет на количество очков умений на уровень, режимы диалога и многие способности.");
+}
+
+static void update_logic() {
+	player.update();
+}
+
+static void render_screen() {
+	rect rc = {0, 0, draw::getwidth(), draw::getheight()};
+	rectf(rc, colors::gray);
+	render_area();
+	render_actions();
 }
 
 void creature::adventure() {
 	cursorset cursor;
 	while(ismodal() && player.isalive()) {
-		rect rc = {0, 0, draw::getwidth(), draw::getheight()};
-		rectf(rc, colors::gray);
-		player.render_actions();
+		render_screen();
+		update_logic();
 		domodal();
 		switch(hot.key) {
 		case KeyLeft: camera.x -= tile_width / 2; break;
 		case KeyRight: camera.x += tile_width / 2; break;
 		case KeyUp: camera.y -= tile_width / 2; break;
 		case KeyDown: camera.y += tile_width / 2; break;
-		case Alpha + '<':
+		case Alpha + '-':
+			player.setorientation((player.getorientation() - 1) % 6);
 			break;
-		case Alpha + '>':
+		case Alpha + '+':
+			player.setorientation((player.getorientation() + 1) % 6);
+			break;
+		case Alpha + 'T':
+			player.setaction(AnimateDodge);
+			player.wait();
+			break;
+		case Alpha + 'D':
+			player.setaction(AnimateKnockOutBack);
+			player.wait();
+			player.setaction(AnimateStandUpBack);
+			player.wait();
+			break;
+		case Alpha + 'S':
+			player.setaction(AnimateWeaponAim);
+			player.wait();
+			player.setaction(AnimateWeaponSingle);
+			player.wait();
+			player.setaction(AnimateWeaponBurst);
+			player.wait();
+			player.setaction(AnimateWeaponAttack);
+			player.wait();
+			break;
+		case Alpha + 'H':
+			player.setaction(AnimateWeaponHide);
+			player.wait();
+			player.setaction(AnimateWeaponHide, true);
+			player.wait();
 			break;
 		}
+	}
+}
+
+void actor::wait() {
+	cursorset cursor;
+	cursor.set(res::INTRFACE, 295);
+	auto current_action = action;
+	auto stop_frame = frame_maximum;
+	while(ismodal()) {
+		if(stop_frame == frame && next_stamp >= gametick())
+			break;
+		update_logic();
+		if(current_action != action)
+			break;
+		render_screen();
+		domodal();
 	}
 }

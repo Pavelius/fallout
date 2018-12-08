@@ -236,3 +236,37 @@ void draw::iteminv(int x, int y, int sx, int sy, item& it, bool resize) {
 			ImageTransparent, real, 0, 0);
 	}
 }
+
+void draw::animate(int x, int y, sprite* ps, int cicle, int fps, int frame, int frame_end) {
+	auto pc = ps->gcicle(cicle);
+	if(!pc || !pc->count)
+		return;
+	auto fb = pc->start;
+	auto fe = pc->start + pc->count - 1;
+	if(frame == -2)
+		frame = fe;
+	else if(frame == -1)
+		frame = fb;
+	if(frame_end == -2)
+		frame_end = fe;
+	else if(frame_end == -1)
+		frame_end = fb;
+	auto d = (frame > frame_end) ? -1 : 1;
+	screenshoot push;
+	cursorset cursor;
+	cursor.set(res::INTRFACE, 295);
+	auto tick_rate = 1000 / fps;
+	auto next_tick = getstamp() + tick_rate;
+	while(ismodal()) {
+		push.restore();
+		image(x, y, ps, frame, 0);
+		domodal();
+		if(next_tick < getstamp()) {
+			if(frame == frame_end)
+				break;
+			next_tick += tick_rate;
+			frame += d;
+		}
+	}
+	push.restore();
+}

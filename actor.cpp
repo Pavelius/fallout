@@ -15,18 +15,22 @@ int actor::byweapon(animation_s action, int weapon_index) {
 	if(action <= AnimateRun)
 		a1 = modify_weapon_base[action];
 	if(a1 >= AnimateWeaponStand)
-		return a1 + (weapon_index - 1) * (AnimateWeaponThrow - AnimateWeaponStand + 1);
+		return a1 + (weapon_index - 1) * 13;
 	return a1;
 }
 
 int actor::getcicle() const {
-	int wt = getweapon().getweaponindex();
-	return byweapon(action, wt) * 6 + orientation;
+	return byweapon(action, getweapon().getweaponindex()) * 6 + orientation;
 }
 
-const sprite* actor::getsprite() const {
-	//return gres(gethuman(getarmor().get(), getgender()));
-	return 0;
+unsigned short actor::getlastframe() const {
+	auto ps = getsprite();
+	if(!ps)
+		return 0;
+	auto pc = ps->gcicle(getcicle());
+	if(!pc || !pc->count)
+		return 0;
+	return pc->count - 1;
 }
 
 void actor::preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation, animation_s action, unsigned tick, const rect& clip) {
@@ -62,25 +66,26 @@ rect actor::getrect() const {
 void actor::moveto(point position, int run) {}
 
 void actor::painting(point camera) const {
-	auto source = getsprite();
-	if(!source)
+	auto ps = getsprite();
+	if(!ps)
 		return;
-	auto cicle = getcicle();
-	auto pc = source->gcicle(cicle);
+	auto pc = ps->gcicle(getcicle());
 	if(!pc->count)
 		return;
 	point pt = getposition() - camera;
 	if(action == AnimateRun || action == AnimateWalk) {
-		auto pa = draw::getaction(source, cicle / 6);
-		if(!pa)
-			return;
-		auto pf = source->get(frame);
+		//auto pa = getaction(source, cicle / 6);
+		//if(!pa)
+		//	return;
+		//auto pf = source->get(frame);
 		//draw::image(
 		//	pt.x - pf.sx / 2 + pa->offset[orientation].x,
 		//	pt.y - pf.sy + pa->offset[orientation].y,
 		//	source, frame, ImageNoOffset);
-	} else
-		draw::image(pt.x, pt.y, source, frame, 0);
+	} else {
+		auto fr = pc->start + frame;
+		image(pt.x, pt.y, ps, fr, 0);
+	}
 }
 
 char actor::getorientation(point from, point to) {
@@ -181,86 +186,53 @@ int actor::getdistance(const point p1, const point p2) {
 //	//setaction(runmode ? ActionRun : ActionWalk);
 //	this->index = index;
 //}
-//
-//void update() {
-//	unsigned tm = draw::gettick();
-//	if(!timestart)
-//		timestart = tm;
-//	while(tm > timestart) {
-//		auto source = getsprite();
-//		if(!source)
-//			return;
-//		if(action == ActionStand) {
-//			auto pa = draw::getaction(source, action);
-//			auto pc = source->gcicle(getcicle());
-//			if(tick == pc->count - 1) {
-//				tick = 0;
-//				timestart += xrand(4, 18) * 1000;
-//			} else {
-//				settick(tick + 1);
-//				timestart += timeout;
-//			}
-//		}
-//		//else if(action == ActionWalk || action == ActionRun)
-//		//{
-//		//	int lp = game::getdistance(start, goal);
-//		//	int lr = game::getdistance(start, pos);
-//		//	if(lr >= lp)
-//		//		nextstep();
-//		//	if(start == goal)
-//		//		stop();
-//		//	else
-//		//	{
-//		//		settick(tick + 1);
-//		//		timestart += timeout;
-//		//		auto pa = draw::getaction(source, action);
-//		//		auto pc = source->gcicle(getcicle());
-//		//		auto pf = source->get(pc->start + tick);
-//		//		pos.x += pf.ox;
-//		//		pos.y += pf.oy;
-//		//	}
-//		//}
-//		else if(isanimationback(action)) {
-//			if(tick == 0)
-//				setaction(ActionStand);
-//			else {
-//				tick--;
-//				timestart += timeout;
-//			}
-//		} else {
-//			auto pa = draw::getaction(source, action);
-//			auto pc = source->gcicle(getcicle());
-//			if(tick == pc->count - 1)
-//				setaction(ActionStand);
-//			else {
-//				tick++;
-//				timestart += timeout;
-//			}
-//		}
-//	}
-//}
-//
-//void settick(int tick) {
-//	if(this->tick != tick) {
-//		auto source = getsprite();
-//		if(!source)
-//			return;
-//		auto pc = source->gcicle(getcicle());
-//		if(!pc->count)
-//			return;
-//		this->tick = tick % pc->count;
-//	}
-//}
-//
-//static bool isanimationback(int action) {
-//	switch(action) {
-//	case ActionPrepareWeapon:
-//		return true;
-//	default:
-//		return false;
-//	}
-//}
-//
+
+void actor::setaction(animation_s value, bool backward) {
+	if(action > AnimateWeaponStand) {
+		static animation_s actions[13] = {
+			AnimateStand, AnimateWalk, AnimateWeaponTakeOn, AnimateWeaponHide, AnimateDodge,
+			AnimateWeaponThrust, AnimateWeaponSwing,
+			AnimateWeaponAim, AnimateWeaponAttack,
+			AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
+			AnimateWeaponThrow,
+		};
+		action = actions[(action - AnimateWeaponStand) % 13];
+	}
+	action = value;
+	frame = 0;
+	frame_maximum = getlastframe();
+	if(backward)
+		iswap(frame, frame_maximum);
+	if(action == AnimateStand)
+		next_stamp = gametick() + xrand(2 * 1000, 12 * 1000);
+	else
+		next_stamp = gametick() + 1000 / getfps();
+}
+
+void actor::update() {
+	unsigned current_tick = gametick();
+	if(!next_stamp)
+		next_stamp = current_tick + 1000 / getfps();
+	while(current_tick > next_stamp) {
+		next_stamp += 1000 / getfps();
+		auto ps = getsprite();
+		if(!ps)
+			return;
+		if(frame == frame_maximum) {
+			if(action == AnimateStand) {
+				frame = 0;
+				next_stamp += xrand(2, 8) * 500;
+			} else
+				setaction(AnimateStand);
+		} else {
+			if(frame < frame_maximum)
+				frame++;
+			else
+				frame--;
+		}
+	}
+}
+
 //void setaction(int action) {
 //	if(action < 0)
 //		action = 0;

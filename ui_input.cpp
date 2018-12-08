@@ -34,20 +34,6 @@ runstate::~runstate() {
 	game_running = value;
 }
 
-static int get_action_cicle(int action) {
-	switch(action) {
-	case Drop: return 254;
-	case Look: return 258;
-	case Talk: return 262;
-	case Turn: return 260;
-	case Unload: return 301;
-	case Use: return 264;
-	case UseItem: return 256;
-	case UseSkill: return 303;
-	default: return 252;
-	}
-}
-
 #ifdef _DEBUG
 static void paint_debug() {
 	static bool show_mouse;
@@ -110,7 +96,9 @@ static command_info* paint_action_menu_loop() {
 		auto y = rc.y1;
 		for(unsigned i = 0; i<cursor_actions.count; i++) {
 			auto id = cursor_actions[i].action;
-			auto an = get_action_cicle(id);
+			auto an = action_data[id].fid;
+			if(an == -1)
+				continue;
 			if(i != current_index)
 				an++;
 			draw::image(x, y, ps, ps->ganim(an, 0), ImageNoOffset);
@@ -146,6 +134,10 @@ void draw::setpause(bool value) {
 
 bool draw::ispause() {
 	return !game_running;
+}
+
+unsigned draw::gametick() {
+	return gamestamp;
 }
 
 cursorset::cursorset(res::tokens r, int f) : r(cursor_sprite), f(cursor_frame) {

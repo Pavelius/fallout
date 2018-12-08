@@ -273,8 +273,8 @@ void creature::inventory() {
 		else
 			chartext(x + 298, y + 48, 144, 180, *this);
 		itemview(x + 152, y + 184, 92, 60, armor, &item::isarmor, di, !info_mode, true);
-		itemview(x + 152, y + 287, 92, 60, weapon[0], &item::isweapon, di, !info_mode, true);
-		itemview(x + 245, y + 287, 92, 60, weapon[1], &item::isweapon, di, !info_mode, true);
+		itemview(x + 152, y + 287, 92, 60, weapons[0], &item::isweapon, di, !info_mode, true);
+		itemview(x + 245, y + 287, 92, 60, weapons[1], &item::isweapon, di, !info_mode, true);
 		backpack(x + 42, y + 40, 70, 300, *this, di, !info_mode);
 		if(info_mode && di.hilite) {
 			addaction(Look, action_look);

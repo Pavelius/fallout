@@ -247,7 +247,7 @@ enum animation_s : unsigned char {
 	AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
 	AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
 	AnimateBloodedBack, AnimateBloodedForward,
-	AnimateStandUpForward, AnimasteStandUpBack,
+	AnimateStandUpForward, AnimateStandUpBack,
 	// Dead body (1 frame animation)
 	AnimateDeadBackNoBlood, AnimateDeadForwardNoBlood,
 	AnimateDeadChest, AnimateDeadElectro,
@@ -256,11 +256,12 @@ enum animation_s : unsigned char {
 	AnimateDeadBlowup, AnimateDeadMelt, AnimateDeadFired,
 	AnimateDeadBack, AnimateDeadForward,
 	// Weapon Block
-	AnimateWeaponStand, AnimateWeaponWalk, AnimateWeaponTakeOn, AnimateWeaponTakeOff, AnimateWeaponDodge,
+	AnimateWeaponStand, AnimateWeaponWalk, AnimateWeaponTakeOn, AnimateWeaponHide, AnimateWeaponDodge,
 	AnimateWeaponThrust, AnimateWeaponSwing,
 	AnimateWeaponAim, AnimateWeaponAttack,
 	AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
 	AnimateWeaponThrow,
+	// Weapon Animate
 	AnimateClub,
 	AnimateHammer = AnimateClub + 13,
 	AnimateSpear = AnimateHammer + 13,
@@ -355,6 +356,9 @@ struct attack_info {
 	short				critical_fail;
 	int					perk;
 	unsigned char		burst;
+	int					getap(action_s id) const;
+	int					getrange(action_s id) const;
+	bool				is(action_s id) const;
 };
 struct ammo_info {
 	caliber_s			caliber;
@@ -402,6 +406,7 @@ struct formula {
 struct action_info {
 	const char*			id;
 	const char*			name;
+	const int			fid;
 };
 struct material_info {
 	const char*			id;
@@ -561,33 +566,43 @@ struct wearable {
 	aref<item*>			select(aref<item*> source) const;
 };
 struct actor : drawable, point, wearable {
-	constexpr actor() : point{0, 0}, action(AnimateStand), orientation(0), frame(0), timestart(0) {}
+	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0) {}
 	static int			byweapon(animation_s action, int weapon);
-	virtual item&		getarmor() const = 0;
 	int					getcicle() const;
-	int					getdistance(const point p1, const point p2);
-	virtual gender_s	getgender() const { return Male; }
-	static int			getlongest(const point from, const point to);
+	static int			getdistance(const point p1, const point p2);
+	unsigned			getfps() const { return 4; }
+	unsigned short		getlastframe() const;
+	static int			getlongest(const point p1, const point p2);
 	rect				getrect() const override;
+	unsigned char		getorientation() const { return orientation; }
 	static char			getorientation(point from, point to);
 	point				getposition() const override { return *this; }
-	const sprite*		getsprite() const;
+	virtual const sprite* getsprite() const = 0;
 	virtual item&		getweapon() const = 0;
 	bool				hittest(point position) const override { return false; }
 	void				moveto(point position, int run);
 	void				painting(point screen) const override;
 	static void			preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation = -1, animation_s action = AnimateStand, unsigned tick = 0, const rect& clip = {-40, -100, 40, 30});
-	void				setaction(animation_s value) { action = value; }
+	void				setaction(animation_s value, bool backward = false);
 	void				setorientation(unsigned char value) { orientation = value; }
-	void				setposition(point value) { x = value.x; x = value.y; }
-	virtual void		update() override {}
+	void				setposition(point value) { x = value.x; y = value.y; }
+	void				update() override;
+	void				wait();
 private:
 	animation_s			action;
 	unsigned char		orientation;
-	short unsigned		frame;
-	unsigned			timestart;
+	short unsigned		frame, frame_maximum;
+	unsigned			next_stamp;
 };
-struct creature : actor {
+struct weaponable {
+	unsigned char		weapon;
+	item				weapons[2];
+	char				weapon_action[2];
+	void				change_weapon() { weapon = weapon ? 0 : 1; }
+	char				getweaponactionindex() const { return weapon_action[weapon]; }
+	void				setweaponactionindex(int value) { weapon_action[weapon] = value; }
+};
+struct creature : actor, weaponable {
 	creature() { clear(); }
 	creature(const char* id) { create(id); }
 	void				add(const item& it);
@@ -606,13 +621,13 @@ struct creature : actor {
 	int					get(parameter_s id) const;
 	int					get(skill_s id) const;
 	char*				get(char* result, const char* result_maximum, variant id, bool show_maximum_only) const;
-	item&				getarmor() const override { return const_cast<creature*>(this)->armor; }
+	item&				getarmor() const { return const_cast<creature*>(this)->armor; }
 	int					getbase(skill_s id) const;
 	int					getcriticalmiss() const;
 	int					getequipweight() const;
 	int					getexperience() const { return experience; }
 	static const datetime& getdate();
-	gender_s			getgender() const override { return gender; }
+	gender_s			getgender() const { return gender; }
 	int					getlevel() const { return level; }
 	static ability_s	getmaximum(ability_s id);
 	const char*			getname() const { return name; }
@@ -620,11 +635,12 @@ struct creature : actor {
 	int					getpartylimit() const;
 	int					getperkrate() const;
 	static creature*	getplayer();
+	const sprite*		getsprite() const override;
 	static const pregen_info* getpregen(const char* id);
 	int					getskillrate() const;
-	item&				getweapon() const override { return const_cast<creature*>(this)->weapon[current_weapon]; }
-	item&				getweaponfirst() { return weapon[0]; }
-	item&				getweaponsecond() { return weapon[1]; }
+	item&				getweapon() const override { return const_cast<creature*>(this)->weapons[weapon]; }
+	item&				getweaponfirst() { return weapons[0]; }
+	item&				getweaponsecond() { return weapons[1]; }
 	void				increase(variant, int& points);
 	void				inventory();
 	bool				is(perk_s id) const { return (perks[id / 32] & (1 << (id % 32))) != 0; }
@@ -653,12 +669,10 @@ private:
 	unsigned char		skills[LastSkill + 1];
 	unsigned			perks[1 + LastTraits / 32];
 	unsigned			skills_tag;
-	item				armor, weapon[2], money;
+	item				armor, money;
 	unsigned char		wounds;
-	unsigned char		current_weapon;
 	unsigned			experience;
 	int					render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const;
-	void				render_actions();
 };
 struct settlement {
 	const char*			name;
@@ -710,23 +724,23 @@ private:
 	int					param;
 };
 void					addaction(action_s action, callback_proc proc, int param = 0);
+void					animate(int x, int y, sprite* ps, int cicle, int fps = 6, int frame = -1, int frame_end = -2);
 void					background(int frame);
 bool					buttonf(int x, int y, int cicles_normal, int cicle_pressed, bool checked = false, bool need_pressed = false, areas* ra = 0, rect* rrc = 0);
 void					buttonp(int x, int y, int circle_normal, int circle_pressed, const runable& ev, const char* string, int ty = 6);
 int						button(int x, int y, int width, const runable& ev, const char* string, unsigned key = 0);
 extern point			camera; // Current view on map
-void					debuginfo();
 void					dlgerr(const char* title, const char* format, ...);
 void					dlgmsg(const char* title, const char* text);
 void					field(int x, int y, int width, const runable& ev, const char* string, unsigned key = 0);
 void					focusing(const rect& rc, int id);
+unsigned				gametick();
 const actinfo*			getaction(const sprite* p, int action);
 int						getfocus();
 callback_proc			getlayout();
 int						getnext(int id, int key);
 unsigned				getstamp();
 unsigned				gettick(unsigned start);
-rect					getrect(int id);
 sprite*					gres(res::tokens id);
 const char*				getresname(res::tokens id);
 void					hexagon(int index, point screen);

@@ -5,8 +5,8 @@ static struct parameter_info {
 	const char*			name;
 	int					(creature::*get)() const;
 	const char*			description;
-} parameter_data[] = {{8, "Уровень", &creature::getlevel},
-{7, "Опыт", &creature::getexperience},
+} parameter_data[] = {{7, "Уровень", &creature::getlevel},
+{8, "Опыт", &creature::getexperience},
 {9, "След. Ур.", &creature::getnextlevel},
 };
 assert_enum(parameter, NextLevelExperience);

@@ -78,10 +78,14 @@ static void test_tile() {
 static void test_adventure() {
 	player.create("narg");
 	player.add(LeatherArmor);
+	player.add(SMG10mm);
 	player.add(Pistol10mm);
 	player.add(Knife);
 	player.add(Sledgehammer);
 	player.add(LaserRifle);
+	player.setposition({200, 300});
+	player.setorientation(2);
+	player.setaction(AnimateStand);
 	player.adventure();
 }
 

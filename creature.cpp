@@ -19,9 +19,9 @@ void creature::clear() {
 	ap = 0;
 	skills_tag = 0;
 	armor.clear();
-	weapon[0].clear();
-	weapon[1].clear();
-	current_weapon = 0;
+	weapons[0].clear();
+	weapons[1].clear();
+	weapon = 0;
 	memset(stats, 0, sizeof(stats));
 	memset(stats_boost, 0, sizeof(stats_boost));
 	memset(perks, 0, sizeof(perks));
@@ -212,8 +212,8 @@ int	creature::get(skill_s id) const {
 
 int	creature::getequipweight() const {
 	auto result = armor.getweight();
-	result += weapon[0].getweight();
-	result += weapon[1].getweight();
+	result += weapons[0].getweight();
+	result += weapons[1].getweight();
 	return result;
 }
 
@@ -273,12 +273,12 @@ bool creature::reload(item& target, bool run, bool interactive) {
 
 bool creature::equip(const item& it) {
 	if(it.isweapon()) {
-		if(!weapon[0]) {
-			weapon[0] = it;
+		if(!weapons[0]) {
+			weapons[0] = it;
 			return true;
 		}
-		if(!weapon[1]) {
-			weapon[1] = it;
+		if(!weapons[1]) {
+			weapons[1] = it;
 			return true;
 		}
 	} else if(it.isarmor()) {
@@ -343,6 +343,19 @@ void creature::get(hit_info& hi, const item weapon, action_s id) const {
 	} else {
 		if(is(Finesse))
 			hi.ammo.dam_resist += 30;
+		if(is(FastShoot)) {
+			for(auto i = 0; i < 2; i++) {
+				switch(hi.attack.actions[i]) {
+				case FireBurst:
+				case FireSingle:
+				case FireContinuous:
+				case Throwing:
+					if(hi.attack.ap[0]>1)
+						hi.attack.ap[0]--;
+					break;
+				}
+			}
+		}
 	}
 	hi.ammo.ac += get(hi.skill);
 	if(is(WoundLeftHand) && weapon.istwohanded())
@@ -371,4 +384,8 @@ int	creature::getcriticalmiss() const {
 
 void creature::damage(const damage_info& di) {
 	auto value = di.min + (rand() % (di.max - di.min));
+}
+
+const sprite* creature::getsprite() const {
+	return draw::gres(armor.getdress(gender));
 }

@@ -40,7 +40,7 @@ void anm_info::validate(int i) {
 
 void anm_info::validate_weapon(int i, int w) {
 	static animation_s copied_weapon[] = {
-		AnimateWeaponTakeOn, AnimateWeaponTakeOff, AnimateWeaponDodge,
+		AnimateWeaponTakeOn, AnimateWeaponHide, AnimateWeaponDodge,
 		AnimateWeaponThrust, AnimateWeaponSwing,
 		AnimateWeaponAim, AnimateWeaponAttack,
 		AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
@@ -83,7 +83,7 @@ void test_animate() {
 		AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
 		AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
 		AnimateBloodedBack, AnimateBloodedForward,
-		AnimateStandUpForward, AnimasteStandUpBack,
+		AnimateStandUpForward, AnimateStandUpBack,
 		//
 		AnimateDeadBackNoBlood, AnimateDeadForwardNoBlood,
 		AnimateDeadChest, AnimateDeadElectro,
