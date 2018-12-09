@@ -570,7 +570,7 @@ struct actor : drawable, point, wearable {
 	static int			byweapon(animation_s action, int weapon);
 	int					getcicle() const;
 	static int			getdistance(const point p1, const point p2);
-	unsigned			getfps() const { return 4; }
+	unsigned			getfps() const;
 	unsigned short		getlastframe() const;
 	static int			getlongest(const point p1, const point p2);
 	rect				getrect() const override;
@@ -580,6 +580,7 @@ struct actor : drawable, point, wearable {
 	virtual const sprite* getsprite() const = 0;
 	virtual item&		getweapon() const = 0;
 	bool				hittest(point position) const override { return false; }
+	bool				ismoving() const;
 	void				moveto(point position, int run);
 	void				painting(point screen) const override;
 	static void			preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation = -1, animation_s action = AnimateStand, unsigned tick = 0, const rect& clip = {-40, -100, 40, 30});
@@ -593,6 +594,7 @@ private:
 	unsigned char		orientation;
 	short unsigned		frame, frame_maximum;
 	unsigned			next_stamp;
+	void				moveshift();
 };
 struct weaponable {
 	unsigned char		weapon;
@@ -698,6 +700,7 @@ struct actinfo {
 	unsigned short		speed;
 	unsigned short		action;
 	int					count;
+	point				offset[6];
 };
 struct command_info {
 	action_s			action;

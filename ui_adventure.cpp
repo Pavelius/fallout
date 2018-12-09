@@ -233,10 +233,12 @@ void creature::adventure() {
 		case KeyUp: camera.y -= tile_width / 2; break;
 		case KeyDown: camera.y += tile_width / 2; break;
 		case Alpha + '-':
-			player.setorientation((player.getorientation() - 1) % 6);
+			if(player.getorientation())
+				player.setorientation(player.getorientation() - 1);
 			break;
 		case Alpha + '+':
-			player.setorientation((player.getorientation() + 1) % 6);
+			if(player.getorientation()<5)
+				player.setorientation(player.getorientation() + 1);
 			break;
 		case Alpha + 'T':
 			player.setaction(AnimateDodge);
@@ -263,6 +265,9 @@ void creature::adventure() {
 			player.wait();
 			player.setaction(AnimateWeaponHide, true);
 			player.wait();
+			break;
+		case Alpha + 'W':
+			player.setaction(AnimateWalk);
 			break;
 		}
 	}

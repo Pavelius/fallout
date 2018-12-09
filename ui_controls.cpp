@@ -238,7 +238,7 @@ void draw::iteminv(int x, int y, int sx, int sy, item& it, bool resize) {
 }
 
 void draw::animate(int x, int y, sprite* ps, int cicle, int fps, int frame, int frame_end) {
-	auto pc = ps->gcicle(cicle);
+	auto pc = ps->getcicle(cicle);
 	if(!pc || !pc->count)
 		return;
 	auto fb = pc->start;

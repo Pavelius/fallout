@@ -27,8 +27,8 @@ unsigned short actor::getlastframe() const {
 	auto ps = getsprite();
 	if(!ps)
 		return 0;
-	auto pc = ps->gcicle(getcicle());
-	if(!pc || !pc->count)
+	auto pc = ps->getcicle(getcicle());
+	if(!pc->count)
 		return 0;
 	return pc->count - 1;
 }
@@ -64,29 +64,6 @@ rect actor::getrect() const {
 }
 
 void actor::moveto(point position, int run) {}
-
-void actor::painting(point camera) const {
-	auto ps = getsprite();
-	if(!ps)
-		return;
-	auto pc = ps->gcicle(getcicle());
-	if(!pc->count)
-		return;
-	point pt = getposition() - camera;
-	if(action == AnimateRun || action == AnimateWalk) {
-		//auto pa = getaction(source, cicle / 6);
-		//if(!pa)
-		//	return;
-		//auto pf = source->get(frame);
-		//draw::image(
-		//	pt.x - pf.sx / 2 + pa->offset[orientation].x,
-		//	pt.y - pf.sy + pa->offset[orientation].y,
-		//	source, frame, ImageNoOffset);
-	} else {
-		auto fr = pc->start + frame;
-		image(pt.x, pt.y, ps, fr, 0);
-	}
-}
 
 char actor::getorientation(point from, point to) {
 	static const char orientations[25] = {
@@ -207,30 +184,87 @@ void actor::setaction(animation_s value, bool backward) {
 		next_stamp = gametick() + xrand(2 * 1000, 12 * 1000);
 	else
 		next_stamp = gametick() + 1000 / getfps();
+	if(ismoving())
+		moveshift();
+}
+
+unsigned actor::getfps() const {
+	return 4;
+	auto ps = getsprite();
+	if(!ps)
+		return 8;
+	auto pi = getaction(ps, getcicle() / 6);
+	if(!pi)
+		return 8;
+	return pi->speed;
+}
+
+void actor::moveshift() {
+	auto ps = getsprite();
+	if(!ps)
+		return;
+	auto pc = ps->getcicle(getcicle());
+	auto& pf = ps->get(pc->start + frame);
+	x += pf.ox;
+	y += pf.oy;
+}
+
+bool actor::ismoving() const {
+	return action == AnimateWalk
+		|| action == AnimateRun
+		|| action == AnimateWeaponWalk;
 }
 
 void actor::update() {
-	unsigned current_tick = gametick();
 	if(!next_stamp)
-		next_stamp = current_tick + 1000 / getfps();
-	while(current_tick > next_stamp) {
-		next_stamp += 1000 / getfps();
-		auto ps = getsprite();
-		if(!ps)
-			return;
-		if(frame == frame_maximum) {
-			if(action == AnimateStand) {
-				frame = 0;
-				next_stamp += xrand(2, 8) * 500;
-			} else
-				setaction(AnimateStand);
-		} else {
-			if(frame < frame_maximum)
-				frame++;
-			else
-				frame--;
-		}
+		return;
+	if(gametick() < next_stamp)
+		return;
+	next_stamp += 1000 / getfps();
+	auto ps = getsprite();
+	if(!ps)
+		return;
+	auto need_shift = ismoving();
+	if(frame == frame_maximum) {
+		if(action == AnimateStand) {
+			frame = 0;
+			next_stamp += xrand(2 * 1000, 8 * 1000);
+		} else if (need_shift) {
+			frame = 0;
+			moveshift();
+		} else
+			setaction(AnimateStand);
+		return;
 	}
+	if(frame < frame_maximum)
+		frame++;
+	else
+		frame--;
+	if(need_shift)
+		moveshift();
+}
+
+void actor::painting(point camera) const {
+	auto ps = getsprite();
+	if(!ps)
+		return;
+	auto cl = getcicle();
+	auto pc = ps->getcicle(cl);
+	if(!pc->count)
+		return;
+	point pt = getposition() - camera;
+	auto fi = pc->start + frame;
+	if(action == AnimateRun || action == AnimateWalk) {
+		auto pa = getaction(ps, cl / 6);
+		if(!pa)
+			return;
+		auto& pf = ps->get(fi);
+		draw::image(
+			pt.x - pf.sx / 2 + pa->offset[orientation].x,
+			pt.y - pf.sy + pa->offset[orientation].y,
+			ps, fi, ImageNoOffset);
+	} else
+		image(pt.x, pt.y, ps, fi, 0);
 }
 
 //void setaction(int action) {

@@ -113,9 +113,9 @@ int main(int argc, char* argv[]) {
 	initialize();
 	setfont(res::FONT1);
 	setpause(false);
-	setlayout(mainmenu);
+	//setlayout(mainmenu);
 	//test_tile();
-	//test_animate();
+	test_animate();
 	return 0;
 }
 

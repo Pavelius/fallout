@@ -1970,12 +1970,10 @@ int pma::find(const char* name) const {
 int sprite::ganim(int index, int tick) {
 	if(!cicles)
 		return 0;
-	cicle* c = gcicle(index);
+	cicle* c = getcicle(index);
 	if(!c->count)
 		return 0;
-	if(flags&NoIndex)
-		return c->start + tick % c->count;
-	return gindex(c->start + tick % c->count);
+	return c->start + tick % c->count;
 }
 
 int sprite::glyph(unsigned sym) const {

@@ -24,7 +24,7 @@ void animable::update() {
 		auto source = gres(icn);
 		if(!source)
 			return;
-		auto pc = source->gcicle(action);
+		auto pc = source->getcicle(action);
 		if(++tick >= pc->count)
 			tick = 0;
 		timestart += timeout;
@@ -35,7 +35,7 @@ void animable::painting(point camera) const {
 	sprite* source = gres(icn);
 	if(!source)
 		return;
-	auto pc = source->gcicle(action);
+	auto pc = source->getcicle(action);
 	if(!pc->count)
 		return;
 	int frame = pc->start + tick;
@@ -47,7 +47,7 @@ bool animable::hittest(point camera) const {
 	sprite* source = gres(icn);
 	if(!source)
 		return false;
-	auto pc = source->gcicle(action);
+	auto pc = source->getcicle(action);
 	if(!pc->count)
 		return false;
 	int frame = pc->start + tick;
