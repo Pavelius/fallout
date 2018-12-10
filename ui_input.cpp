@@ -20,19 +20,9 @@ static hotinfo				keep_hot_value;
 static unsigned				mouse_left_pressed;
 static bool					mouse_left_pressed_action;
 static focusable_element*	render_control;
-static bool					game_running;
-static unsigned				gamestamp;
 static unsigned				timestamp;
 void						apply_pallette_cicle(unsigned char* pal, unsigned stamp);
 point						draw::camera;
-
-runstate::runstate(bool new_value) : value(game_running) {
-	game_running = new_value;
-}
-
-runstate::~runstate() {
-	game_running = value;
-}
 
 #ifdef _DEBUG
 static void paint_debug() {
@@ -52,16 +42,9 @@ static void paint_debug() {
 #endif
 
 static void update_timestamp() {
-	static unsigned last;
 	timestamp = clock();
-	if(game_running) {
-		if(!last)
-			last = timestamp;
-		gamestamp += (timestamp - last);
-	}
 	if(draw::palt)
 		apply_pallette_cicle((unsigned char*)draw::palt, timestamp);
-	last = timestamp;
 }
 
 static command_info* paint_action_menu_loop() {
@@ -126,18 +109,6 @@ static bool paint_action_menu() {
 	if(pa->proc)
 		pa->proc();
 	return true;
-}
-
-void draw::setpause(bool value) {
-	game_running = !value;
-}
-
-bool draw::ispause() {
-	return !game_running;
-}
-
-unsigned draw::gametick() {
-	return gamestamp;
 }
 
 cursorset::cursorset(res::tokens r, int f) : r(cursor_sprite), f(cursor_frame) {

@@ -2,6 +2,29 @@
 
 using namespace draw;
 
+static bool			game_running;
+static unsigned		gamestamp;
+
+runstate::runstate(bool new_value) : value(game_running) {
+	game_running = new_value;
+}
+
+runstate::~runstate() {
+	game_running = value;
+}
+
+void draw::setpause(bool value) {
+	game_running = !value;
+}
+
+bool draw::ispause() {
+	return !game_running;
+}
+
+unsigned draw::gametick() {
+	return gamestamp;
+}
+
 //static void game_map(rect& rc, cursorset& cursor) {
 //	static bool info_mode;
 //	game_index = 0;
@@ -171,6 +194,12 @@ static void render_actions() {
 }
 
 static void update_logic() {
+	static unsigned last;
+	auto timestamp = clock();
+	if(!last)
+		last = timestamp;
+	gamestamp += (timestamp - last);
+	last = timestamp;
 	player.update();
 }
 
@@ -197,7 +226,7 @@ void creature::adventure() {
 				player.setorientation(player.getorientation() - 1);
 			break;
 		case Alpha + '+':
-			if(player.getorientation()<5)
+			if(player.getorientation() < 5)
 				player.setorientation(player.getorientation() + 1);
 			break;
 		case Alpha + 'T':
