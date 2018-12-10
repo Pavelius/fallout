@@ -28,6 +28,8 @@ struct anm_info {
 	void			validate(int dir);
 	void			validate_weapon(int dir, int w);
 };
+void				convert_creature(res::tokens id);
+void				convert_creature_bs(res::tokens id);
 lst_info			criters_lst[];
 msg_info			lst_pro_crit[];
 msg_info			lst_pro_item[];

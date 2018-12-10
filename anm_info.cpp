@@ -70,6 +70,7 @@ constexpr animation_s ganm(animation_s w, animation_s a) {
 void test_animate() {
 	char temp[260];
 	anm_info ai = {};
+	convert_creature_bs(res::HMLTHR);
 	static animation_s actions[] = {AnimateStand, AnimatePickup, AnimateUse, AnimateDodge,
 		AnimateDamaged, AnimateDamagedRear,
 		AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
@@ -214,4 +215,5 @@ void test_animate() {
 		}
 	}
 	ai.serialize(last_id, true);
+	convert_creature(res::HMLTHR);
 }

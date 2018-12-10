@@ -165,7 +165,7 @@ int actor::getdistance(const point p1, const point p2) {
 //}
 
 void actor::setaction(animation_s value, bool backward) {
-	if(action > AnimateWeaponStand) {
+	if(value > AnimateWeaponStand) {
 		static animation_s actions[13] = {
 			AnimateStand, AnimateWalk, AnimateWeaponTakeOn, AnimateWeaponHide, AnimateDodge,
 			AnimateWeaponThrust, AnimateWeaponSwing,
@@ -173,7 +173,7 @@ void actor::setaction(animation_s value, bool backward) {
 			AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
 			AnimateWeaponThrow,
 		};
-		action = actions[(action - AnimateWeaponStand) % 13];
+		value = actions[(value - AnimateWeaponStand) % 13];
 	}
 	action = value;
 	frame = 0;

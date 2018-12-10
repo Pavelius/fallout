@@ -148,9 +148,12 @@ static void open_charsheet() {
 static void open_pipboy() {}
 
 static void change_weapon_proc() {
-	player.setaction(AnimateWeaponTakeOn);
+	player.setaction(AnimateWeaponHide);
+	player.wait();
 	player.change_weapon();
 	correct_weapon_action();
+	player.setaction(AnimateWeaponHide, true);
+	player.wait();
 }
 
 static void render_console(const rect& rc) {

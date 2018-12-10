@@ -101,7 +101,7 @@ static void mainmenu() {
 			field(x, y, 100, cmd(show_invertory), "Предметы", Alpha + 'I'); y += 41;
 			field(x, y, 100, cmd(test_animate), "Анимация", Alpha + 'A'); y += 41;
 			field(x, y, 100, cmd(test_tile), "Тайлы", Alpha + 'T'); y += 41;
-			field(x, y, 100, cmd(test_adventure), "Приключения", Alpha + 'G'); y += 41;
+			field(x, y, 100, cmd(test_adventure), "Игра", Alpha + 'G'); y += 41;
 		}
 		domodal();
 	}
@@ -115,7 +115,6 @@ int main(int argc, char* argv[]) {
 	setpause(false);
 	setlayout(mainmenu);
 	//test_tile();
-	//test_animate();
 	return 0;
 }
 
