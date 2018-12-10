@@ -177,6 +177,13 @@ static void change_weapon_proc() {
 	correct_weapon_action();
 }
 
+static void render_console(const rect& rc) {
+	draw::state push;
+	//rectb(rc, colors::red);
+	setclip(rc);
+	textf(rc.x1, rc.y1, rc.width(), " рутизна позвол€ет вам не замечать мелкие жизненный непри€тности. ¬ы получаете 10 процентов устойчивости к повреждени€м.");
+}
+
 static void render_actions() {
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
@@ -207,7 +214,7 @@ static void render_actions() {
 	}
 	numbersm(x + 472, y + 38, 4, player.get(HP));
 	numbersm(x + 472, y + 76, 4, player.get(AC));
-	//console(x1 + 28, y1 + 35, 155, 50, "Ёто длинна€ строка по идее должна разбитьс€ на несколько коротких строчек с переносом. „тобы еще добавить? ќна должна скроллитьс€. »нтеллект отвечает за пам€ть, скорость реакции и способность оценивать событи€. ¬ысокий »нтеллект важен дл€ всех. ¬ли€ет на количество очков умений на уровень, режимы диалога и многие способности.");
+	render_console({x + 28, y + 32, x + 186, y + 82});
 }
 
 static void update_logic() {
