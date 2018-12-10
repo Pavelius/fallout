@@ -141,36 +141,12 @@ void draw::hexagon(int index, point camera) {
 	image(pt.x - pf.sx / 2, pt.y - pf.sy / 2, ps, fr, ImageNoOffset);
 }
 
-void draw::number(int x, int y, int digits, int value) {
-	draw::state push;
+static void render_number(int x, int y, int digits, int value, const sprite* ps, int cicle, int symbol_offset, int symbol_width, int symbol_height) {
 	char temp[16];
-	int fid = 170;
-	int n = 0;
-	if(value < 0) {
-		n = 12;
-		value = -value;
-	}
-	sznum(temp, value, digits, 0);
-	for(int i = 0; i < digits; i++) {
-		draw::clipping.x1 = x + i * 14;
-		draw::clipping.x2 = x + (i + 1) * 14;
-		draw::clipping.y1 = y;
-		draw::clipping.y2 = y + 24;
-		draw::image(x + i * 14 - (temp[i] - '0' + n) * 14, y, res::INTRFACE, 170, ImageNoOffset);
-	}
-}
-
-void draw::numbersm(int x, int y, int digits, int value, int group) {
-	const int symbol_width = 9;
-	const int symbol_height = 17;
-	const int group_width = 120;
-	char temp[16];
-	auto ps = gres(res::INTRFACE);
 	if(!ps)
 		return;
-	auto fr = ps->ganim(82, 0);
-	auto pf = ps->get(fr);
-	int n = 0;
+	auto fr = ps->ganim(cicle, 0);
+	auto& pf = ps->get(fr);
 	sznum(temp, value, digits, 0);
 	draw::state push;
 	for(int i = 0; i < digits; i++) {
@@ -179,9 +155,40 @@ void draw::numbersm(int x, int y, int digits, int value, int group) {
 		draw::clipping.y1 = y;
 		draw::clipping.y2 = y + symbol_height;
 		int sym = (temp[i] == '-') ? 12 : temp[i] - '0';
-		draw::image(x + i * symbol_width - sym * symbol_width - group * group_width, y, ps, fr, ImageNoOffset);
+		draw::image(x + (i-sym) * symbol_width - symbol_offset, y, ps, fr, ImageNoOffset);
 	}
-	//draw::rectb({x, y, x + digits*symbol_width, y + symbol_height}, colors::green);
+}
+
+void draw::number(int x, int y, int digits, int value) {
+	if(value>=0)
+		render_number(x, y, digits, value, gres(res::INTRFACE), 170, 0, 14, 24);
+	else
+		render_number(x, y, digits, value, gres(res::INTRFACE), 170, 12*14, 14, 24);
+}
+
+void draw::numbersm(int x, int y, int digits, int value, int group) {
+	render_number(x, y, digits, value, gres(res::INTRFACE), 82, group * 120, 9, 17);
+}
+
+void draw::numberap(int x, int y, int value) {
+	const int symbol_width = 10;
+	const int symbol_height = 11;
+	char temp[16];
+	auto ps = gres(res::INTRFACE);
+	if(!ps)
+		return;
+	auto fr = ps->ganim(290, 0);
+	auto& pf = ps->get(fr);
+	sznum(temp, value);
+	draw::state push;
+	for(int i = 0; temp[i]; i++) {
+		draw::clipping.x1 = x + i * symbol_width;
+		draw::clipping.x2 = x + (i + 1) * symbol_width;
+		draw::clipping.y1 = y;
+		draw::clipping.y2 = y + symbol_height;
+		int sym = (temp[i] == '-') ? 12 : temp[i] - '0';
+		draw::image(x + (i - sym) * symbol_width, y, ps, fr, ImageNoOffset);
+	}
 }
 
 void draw::image(int x, int y, res::tokens token, int cicle, int flags, unsigned char alpha) {

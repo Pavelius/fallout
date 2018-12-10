@@ -1967,7 +1967,7 @@ int pma::find(const char* name) const {
 	return 0;
 }
 
-int sprite::ganim(int index, int tick) {
+int sprite::ganim(int index, int tick) const {
 	if(!cicles)
 		return 0;
 	cicle* c = getcicle(index);

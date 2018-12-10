@@ -112,7 +112,7 @@ struct sprite : pma {
 	void				create(int count, int cicles, int additional_bytes);
 	int					esize() const { return frames[0].offset - (sizeof(sprite) + sizeof(frame)*(count - 1)); }
 	const unsigned char* edata() const { return (const unsigned char*)this + sizeof(sprite) + sizeof(frame)*(count - 1); }
-	int					ganim(int index, int tick);
+	int					ganim(int index, int tick) const;
 	const frame&		get(int id) const { return frames[(id >= count) ? 0 : id]; }
 	cicle*				getcicle(int index) const { return (cicle*)ptr(cicles_offset) + index; }
 	int					glyph(unsigned sym) const;

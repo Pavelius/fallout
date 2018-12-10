@@ -39,54 +39,6 @@ using namespace draw;
 //	}
 //}
 
-//static void show_combat_animation(bool finish = false) {
-//	game::state push;
-//	auto ps = gres(res::INTRFACE);
-//	if(!ps)
-//		return;
-//	game::setpause(true);
-//	draw::screenshoot screen;
-//	cursorset cursor;
-//	cursor.set(res::INTRFACE, 295);
-//	auto cl = ps->gcicle(104);
-//	unsigned timestart = clock();
-//	int fr = finish ? cl->count - 1 : 0;
-//	while(true) {
-//		screen.restore();
-//		draw::image(608, 477, ps, cl->start + fr, 0);
-//		draw::sysredraw();
-//		if(timestart <= clock()) {
-//			timestart += animation_speed;
-//			if(finish) {
-//				if(--fr < 0)
-//					break;
-//			} else {
-//				if(++fr >= cl->count)
-//					break;
-//			}
-//		}
-//	}
-//}
-
-//static void wait(int player) {
-//	draw::state push;
-//	draw::mouseinput = false;
-//	int a = bsget(player, Animation);
-//	if(a == ActionStand)
-//		return;
-//	cursorset cursor(res::INTRFACE, 295);
-//	while(true) {
-//		dwupdate();
-//		int a = bsget(player, Animation);
-//		if(a == ActionStand)
-//			return;
-//		rect rc = {0, 0, draw::getwidth(), draw::getheight()};
-//		game_panel(rc, player);
-//		game_map(rc, cursor);
-//		draw::input(true);
-//	}
-//}
-
 static void open_invertory() {
 	player.inventory();
 }
@@ -161,7 +113,8 @@ static void render_item(int x, int y) {
 		if((a == AreaHilited || a == AreaHilitedPressed) && hot.key == MouseRight && !hot.pressed)
 			execute(change_weapon_action);
 		hit_info hi = {}; player.get(hi, wp, ac);
-		draw::image(rc.x1 + 16, rc.y1 + 56, ps, ps->ganim(289, getstamp()), 0);
+		draw::image(rc.x1 + 16, rc.y1 + 56, ps, ps->ganim(289, 0), 0);
+		draw::numberap(rc.x1 + 30, rc.y1 + 45, hi.attack.getap(ac));
 	}
 }
 
@@ -181,7 +134,7 @@ static void render_console(const rect& rc) {
 	draw::state push;
 	//rectb(rc, colors::red);
 	setclip(rc);
-	textf(rc.x1, rc.y1, rc.width(), " рутизна позвол€ет вам не замечать мелкие жизненный непри€тности. ¬ы получаете 10 процентов устойчивости к повреждени€м.");
+	textf(rc.x1, rc.y1, rc.width(), " рутизна позвол€ет вам не [-замечать] мелкие жизненный непри€тности. ¬ы получаете 10 процентов устойчивости к повреждени€м.");
 }
 
 static void render_actions() {
