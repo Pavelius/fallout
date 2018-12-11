@@ -67,6 +67,61 @@ constexpr animation_s ganm(animation_s w, animation_s a) {
 	return animation_s(w + (a - AnimateWeaponStand));
 }
 
+void test_frame_animate() {
+	char temp[260];
+	anm_info ai = {};
+	convert_creature_bs(res::HMLTHR);
+	static animation_s actions[] = {AnimateStand,
+		AnimatePistol, AnimateSMG, AnimateClub, AnimateRifle, AnimateWeaponStand
+	};
+	static res::tokens resources[] = {res::HMLTHR, res::HMCMBT, res::HFLTHR};
+	int resource = 0, action = 0, orientation = 2, weapon = 0;
+	bool fast_stand = false;
+	bool freezy_frame = false;
+	bool show_red = true;
+	bool lock_stand = true;
+	bool normal_mode = false;
+	animation_s am = AnimateStand;
+	res::tokens last_id = res::NoRes;
+	auto rsin = gres(res::INTRFACE);
+	draw::surface original(320, 240, 32);
+	while(ismodal()) {
+		mmax(action, 0, sizeof(actions) / sizeof(actions[0]) - 1);
+		rectf({0, 0, getwidth(), getheight()}, colors::gray);
+		short x = 160, y = 160;
+		point pt = {x, y};
+		auto a = actions[action];
+		auto* pa = ai.points + (a * 6 + orientation);
+		auto ps = gres(resources[resource]);
+		auto tick = getstamp() / 200;
+		auto c1 = a * 6 + orientation;
+		auto fi = ps->ganim(c1, freezy_frame ? 0 : tick);
+		auto& fr = ps->get(fi);
+		if(true) {
+			draw::state push;
+			canvas = &original; setclip();
+			rectf({0, 0, getwidth(), getheight()}, colors::gray);
+			szprint(zend(temp), zendof(temp), " {%1i, %2i}, {%3i, %4i}", fr.sx, fr.sy, fr.ox, fr.oy);
+			image(x - 32 / 2, y - 16 / 2, rsin, 1, ImageNoOffset);
+			if(!normal_mode)
+				pt = pt + *pa;
+			image(pt.x, pt.y, ps, fi, 0);
+			if(show_red) {
+				line(x - 4, y, x + 4, y, colors::red);
+				line(x, y - 4, x, y + 4, colors::red);
+			}
+		}
+		scale2x(canvas->ptr(0, 0), canvas->scanline,
+			original.ptr(0, 0), original.scanline,
+			original.width, original.height);
+		domodal();
+		switch(hot.key) {
+		case Alpha + 'A': action--; ai.serialize(last_id, true); break;
+		case Alpha + 'S': action++; ai.serialize(last_id, true); break;
+		}
+	}
+}
+
 void test_animate() {
 	char temp[260];
 	anm_info ai = {};

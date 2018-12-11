@@ -76,6 +76,7 @@ static void test_tile() {
 }
 
 static void test_adventure() {
+	map.clear();
 	player.create("narg");
 	player.add(LeatherArmor);
 	player.add(SMG10mm);
@@ -83,11 +84,13 @@ static void test_adventure() {
 	player.add(Knife);
 	player.add(Sledgehammer);
 	player.add(LaserRifle);
-	player.setposition({200, 300});
+	player.setposition({600, 100});
 	player.setorientation(2);
 	player.setaction(AnimateStand);
 	player.adventure();
 }
+
+void test_frame_animate();
 
 static void mainmenu() {
 	while(ismodal()) {
@@ -98,7 +101,7 @@ static void mainmenu() {
 			draw::setfont(res::FONT4);
 			field(x, y, 100, cmd(new_game), "История"); y += 41;
 			field(x, y, 100, cmd(show_worldmap), "Загрузить"); y += 41;
-			field(x, y, 100, cmd(show_invertory), "Предметы", Alpha + 'I'); y += 41;
+			field(x, y, 100, cmd(test_frame_animate), "Предметы", Alpha + 'I'); y += 41;
 			field(x, y, 100, cmd(test_animate), "Анимация", Alpha + 'A'); y += 41;
 			field(x, y, 100, cmd(test_tile), "Тайлы", Alpha + 'T'); y += 41;
 			field(x, y, 100, cmd(test_adventure), "Игра", Alpha + 'G'); y += 41;

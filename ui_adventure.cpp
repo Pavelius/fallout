@@ -207,14 +207,24 @@ static void update_logic() {
 }
 
 static void render_screen() {
-	rect rc = {0, 0, draw::getwidth(), draw::getheight()};
-	rectf(rc, colors::gray);
+	char temp[260];
+	auto hotspot = camera + hot.mouse;
+	auto mapspot = s2m(hotspot);
+	auto hexpos = h2m(hotspot);
+	map.render_tiles({0, 0}, camera);
 	render_area();
 	render_actions();
+	draw::hexagon(2, camera);
+	draw::hexagon(3, camera);
+	draw::hexagon(4, camera);
+	draw::hexagon(5, camera);
+	szprint(temp, zendof(temp), "mouse(%1i, %2i), hex(%3i, %4i)", hotspot.x, hotspot.y, hexpos.x, hexpos.y);
+	draw::text(10, 10, temp);
 }
 
 void creature::adventure() {
 	cursorset cursor;
+	camera = {400, -100};
 	while(ismodal() && player.isalive()) {
 		render_screen();
 		update_logic();

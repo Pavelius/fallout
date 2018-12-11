@@ -687,6 +687,7 @@ struct map_info {
 	static const unsigned width = 100;
 	void				clear();
 	short unsigned		geti(int x, int y) const;
+	short unsigned		gettile(short unsigned index) const;
 	short unsigned		moveto(short unsigned index, direction_s d);
 	void				render_tiles(point screen, point camera);
 	void				settile(short unsigned index, short unsigned value);
@@ -795,6 +796,7 @@ extern creature			player;
 extern adat<creature, 128> creature_data;
 extern resist_info		damage_data[];
 extern gender_info		gender_data[];
+extern map_info			map;
 extern material_info	material_data[];
 extern perk_info		perk_data[];
 extern skill_info		skill_data[];

@@ -1,6 +1,7 @@
 #include "main.h"
 
 const unsigned short	Blocked = 0xFFFF;
+map_info				map;
 const int				stx = tile_width / 5; // 16 - Ширина юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 const int				sty = tile_height / 3; // 12 - Высота юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 
@@ -52,6 +53,12 @@ short unsigned map_info::geti(int x, int y) const {
 	if(((unsigned)x) >= width || ((unsigned)y) >= height)
 		return Blocked;
 	return y * width + x;
+}
+
+short unsigned map_info::gettile(short unsigned index) const {
+	if(index == Blocked)
+		return 0;
+	return tiles[index];
 }
 
 void map_info::settile(short unsigned index, short unsigned value) {
@@ -116,7 +123,7 @@ void map_info::render_tiles(point screen, point camera) {
 		for(int x = x1; x < x2; x++) {
 			if(x < 0 || x >= width)
 				continue;
-			auto tv = geti(x, y);
+			auto tv = gettile(geti(x, y));
 			if(tv > 1) {
 				point pt = m2s(x, y);
 				point pz = pt + screen - camera;
