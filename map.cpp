@@ -61,6 +61,28 @@ short unsigned map_info::gettile(short unsigned index) const {
 	return tiles[index];
 }
 
+short unsigned map_info::getwall(short unsigned index) const {
+	if(index == Blocked)
+		return 0;
+	return walls[index];
+}
+
+void map_info::setscene(int x, int y, short unsigned value) {
+	scenery* ps = 0;
+	auto pt = m2h(x, y);
+	for(auto& e : scenes) {
+		if(pt.x == e.x && pt.y == e.y) {
+			ps = &e;
+			break;
+		}
+	}
+	if(!ps)
+		ps = scenes.add();
+	ps->x = pt.x;
+	ps->y = pt.y;
+	ps->type = value;
+}
+
 void map_info::settile(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
@@ -131,4 +153,8 @@ void map_info::render_tiles(point screen, point camera) {
 			}
 		}
 	}
+}
+
+adat<scenery, 512>& map_info::getscenes() {
+	return scenes;
 }

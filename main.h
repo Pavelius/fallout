@@ -519,8 +519,7 @@ private:
 	int					action;
 };
 struct drawable {
-	virtual int			getcursor() const { return 0; } // Get cursor index when over this drawable
-	virtual unsigned	getfps() const { return 20; }
+	virtual unsigned	getfps() const { return 8; }
 	virtual point		getposition() const = 0;
 	virtual rect		getrect() const = 0;
 	virtual int			getzorder() const { return 0; } // Priority for z-order sortering (lesser was be most visible). If there is two drawable in same position.
@@ -682,19 +681,30 @@ struct settlement {
 	char				size;
 	unsigned			flags;
 };
+struct scenery : drawable, point {
+	short unsigned		type;
+	constexpr scenery() : point{0, 0}, type(0) {}
+	point				getposition() const override { return *this; }
+	rect				getrect() const override { return {x-64, y- 64, x+ 64, y+64};}
+	void				painting(point position) const override;
+};
 struct map_info {
 	static const unsigned height = 100;
 	static const unsigned width = 100;
 	void				clear();
 	short unsigned		geti(int x, int y) const;
+	adat<scenery, 512>&	getscenes();
 	short unsigned		gettile(short unsigned index) const;
+	short unsigned		getwall(short unsigned index) const;
 	short unsigned		moveto(short unsigned index, direction_s d);
 	void				render_tiles(point screen, point camera);
+	void				setscene(int x, int y, short unsigned value);
 	void				settile(short unsigned index, short unsigned value);
 	void				setwall(unsigned char index, short unsigned value);
 private:
 	unsigned short		tiles[width*height];
 	unsigned short		walls[width*height * 4];
+	adat<scenery, 512>	scenes;
 };
 namespace draw {
 struct actinfo {
@@ -799,6 +809,7 @@ extern gender_info		gender_data[];
 extern map_info			map;
 extern material_info	material_data[];
 extern perk_info		perk_data[];
+extern adat<scenery, 512> scenery_data;
 extern skill_info		skill_data[];
 extern tile_info		tile_data[];
 extern wall_info		wall_data[];

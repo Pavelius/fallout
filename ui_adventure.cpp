@@ -106,8 +106,32 @@ static void change_weapon_action() {
 	correct_weapon_action();
 }
 
+static int compare_drawable(const void* p1, const void* p2) {
+	auto d1 = *((drawable**)p1);
+	auto d2 = *((drawable**)p2);
+	auto z1 = d1->getposition();
+	auto z2 = d2->getposition();
+	z1.y += d1->getzorder();
+	z2.y += d2->getzorder();
+	if(z1.y < z2.y)
+		return -1;
+	if(z1.y > z2.y)
+		return 1;
+	if(z1.x < z2.x)
+		return -1;
+	if(z1.x > z2.x)
+		return 1;
+	return 0;
+}
+
 static void render_area() {
-	player.painting(camera);
+	adat<drawable*, 512> source;
+	source.add(&player);
+	for(auto& e : map.getscenes())
+		source.add(&e);
+	qsort(source.data, source.count, sizeof(source.data[0]), compare_drawable);
+	for(auto p : source)
+		p->painting(camera);
 }
 
 static void render_item(int x, int y) {
