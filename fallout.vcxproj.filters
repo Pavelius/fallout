@@ -199,6 +199,9 @@
     <ClCompile Include="scenery.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="archive.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collection.h">
@@ -245,6 +248,9 @@
     </ClInclude>
     <ClInclude Include="util.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="archive.h">
+      <Filter>support</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -83,11 +83,11 @@ struct weaponwear {
 		correct();
 	}
 	void correct() {
-		if(weapons.weapon_action[weapons.weapon] >= (int)actions.count)
-			weapons.weapon_action[weapons.weapon] = 0;
+		if(weapons.weapon_action[0] >= (int)actions.count)
+			weapons.weapon_action[0] = 0;
 	}
 	int getindex() const {
-		return weapons.weapon_action[weapons.weapon];
+		return weapons.weapon_action[0];
 	}
 	action_s getaction() const {
 		if(!actions)
@@ -102,7 +102,7 @@ static void correct_weapon_action() {
 }
 
 static void change_weapon_action() {
-	player.weapon_action[player.weapon]++;
+	player.weapon_action[0]++;
 	correct_weapon_action();
 }
 
@@ -230,27 +230,76 @@ static void update_logic() {
 	player.update();
 }
 
-static void render_screen() {
+static void render_screen(point& hilite_hex) {
 	char temp[260];
 	auto hotspot = camera + hot.mouse;
 	auto mapspot = s2m(hotspot);
-	auto hexpos = h2m(hotspot);
+	hilite_hex = h2m(hotspot);
 	map.render_tiles({0, 0}, camera);
+	draw::hexagon(hilite_hex.y*(map_info::width * 2) + hilite_hex.x, camera);
 	render_area();
 	render_actions();
-	draw::hexagon(2, camera);
-	draw::hexagon(3, camera);
-	draw::hexagon(4, camera);
-	draw::hexagon(5, camera);
-	szprint(temp, zendof(temp), "mouse(%1i, %2i), hex(%3i, %4i)", hotspot.x, hotspot.y, hexpos.x, hexpos.y);
+	szprint(temp, zendof(temp), "mouse(%1i, %2i), hex(%3i, %4i)", hotspot.x, hotspot.y, hilite_hex.x, hilite_hex.y);
 	draw::text(10, 10, temp);
+}
+
+short unsigned choose_scenery(int id_scenery) {
+	auto ps = gres(res::SCENERY);
+	auto push_scenery = id_scenery;
+	int origin = (id_scenery/3)*3 - 3;
+	while(ismodal()) {
+		draw::rectf({0, 0, getwidth(), getheight()}, colors::gray);
+		if(origin < 0)
+			origin = 0;
+		for(auto y = 0; y < 3; y++) {
+			for(auto x = 0; x < 3; x++) {
+				auto x1 = x * 210;
+				auto y1 = y * 150;
+				auto fi = origin + y * 3 + x;
+				image(x1 + 100, y1 + 75, ps, ps->ganim(fi, getstamp()/100), 0);
+				if(fi==id_scenery)
+					rectx({x1 + 4, y1 + 4, x1 + 210 - 4, y1 + 150 - 4}, colors::black);
+			}
+		}
+		domodal();
+		auto prev_scenery = id_scenery;
+		switch(hot.key) {
+		case KeyLeft:
+			id_scenery--;
+			break;
+		case KeyRight:
+			id_scenery++;
+			break;
+		case KeyUp:
+			if(id_scenery >= 3)
+				id_scenery -= 3;
+			break;
+		case KeyDown:
+			id_scenery += 3;
+			break;
+		case KeyEnter:
+			breakmodal(1);
+			break;
+		}
+		if(id_scenery < 0)
+			id_scenery = 0;
+		if(id_scenery < origin)
+			origin -= 3;
+		if(id_scenery > origin + 8)
+			origin += 3;
+	}
+	if(getresult())
+		return id_scenery;
+	return push_scenery;
 }
 
 void creature::adventure() {
 	cursorset cursor;
+	unsigned short current_scenery = 4;
 	camera = {400, -100};
+	point current_hex;
 	while(ismodal() && player.isalive()) {
-		render_screen();
+		render_screen(current_hex);
 		update_logic();
 		domodal();
 		switch(hot.key) {
@@ -295,12 +344,25 @@ void creature::adventure() {
 		case Alpha + 'W':
 			player.setaction(AnimateWalk);
 			break;
+		case Ctrl + Alpha + 'S':
+			map.serialize(true);
+			break;
+		case Ctrl + Alpha + 'L':
+			map.serialize(false);
+			break;
+		case Alpha + 'U':
+			current_scenery = choose_scenery(current_scenery);
+			break;
+		case Alpha + 'P':
+			map.setscene(current_hex.x, current_hex.y, current_scenery);
+			break;
 		}
 	}
 }
 
 void actor::wait() {
 	cursorset cursor;
+	point current_hex;
 	cursor.set(res::INTRFACE, 295);
 	auto current_action = action;
 	auto stop_frame = frame_maximum;
@@ -310,7 +372,7 @@ void actor::wait() {
 		update_logic();
 		if(current_action != action)
 			break;
-		render_screen();
+		render_screen(current_hex);
 		domodal();
 	}
 }

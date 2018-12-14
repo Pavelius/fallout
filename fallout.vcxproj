@@ -136,6 +136,7 @@
     <ClCompile Include="ability.cpp" />
     <ClCompile Include="actor.cpp" />
     <ClCompile Include="anm_info.cpp" />
+    <ClCompile Include="archive.cpp" />
     <ClCompile Include="attack.cpp" />
     <ClCompile Include="caliber.cpp" />
     <ClCompile Include="critical.cpp" />
@@ -203,6 +204,7 @@
     <ClCompile Include="wound.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="archive.h" />
     <ClInclude Include="collection.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="crt.h" />

@@ -1,3 +1,4 @@
+#include "archive.h"
 #include "main.h"
 
 const unsigned short	Blocked = 0xFFFF;
@@ -49,10 +50,16 @@ point h2m(point pt) {
 	return{(short)x, (short)y};
 }
 
-short unsigned map_info::geti(int x, int y) const {
+short unsigned map_info::getm(int x, int y) const {
 	if(((unsigned)x) >= width || ((unsigned)y) >= height)
 		return Blocked;
 	return y * width + x;
+}
+
+short unsigned map_info::geth(int x, int y) const {
+	if(((unsigned)x) >= (width * 2) || ((unsigned)y) >= (height * 2))
+		return Blocked;
+	return y * width * 2 + x;
 }
 
 short unsigned map_info::gettile(short unsigned index) const {
@@ -99,7 +106,7 @@ void map_info::clear() {
 	memset(tiles, 0, sizeof(tiles));
 	for(int y = 0; y <= height; y++) {
 		for(int x = 0; x < width; x++)
-			settile(geti(x, y), 172 + rand() % (190 - 172));
+			settile(getm(x, y), 172 + rand() % (190 - 172));
 	}
 }
 
@@ -115,7 +122,7 @@ short unsigned map_info::moveto(short unsigned index, direction_s d) {
 			return Blocked;
 		return index - 1;
 	case Right:
-		if(x >= (width-1))
+		if(x >= (width - 1))
 			return Blocked;
 		return index + 1;
 	case Up:
@@ -123,7 +130,7 @@ short unsigned map_info::moveto(short unsigned index, direction_s d) {
 			return Blocked;
 		return index - s;
 	case Down:
-		if(y >= (height-1))
+		if(y >= (height - 1))
 			return Blocked;
 		return index + s;
 	default:
@@ -145,7 +152,7 @@ void map_info::render_tiles(point screen, point camera) {
 		for(int x = x1; x < x2; x++) {
 			if(x < 0 || x >= width)
 				continue;
-			auto tv = gettile(geti(x, y));
+			auto tv = gettile(getm(x, y));
 			if(tv > 1) {
 				point pt = m2s(x, y);
 				point pz = pt + screen - camera;
@@ -157,4 +164,19 @@ void map_info::render_tiles(point screen, point camera) {
 
 adat<scenery, 512>& map_info::getscenes() {
 	return scenes;
+}
+
+template<> void archive::set<map_info>(map_info& e) {
+	set(e.tiles, sizeof(e.tiles));
+	set(e.walls, sizeof(e.walls));
+	set(e.scenes);
+}
+
+void map_info::serialize(bool write_mode) {
+	char temp[32]; szprint(temp, zendof(temp), "temp/AR%1.5i.map", 200);
+	io::file file(temp, write_mode ? StreamWrite : StreamRead);
+	if(!file)
+		return;
+	archive a(file, write_mode);
+	a.set(*this);
 }

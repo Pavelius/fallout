@@ -21,7 +21,6 @@ void creature::clear() {
 	armor.clear();
 	weapons[0].clear();
 	weapons[1].clear();
-	weapon = 0;
 	memset(stats, 0, sizeof(stats));
 	memset(stats_boost, 0, sizeof(stats_boost));
 	memset(perks, 0, sizeof(perks));
@@ -388,4 +387,9 @@ void creature::damage(const damage_info& di) {
 
 const sprite* creature::getsprite() const {
 	return draw::gres(armor.getdress(gender));
+}
+
+void weaponable::change_weapon() {
+	iswap(weapons[0], weapons[1]);
+	iswap(weapon_action[0], weapon_action[1]);
 }

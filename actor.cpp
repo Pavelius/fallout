@@ -189,7 +189,7 @@ void actor::setaction(animation_s value, bool backward) {
 }
 
 unsigned actor::getfps() const {
-	return 4;
+	return 8;
 	auto ps = getsprite();
 	if(!ps)
 		return 8;

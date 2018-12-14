@@ -1,3 +1,4 @@
+#include "archive.h"
 #include "collection.h"
 #include "crt.h"
 #include "datetime.h"
@@ -596,12 +597,11 @@ private:
 	void				moveshift();
 };
 struct weaponable {
-	unsigned char		weapon;
 	item				weapons[2];
 	char				weapon_action[2];
-	void				change_weapon() { weapon = weapon ? 0 : 1; }
-	char				getweaponactionindex() const { return weapon_action[weapon]; }
-	void				setweaponactionindex(int value) { weapon_action[weapon] = value; }
+	void				change_weapon();
+	char				getweaponactionindex() const { return weapon_action[0]; }
+	void				setweaponactionindex(int value) { weapon_action[0] = value; }
 };
 struct creature : actor, weaponable {
 	creature() { clear(); }
@@ -639,7 +639,7 @@ struct creature : actor, weaponable {
 	const sprite*		getsprite() const override;
 	static const pregen_info* getpregen(const char* id);
 	int					getskillrate() const;
-	item&				getweapon() const override { return const_cast<creature*>(this)->weapons[weapon]; }
+	item&				getweapon() const override { return const_cast<creature*>(this)->weapons[0]; }
 	item&				getweaponfirst() { return weapons[0]; }
 	item&				getweaponsecond() { return weapons[1]; }
 	void				increase(variant, int& points);
@@ -685,23 +685,29 @@ struct scenery : drawable, point {
 	short unsigned		type;
 	constexpr scenery() : point{0, 0}, type(0) {}
 	point				getposition() const override { return *this; }
-	rect				getrect() const override { return {x-64, y- 64, x+ 64, y+64};}
+	rect				getrect() const override { return {x - 64, y - 64, x + 64, y + 64}; }
 	void				painting(point position) const override;
+};
+struct ground_info : item {
+	point				position;
 };
 struct map_info {
 	static const unsigned height = 100;
 	static const unsigned width = 100;
 	void				clear();
-	short unsigned		geti(int x, int y) const;
+	short unsigned		geth(int x, int y) const;
+	short unsigned		getm(int x, int y) const;
 	adat<scenery, 512>&	getscenes();
 	short unsigned		gettile(short unsigned index) const;
 	short unsigned		getwall(short unsigned index) const;
 	short unsigned		moveto(short unsigned index, direction_s d);
 	void				render_tiles(point screen, point camera);
+	void				serialize(bool write_mode);
 	void				setscene(int x, int y, short unsigned value);
 	void				settile(short unsigned index, short unsigned value);
 	void				setwall(unsigned char index, short unsigned value);
 private:
+	friend archive;
 	unsigned short		tiles[width*height];
 	unsigned short		walls[width*height * 4];
 	adat<scenery, 512>	scenes;
@@ -757,7 +763,7 @@ unsigned				getstamp();
 unsigned				gettick(unsigned start);
 sprite*					gres(res::tokens id);
 const char*				getresname(res::tokens id);
-void					hexagon(int index, point screen);
+void					hexagon(short unsigned index, point screen);
 void					image(int x, int y, res::tokens token, int id, int flags = 0, unsigned char alpha = 0xFF);
 void					initialize();
 bool					isnext(callback_proc proc);
@@ -782,22 +788,13 @@ void					tiles(point screen);
 }
 const int				tile_width = 80; // Width of isometric tile
 const int				tile_height = 36; // Height of isometric tile
+template<> void			archive::set<scenery>(scenery& e);
 point					h2m(point pt);
 point					s2m(point s); // Convert screen coordinates to tile index
 inline short unsigned	m2i(short unsigned x, short unsigned y) { return (y << 8) + x; }
 inline short unsigned	m2i(point pt) { return m2i(pt.x, pt.y); }
 point					m2s(int x, int y);
 point					m2h(int x, int y);
-inline int				i2x(short unsigned index) { return index & 0xFF; }
-inline int				i2y(short unsigned index) { return index >> 8; }
-inline point			i2s(short unsigned index) { return m2s(i2x(index), i2y(index)); }
-inline point			i2h(short unsigned index) { return m2h(i2x(index), i2y(index)); }
-//namespace map {
-//const int				mvc = 24;
-//const int				scanline = 256;
-//const int				gridw = 32;
-//const int				gridh = 16;
-//}
 extern ability_info		ability_data[];
 extern const char*		ability_values[11];
 extern action_info		action_data[];

@@ -10,3 +10,8 @@ void scenery::painting(point camera) const {
 	auto pt = getposition() - camera;
 	image(pt.x, pt.y, ps, fr, 0);
 }
+
+template<> void archive::set<scenery>(scenery& e) {
+	set(static_cast<point&>(e));
+	set(e.type);
+}

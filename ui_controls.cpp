@@ -8,8 +8,8 @@ void draw::radio(int x, int y, const runable& ev, int cicle, unsigned key) {
 		y + ps->get(frame).sy - 1};
 	areas a = area(rc);
 	if((hot.key == MouseLeft && !hot.pressed
-		&& (a == AreaHilited || a==AreaHilitedPressed))
-		|| (key && hot.key==key))
+		&& (a == AreaHilited || a == AreaHilitedPressed))
+		|| (key && hot.key == key))
 		ev.execute();
 	if(ev.ischecked())
 		a = AreaHilitedPressed;
@@ -62,7 +62,7 @@ int draw::button(int x, int y, int width, const runable& ev, const char* string,
 	rect rc = {x, y, x + width, y + sy};
 	areas a = area(rc);
 	if((hot.key == MouseLeft && !hot.pressed && a == AreaHilited)
-		|| (key && hot.key==key))
+		|| (key && hot.key == key))
 		ev.execute();
 	if(ev.ischecked())
 		a = AreaHilitedPressed;
@@ -129,13 +129,15 @@ void draw::label(int x, int y, int id, const char* temp, bool checked, bool disa
 	draw::text(x, y, temp);
 }
 
-void draw::hexagon(int index, point camera) {
-	if(index == -1)
+void draw::hexagon(short unsigned index, point camera) {
+	if(index == 0xFFFF)
 		return;
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
 		return;
-	point pt = i2h(index) - camera;
+	short x = index % (map_info::width * 2);
+	short y = index / (map_info::width * 2);
+	auto pt = m2h(x, y) - camera;
 	auto fr = ps->ganim(1, 0);
 	auto pf = ps->get(fr);
 	image(pt.x - pf.sx / 2, pt.y - pf.sy / 2, ps, fr, ImageNoOffset);
@@ -155,15 +157,15 @@ static void render_number(int x, int y, int digits, int value, const sprite* ps,
 		draw::clipping.y1 = y;
 		draw::clipping.y2 = y + symbol_height;
 		int sym = (temp[i] == '-') ? 12 : temp[i] - '0';
-		draw::image(x + (i-sym) * symbol_width - symbol_offset, y, ps, fr, ImageNoOffset);
+		draw::image(x + (i - sym) * symbol_width - symbol_offset, y, ps, fr, ImageNoOffset);
 	}
 }
 
 void draw::number(int x, int y, int digits, int value) {
-	if(value>=0)
+	if(value >= 0)
 		render_number(x, y, digits, value, gres(res::INTRFACE), 170, 0, 14, 24);
 	else
-		render_number(x, y, digits, value, gres(res::INTRFACE), 170, 12*14, 14, 24);
+		render_number(x, y, digits, value, gres(res::INTRFACE), 170, 12 * 14, 14, 24);
 }
 
 void draw::numbersm(int x, int y, int digits, int value, int group) {
