@@ -110,12 +110,12 @@ void map_info::clear() {
 	}
 }
 
-short unsigned map_info::moveto(short unsigned index, direction_s d) {
+short unsigned map_info::to(short unsigned index, direction_s d) {
 	if(index == Blocked)
 		return index;
-	auto x = index % width;
-	auto y = index / width;
-	auto s = width;
+	auto x = index % (width * 2);
+	auto y = index / (width * 2);
+	auto s = (width * 2);
 	switch(d) {
 	case Left:
 		if(x == 0)

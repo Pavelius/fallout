@@ -304,6 +304,25 @@ static void render_screen(point& hilite_hex) {
 
 extern unsigned wall_count;
 
+struct wall_place_info {
+	const char*			name;
+	short unsigned		corners[8][4];
+	void lefttoright(int x, int y, int c) const {
+		auto i = map.geth(x, y);
+		map.setwall(i, corners[0][0]);
+		for(auto k = 0; k < 3; k++) {
+			for(auto v : corners[1]) {
+				if(!v)
+					break;
+				i = map.to(i, Right);
+				map.setwall(i, v);
+			}
+		}
+		map.setwall(i, corners[2][0]);
+	}
+};
+static wall_place_info wall_place[] = {{"Деревянная ограда", {{64}, {66, 65}, {67}, {62, 63}, {61}, {57, 58}, {56}, {59, 60}}}};
+
 static short unsigned choose_wall(int id) {
 	const int col = 3;
 	const auto dx = 640 / col;
@@ -324,7 +343,9 @@ static short unsigned choose_wall(int id) {
 				if(fi!=-1)
 					image(x1 + dx/2, y1 + dy/2 + 20, ps, ps->ganim(fi, getstamp() / 100), 0);
 				auto pn = wall_data[ii].name;
+				char temp[32]; szprint(temp, zendof(temp), "%1i", ii);
 				text(x1 + (dx - textw(pn)) / 2, y1 + dy - 32, pn);
+				text(x1 + (dx - textw(temp)) / 2, y1 + dy-48, temp);
 				if(ii == id)
 					rectx({x1 + 4, y1 + 4, x1 + 210 - 4, y1 + 150 - 4}, colors::black);
 			}
@@ -340,6 +361,7 @@ static short unsigned choose_wall(int id) {
 			break;
 		case KeyDown: id += col; break;
 		case KeyEnter: breakmodal(1); break;
+		case KeyEscape: breakmodal(0); break;
 		}
 		if(id < 0)
 			id = 0;
@@ -468,6 +490,9 @@ void creature::adventure() {
 			break;
 		case Alpha + 'O':
 			map.setwall(map.geth(current_hex.x, current_hex.y), current_wall);
+			break;
+		case Alpha + 'M':
+			wall_place[0].lefttoright(current_hex.x, current_hex.y, 4);
 			break;
 		}
 	}

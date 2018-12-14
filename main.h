@@ -702,7 +702,7 @@ struct map_info {
 	short unsigned		gettile(short unsigned index) const;
 	short unsigned		getwall(short unsigned index) const;
 	bool				isblocked(short unsigned index) const;
-	short unsigned		moveto(short unsigned index, direction_s d);
+	short unsigned		to(short unsigned index, direction_s d);
 	void				serialize(bool write_mode);
 	void				setscene(int x, int y, short unsigned value);
 	void				settile(short unsigned index, short unsigned value);
