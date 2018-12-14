@@ -148,6 +148,7 @@
     <ClCompile Include="lst_pro_scen.cpp" />
     <ClCompile Include="lst_pro_tile.cpp" />
     <ClCompile Include="lst_pro_wall.cpp" />
+    <ClCompile Include="map_render.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="msg_info.cpp" />
     <ClCompile Include="action.cpp" />

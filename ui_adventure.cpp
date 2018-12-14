@@ -4,6 +4,7 @@ using namespace draw;
 
 static bool			game_running;
 static unsigned		gamestamp;
+static unsigned		timestamp;
 
 runstate::runstate(bool new_value) : value(game_running) {
 	game_running = new_value;
@@ -61,10 +62,6 @@ unsigned draw::gametick() {
 //		}
 //	}
 //}
-
-static void open_invertory() {
-	player.inventory();
-}
 
 static void use_action() {
 	animate(608, 477, gres(res::INTRFACE), 104);
@@ -124,13 +121,66 @@ static int compare_drawable(const void* p1, const void* p2) {
 	return 0;
 }
 
-static void render_area() {
-	adat<drawable*, 512> source;
-	source.add(&player);
-	for(auto& e : map.getscenes())
-		source.add(&e);
-	qsort(source.data, source.count, sizeof(source.data[0]), compare_drawable);
-	for(auto p : source)
+static void render_tiles(point screen, point camera) {
+	auto ps = draw::gres(res::TILES);
+	if(!ps)
+		return;
+	auto a = draw::getstamp() / 100;
+	auto pm = s2m(camera);
+	int x1 = pm.x - 8; int x2 = x1 + 8 + 11;
+	int y1 = pm.y; int y2 = y1 + 18;
+	for(auto y = y1; y < y2; y++) {
+		if(y < 0 || y >= map.height)
+			continue;
+		for(int x = x1; x < x2; x++) {
+			if(x < 0 || x >= map.width)
+				continue;
+			auto tv = map.gettile(map.getm(x, y));
+			if(tv > 1) {
+				point pt = m2s(x, y);
+				point pz = pt + screen - camera;
+				draw::image(pz.x, pz.y + tile_height / 2, ps, ps->ganim(tv, a), 0);
+			}
+		}
+	}
+}
+
+static void render_area(point screen, point camera) {
+	const rect rc = {0, 0, 640, 480};
+	map_render result;
+	rect rcscreen;
+	rcscreen.x1 = camera.x - screen.x;
+	rcscreen.y1 = camera.y - screen.y;
+	rcscreen.x2 = rcscreen.x1 + 640;
+	rcscreen.y2 = rcscreen.y1 + 480;
+	for(auto& e : map.getscenes()) {
+		if(e.getrect().intersect(rcscreen))
+			result.add(&e);
+	}
+	point pc = screen - camera;
+	auto pm = s2m(camera);
+	int x1 = pm.x - 8; int x2 = x1 + 8 + 10;
+	int y1 = pm.y; int y2 = y1 + 18;
+	x1 *= 2; y1 *= 2; x2 *= 2; y2 *= 2;
+	auto psw = draw::gres(res::WALLS);
+	auto pss = draw::gres(res::SCENERY);
+	auto a = draw::getstamp() / 120;
+	for(auto y = y1; y < y2; y++) {
+		if(y < 0 || y >= map.height)
+			continue;
+		for(int x = x2; x >= x1; x--) {
+			if(x < 0 || x >= map.width)
+				continue;
+			auto tv = map.getwall(map.geth(x, y));
+			if(tv > 0) {
+				point pz = m2h(x, y);
+				result.add(pz.x, pz.y, psw, psw->ganim(wall_data[tv].fid, a));
+			}
+		}
+	}
+	result.add(&player);
+	qsort(result.data, result.count, sizeof(result.data[0]), compare_drawable);
+	for(auto p : result)
 		p->painting(camera);
 }
 
@@ -187,6 +237,24 @@ static void render_console(const rect& rc) {
 	textf(rc.x1, rc.y1, rc.width(), " рутизна позвол€ет вам не [-замечать] мелкие жизненный непри€тности. ¬ы получаете 10 процентов устойчивости к повреждени€м.");
 }
 
+static void update_logic() {
+	auto tm = clock();
+	if(!timestamp)
+		timestamp = tm;
+	gamestamp += (tm - timestamp);
+	timestamp = tm;
+	player.update();
+}
+
+static void resume_game() {
+	timestamp = clock();
+}
+
+static void open_invertory() {
+	player.inventory();
+	resume_game();
+}
+
 static void render_actions() {
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
@@ -220,30 +288,74 @@ static void render_actions() {
 	render_console({x + 28, y + 32, x + 186, y + 82});
 }
 
-static void update_logic() {
-	static unsigned last;
-	auto timestamp = clock();
-	if(!last)
-		last = timestamp;
-	gamestamp += (timestamp - last);
-	last = timestamp;
-	player.update();
-}
-
 static void render_screen(point& hilite_hex) {
 	char temp[260];
 	auto hotspot = camera + hot.mouse;
 	auto mapspot = s2m(hotspot);
+	point screen = {0, 0};
 	hilite_hex = h2m(hotspot);
-	map.render_tiles({0, 0}, camera);
+	render_tiles(screen, camera);
 	draw::hexagon(hilite_hex.y*(map_info::width * 2) + hilite_hex.x, camera);
-	render_area();
+	render_area(screen, camera);
 	render_actions();
 	szprint(temp, zendof(temp), "mouse(%1i, %2i), hex(%3i, %4i)", hotspot.x, hotspot.y, hilite_hex.x, hilite_hex.y);
 	draw::text(10, 10, temp);
 }
 
-short unsigned choose_scenery(int id_scenery) {
+extern unsigned wall_count;
+
+static short unsigned choose_wall(int id) {
+	const int col = 3;
+	const auto dx = 640 / col;
+	const auto dy = 480 / col;
+	auto ps = gres(res::WALLS);
+	auto push_id = id;
+	int origin = (id / col) * col - col;
+	while(ismodal()) {
+		draw::rectf({0, 0, getwidth(), getheight()}, colors::gray);
+		if(origin < 0)
+			origin = 0;
+		for(auto y = 0; y < col; y++) {
+			for(auto x = 0; x < col; x++) {
+				auto x1 = x * dx;
+				auto y1 = y * dy;
+				auto ii = origin + y * 3 + x;
+				auto fi = wall_data[ii].fid;
+				if(fi!=-1)
+					image(x1 + dx/2, y1 + dy/2 + 20, ps, ps->ganim(fi, getstamp() / 100), 0);
+				auto pn = wall_data[ii].name;
+				text(x1 + (dx - textw(pn)) / 2, y1 + dy - 32, pn);
+				if(ii == id)
+					rectx({x1 + 4, y1 + 4, x1 + 210 - 4, y1 + 150 - 4}, colors::black);
+			}
+		}
+		domodal();
+		auto prev_scenery = id;
+		switch(hot.key) {
+		case KeyLeft: id--; break;
+		case KeyRight: id++; break;
+		case KeyUp:
+			if(id >= col)
+				id -= col;
+			break;
+		case KeyDown: id += col; break;
+		case KeyEnter: breakmodal(1); break;
+		}
+		if(id < 0)
+			id = 0;
+		if(id >= (int)wall_count-1)
+			id = wall_count - 2;
+		if(id < origin)
+			origin -= col;
+		if(id > origin + 8)
+			origin += 3;
+	}
+	if(getresult())
+		return id;
+	return push_id;
+}
+
+static short unsigned choose_scenery(int id_scenery) {
 	auto ps = gres(res::SCENERY);
 	auto push_scenery = id_scenery;
 	int origin = (id_scenery/3)*3 - 3;
@@ -264,22 +376,14 @@ short unsigned choose_scenery(int id_scenery) {
 		domodal();
 		auto prev_scenery = id_scenery;
 		switch(hot.key) {
-		case KeyLeft:
-			id_scenery--;
-			break;
-		case KeyRight:
-			id_scenery++;
-			break;
+		case KeyLeft: id_scenery--; break;
+		case KeyRight: id_scenery++; break;
 		case KeyUp:
 			if(id_scenery >= 3)
 				id_scenery -= 3;
 			break;
-		case KeyDown:
-			id_scenery += 3;
-			break;
-		case KeyEnter:
-			breakmodal(1);
-			break;
+		case KeyDown: id_scenery += 3; break;
+		case KeyEnter: breakmodal(1); break;
 		}
 		if(id_scenery < 0)
 			id_scenery = 0;
@@ -296,6 +400,7 @@ short unsigned choose_scenery(int id_scenery) {
 void creature::adventure() {
 	cursorset cursor;
 	unsigned short current_scenery = 4;
+	unsigned short current_wall = 4;
 	camera = {400, -100};
 	point current_hex;
 	while(ismodal() && player.isalive()) {
@@ -341,7 +446,7 @@ void creature::adventure() {
 			player.setaction(AnimateWeaponHide, true);
 			player.wait();
 			break;
-		case Alpha + 'W':
+		case Alpha + 'Q':
 			player.setaction(AnimateWalk);
 			break;
 		case Ctrl + Alpha + 'S':
@@ -352,9 +457,17 @@ void creature::adventure() {
 			break;
 		case Alpha + 'U':
 			current_scenery = choose_scenery(current_scenery);
+			resume_game();
+			break;
+		case Alpha + 'W':
+			current_wall = choose_wall(current_wall);
+			resume_game();
 			break;
 		case Alpha + 'P':
 			map.setscene(current_hex.x, current_hex.y, current_scenery);
+			break;
+		case Alpha + 'O':
+			map.setwall(map.geth(current_hex.x, current_hex.y), current_wall);
 			break;
 		}
 	}

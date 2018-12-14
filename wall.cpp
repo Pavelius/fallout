@@ -1635,3 +1635,4 @@ wall_info wall_data[] = {{0, -1, "Нет стены"},
 {1632, 1688, "Дверной Проем", Metal, EastWest, CanLookAt},
 {1633, 1689, "Стена", Metal, EastWest, CanLookAt},
 {}};
+unsigned wall_count = sizeof(wall_data) / sizeof(wall_data[0]);

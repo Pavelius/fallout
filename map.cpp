@@ -96,7 +96,7 @@ void map_info::settile(short unsigned index, short unsigned value) {
 	tiles[index] = value;
 }
 
-void map_info::setwall(unsigned char index, short unsigned value) {
+void map_info::setwall(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
 	walls[index] = value;
@@ -136,34 +136,6 @@ short unsigned map_info::moveto(short unsigned index, direction_s d) {
 	default:
 		return Blocked;
 	}
-}
-
-void map_info::render_tiles(point screen, point camera) {
-	auto ps = draw::gres(res::TILES);
-	if(!ps)
-		return;
-	auto a = draw::getstamp() / 100;
-	auto pm = s2m(camera);
-	int x1 = pm.x - 8; int x2 = x1 + 8 + 11;
-	int y1 = pm.y; int y2 = y1 + 18;
-	for(auto y = y1; y < y2; y++) {
-		if(y < 0 || y >= height)
-			continue;
-		for(int x = x1; x < x2; x++) {
-			if(x < 0 || x >= width)
-				continue;
-			auto tv = gettile(getm(x, y));
-			if(tv > 1) {
-				point pt = m2s(x, y);
-				point pz = pt + screen - camera;
-				draw::image(pz.x, pz.y + tile_height / 2, ps, ps->ganim(tv, a), 0);
-			}
-		}
-	}
-}
-
-adat<scenery, 512>& map_info::getscenes() {
-	return scenes;
 }
 
 template<> void archive::set<map_info>(map_info& e) {

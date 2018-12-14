@@ -530,20 +530,21 @@ struct drawable {
 	virtual void		painting(point position) const = 0; // How to paint drawable.
 	virtual void		update() {}
 };
-struct animable : drawable {
-	short unsigned		index;
-	short unsigned		action, tick, orientation, timeout;
-	res::tokens			icn;
-	point				pos;
+struct animable : drawable, point {
+	const sprite*		ps;
+	short unsigned		frame;
 	animable();
-	animable(point pos, res::tokens icn, int action);
+	explicit operator bool() const { return ps != 0; }
 	rect				getrect() const override;
-	point				getposition() const override { return pos; }
+	point				getposition() const override { return *this; }
 	bool				hittest(point position) const override;
 	void				painting(point screen) const override;
-	virtual void		update() override;
+};
+struct map_render : adat<drawable*, 512> {
+	void				add(drawable* dw) { adat::add(dw); }
+	void				add(int x, int y, const sprite* ps, short unsigned frame);
 private:
-	unsigned			timestart;
+	adat<animable, 512>	elements;
 };
 struct pregen_info {
 	unsigned char		level;
@@ -697,19 +698,20 @@ struct map_info {
 	void				clear();
 	short unsigned		geth(int x, int y) const;
 	short unsigned		getm(int x, int y) const;
-	adat<scenery, 512>&	getscenes();
+	aref<scenery>		getscenes() { return scenes; }
 	short unsigned		gettile(short unsigned index) const;
 	short unsigned		getwall(short unsigned index) const;
+	bool				isblocked(short unsigned index) const;
 	short unsigned		moveto(short unsigned index, direction_s d);
-	void				render_tiles(point screen, point camera);
 	void				serialize(bool write_mode);
 	void				setscene(int x, int y, short unsigned value);
 	void				settile(short unsigned index, short unsigned value);
-	void				setwall(unsigned char index, short unsigned value);
+	void				setwall(short unsigned index, short unsigned value);
 private:
 	friend archive;
 	unsigned short		tiles[width*height];
 	unsigned short		walls[width*height * 4];
+	unsigned char		flags[width*height * 4];
 	adat<scenery, 512>	scenes;
 };
 namespace draw {
