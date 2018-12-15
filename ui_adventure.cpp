@@ -597,7 +597,7 @@ void creature::adventure() {
 			map.setnone(map.geth(current_hex.x, current_hex.y));
 			break;
 		case Alpha + 'G':
-			map.setgroup(map.getm(current_hex.x/2, current_hex.y/2), 4);
+			map.setgroup(map.getm(current_hex.x/2, current_hex.y/2), 6);
 			break;
 		case Alpha + 'D':
 			player.setaction(AnimateKnockOutBack);
