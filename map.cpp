@@ -25,6 +25,18 @@ land_info land_data[] = {{"Недоступно"},
 //
 {"Огород", 15, {716, 717, 718}, {715, 719}, {}},
 };
+struct group_info {
+	const char*			name;
+	point				size;
+	short unsigned		start;
+	short unsigned		count;
+};
+static group_info group_data[] = {{"", {3, 3}, 1415},
+{"Каменная впадина", {8, 4}, 1425},
+{"Скалы", {9, 3}, 1527, 26},
+{"Скалы", {9, 2}, 1554},
+{"Мост", {3, 2}, 1749},
+};
 
 // Получение координаты тайла(x,y) на экране
 point m2s(int x, int y) {
@@ -262,8 +274,32 @@ void map_info::updateland() {
 	}
 }
 
+void map_info::setgroup(short unsigned index, short unsigned group) {
+	auto& g = group_data[group];
+	auto pb = 0;
+	auto count = g.count;
+	if(!count)
+		count = g.size.x* g.size.y;
+	for(auto y = g.size.y; y > 0; y--) {
+		auto i1 = index + g.size.x;
+		auto pi = pb;
+		for(auto i = index; i < i1; i++) {
+			if(i == Blocked)
+				break;
+			if(pi >= count)
+				break;
+			tiles[i] = g.start + pi;
+			pi++;
+		}
+		pb += g.size.x;
+		index = tot(index, Down);
+		if(index == Blocked)
+			break;
+	}
+}
+
 short unsigned land_info::getlast() {
-	return sizeof(land_data) / sizeof(land_data[0])-1;
+	return sizeof(land_data) / sizeof(land_data[0]) - 1;
 }
 
 void map_info::setland(short unsigned index, short unsigned value) {

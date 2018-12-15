@@ -418,7 +418,8 @@ static short unsigned choose_tile_ex(int id, const sprite* ps, const int col, in
 					image(x1 + dx / 2, y1 + dy / 2 + 20, ps, ps->ganim(fi, getstamp() / 100), 0);
 				auto pn = get_name(ii);
 				char temp[32]; szprint(temp, zendof(temp), "%1i/%2i", ii, fi);
-				text(x1 + (dx - textw(pn)) / 2, y1 + dy - 32, pn);
+				if(pn)
+					text(x1 + (dx - textw(pn)) / 2, y1 + dy - 32, pn);
 				text(x1 + (dx - textw(temp)) / 2, y1 + dy - 48, temp);
 				if(ii == id)
 					rectx({x1 + 4, y1 + 4, x1 + 210 - 4, y1 + 150 - 4}, colors::black);
@@ -433,14 +434,14 @@ static short unsigned choose_tile_ex(int id, const sprite* ps, const int col, in
 				id -= col;
 			break;
 		case KeyPageUp:
-			if(id >= col*col)
-				id -= col * col;
+			if(id >= col)
+				id -= col * (col - 1);
 			break;
 		case KeyDown:
 			id += col;
 			break;
 		case KeyPageDown:
-			id += col*(col-1);
+			id += col * (col - 1);
 			break;
 		case KeyEnter: breakmodal(1); break;
 		case KeyEscape: breakmodal(0); break;
@@ -450,9 +451,9 @@ static short unsigned choose_tile_ex(int id, const sprite* ps, const int col, in
 		if(id > last)
 			id = last;
 		if(id < origin)
-			origin -= col;
-		if(id >= origin + col*col)
-			origin = ((id-first) / col)*col - col * (col - 1) + first;
+			origin = ((id - first) / col)*col + first;
+		if(id >= origin + col * col)
+			origin = ((id - first) / col)*col - col * (col - 1) + first;
 	}
 	resume_game();
 	if(getresult())
@@ -594,6 +595,9 @@ void creature::adventure() {
 			break;
 		case Alpha + 'E':
 			map.setnone(map.geth(current_hex.x, current_hex.y));
+			break;
+		case Alpha + 'G':
+			map.setgroup(map.getm(current_hex.x/2, current_hex.y/2), 4);
 			break;
 		case Alpha + 'D':
 			player.setaction(AnimateKnockOutBack);
