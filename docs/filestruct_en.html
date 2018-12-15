@@ -1,0 +1,99 @@
+<HTML>
+<HEAD>
+   <TITLE>File structure of Fallout 2</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#E6E7EC" LINK="#FF0000" VLINK="#800080" ALINK="#0000FF">
+<TT><FONT SIZE=-1>Last Updated: 03-Jan-2000
+- Happy New Year2K :)</FONT></TT>
+<BR>&nbsp;
+<H2>
+File structure of Fallout 2.&nbsp;
+<HR ALIGN=LEFT WIDTH="75%"></H2>
+This document describes the file structure of Fallout 2 and how to link up
+your changed files to the game. The file structure is described for a better
+understanding of what and where to put when linking up your files.
+<H3>
+Contents</H3>
+
+<BLOCKQUOTE><A HREF="#File structure of Fallout">1. File structure of
+Fallout 2</A>
+<BR><A HREF="#Linking up the modified files">2. Linking up the modified files</A>
+<BR><A HREF="#4.">3. Credits</A></BLOCKQUOTE>
+&nbsp;
+<H3>
+<A NAME="File structure of Fallout"></A>1. File structure of Fallout
+2&nbsp;
+<HR ALIGN=LEFT WIDTH="75%"></H3>
+The file structure of the game is very simple. Fallout 2 consists of several
+directories. In the <I>main (root) directory</I>
+of the game (the one you choose when installing the game, e.g. <TT><FONT COLOR="#663366">c:\fallout2</FONT></TT>),
+you can find the main executable <TT><FONT COLOR="#663366">fallout2.exe</FONT></TT>
+and the main confguration file <TT><FONT COLOR="#663366">fallout2.cfg</FONT></TT>.
+(refer to the fallout2.cfg file format). This configuration file contains, in addition, the paths to the <I>data
+folders</I> which locate all the data files during the game and the paths to the two  <i>patch folders</i> for <TT><FONT COLOR="#663366">master.dat </FONT></TT> and <TT><FONT COLOR="#663366">critter.dat</FONT></TT> . By default all data and patch folders have the same name, usually <TT><FONT COLOR="#663366">c:\fallout2\data\</FONT></TT>. 
+All the files outside the data folder (e.g. the
+<TT><FONT COLOR="#663366">ereg\</FONT></TT> folder) don't matter to  <FONT COLOR="#000000">TeamX</FONT>
+and thus won't be examined here.
+
+<BR>&nbsp;
+<H3>
+<A NAME="Linking up the modified files"></A>2. Linking up the modified files (patch files)&nbsp;
+<HR ALIGN=LEFT WIDTH="75%"></H3>
+In order to make Fallout notice your modified files from <TT><FONT COLOR="#663366">master.dat</FONT></TT>
+or <TT><FONT COLOR="#663366">critter.dat</FONT></TT> you need to do the following.
+
+<P>1. Copy the modified files (patch files) to the <I>patch folder</I>
+for <TT><FONT COLOR="#663366">master.dat</FONT></TT> or <TT><FONT COLOR="#663366">critter.dat</FONT></TT>
+(refer to the <TT><FONT COLOR="#663366">fallout2.cfg</FONT></TT> file description
+) keeping the directory structure. The path to the patch folder
+(the data folder by default) for <TT><FONT COLOR="#663366">master.dat</FONT></TT>
+is defined by the <TT><FONT COLOR="#663366">master_patches</FONT></TT>
+variable in the <TT><FONT COLOR="#663366">fallout2.cfg</FONT></TT> file, the usual case is
+<TT><FONT COLOR="#663366">fallout2\data\</FONT></TT>.
+
+<P>2. It is <B>necessary</B> to make these files <TT>READ_ONLY</TT>. Otherwise Fallout
+will replace you file with the corresponding original file from the corresponding <TT><FONT COLOR="#663366">dat</FONT></TT>-file.
+(There are other ways to prevent that, but this one is the easiest.)
+
+<P>3. You can now run Fallout to see your changes working.
+<BLOCKQUOTE><I>Sounds complicated? It's actually quite simple. As an example,
+imagine you have unpacked and modified the </I><TT><FONT COLOR="#663366">master.dat\\art\splash\SPLASH0.rix</FONT></TT><I> file and your Fallout2 folder is </i><TT><FONT COLOR="#663366">c:\fallout2</FONT></TT><i>.
+To make the game use your file, concatenate the </I><TT><FONT COLOR="#663366">fallout2\data\</FONT></TT>
+<I> path with the path to your file in </I><TT><FONT COLOR="#663366">master.dat</FONT></TT>.
+
+<P><TT><FONT COLOR="#663366">&nbsp;&nbsp; fallout2\data\</FONT></TT>
+<BR><TT><FONT COLOR="#663366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +</FONT></TT>
+<BR><TT><FONT COLOR="#663366">&nbsp;&nbsp; art\splash\SPLASH0.rix</FONT></TT>
+<BR><TT><FONT COLOR="#663366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =</FONT></TT>
+<BR><TT><FONT COLOR="#663366">&nbsp;&nbsp; fallout2\data\art\splash\SPLASH0.rix</FONT></TT></BLOCKQUOTE>
+4. What to do if it didn't work? There are three possible reasons: either
+you did something wrong and the game ignored your changes or you just didn't notice
+the results of your changes or you should compress your patch file using <TT><FONT COLOR="#663366">gzip</FONT></TT>. 
+(you should do that to &nbsp; <TT><FONT COLOR="#663366">*.pro</FONT></TT> files at least.)
+<BLOCKQUOTE><I>To do that you have to do the following: if your modified file is called, for instance,
+</I><TT><FONT COLOR="#663366">00005678.pro</FONT></TT><I> then you should reemove it's extension and type the following
+in the command line (just run </I><TT><FONT COLOR="#663366">command.com</FONT></TT><I>
+for that, you need to have </I><TT><FONT COLOR="#663366"><A HREF="http://www.gzip.org/gzip124xN.zip">gzip</A></FONT></TT><I> installed on your system):</I>
+
+<P><TT><FONT COLOR="#663366">gzip -9 -n 00005678</FONT></TT>
+
+<P><I>After you have done that, rename the compressed file (</I><TT><FONT COLOR="#663366">00005678.gz</FONT></TT><I>)
+back into </I><TT><FONT COLOR="#663366">00005678.pro</FONT></TT><I>
+and copy it to fallout2\data\...... blah blah blah. Just don't forget to make it
+</I><TT>READ ONLY</TT><I> %)</I></BLOCKQUOTE>
+5. That's all. Just run Fallout and check. If you did everything right
+and sill can't get your changes to work - well, we have got rid of one possible failure reason ;)))))))))))
+
+<P><A NAME="6."></A>6. A couple of words about <TT><FONT COLOR="#663366">gzip</FONT></TT>.
+It's a compressor/decompressor. You can download it from <A HREF="http://www.gzip.org">www.gzip.org</A>
+. (<A HREF="http://www.gzip.org/gzip124xN.zip">http://www.gzip.org/gzip124xN.zip</A>
+for Win9x).
+<BR>&nbsp;
+<H3>
+<A NAME="4."></A>3. Credits&nbsp;
+<HR ALIGN=LEFT WIDTH="75%"></H3>
+<i>This doc was written </i><i>by <a
+href="mailto:serge@fallout.ru">Serge</a>, R&D Group Leader, <a href="http://www.fallout.ru/teamx/en/">TeamX</a></i><BR>
+<I>Translated by <A HREF="mailto:dr_w95@mail.ru">Dr. W95</A>. </I>
+</BODY>
+</HTML>

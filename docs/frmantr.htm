@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Untitled</title>
+
+<meta http-equiv="Content-Type" content="text/html;charset=windows-1251">
+</head>
+
+<body>
+<h3>Создание анимации персонажа при помощи 3DMAX и FrameAnimator</h3>
+<h4>1. Создание модели песонажа</h4>
+<img src="image100.gif" width="84" height="199" alt="" border="0">
+<br>3D-модель персонажа
+<br>
+<h4>2. Сцена для создания анимации</h4>
+<img src="image200.gif" width="242" height="202" alt="" border="0">
+<br>&nbsp;&nbsp;1 - персонаж;
+<br>&nbsp;&nbsp;2 - камера ( 'Ortographic Projection' ( 3DMAX ) );
+<br>&nbsp;&nbsp;3 - источник света для создания тени персонажа на земле ( 'Cast Shadows', 'Use Ray-Traced Shadows', 'Decay' в 'None' ( 3DMAX ) );
+<br>&nbsp;&nbsp;4 - произвольный источник света для создания общего освещения( 'Cast Shadows' отключить, 'Decay' в 'None' ( 3DMAX ) );
+<br>&nbsp;&nbsp;5 - съемочная плоскость для формирования фонового цвета и тени на итоговом изображении;
+<br>&nbsp;&nbsp;a1 - угол наклона камеры ( -25.7 );
+<br>&nbsp;&nbsp;a2 - угол наклона источника света для тени ( -75.7 );
+<br>&nbsp;&nbsp;a3 - угол поворота камеры ( -150, -90, -30, 30, 90, 150 ).
+<br>
+<h4>3. Генерация фреймов</h4>
+<img src="image300.gif" width="260" height="359" alt="" border="0">
+<br>&nbsp;&nbsp;Пакет анимации из пяти фреймов для ориентации 'South East'. Для реендеринга отключить 'Anti-Aliasing' ( 3DMAX ). 'StayFrame' не входит в пакет 'AB', но входит в пакет 'AA'.
+<br>
+<h4>4. Создание проекта анимации</h4>
+<img src="image400.gif" width="187" height="289" alt="" border="0">
+<br>Фрейм.
+<br>&nbsp;&nbsp;1 - фактические габариты картинки;
+<br>&nbsp;&nbsp;2 - целевое изображение персонажа;
+<br>&nbsp;&nbsp;3 - пустые границы. ( Не обрезайте их самостоятельно. Они нужны для корректного расчета смещения логических границ фреймов относительно друг друга. FrameAnimator обрежет сам эти пустые поля непосредственно перед генерацией FRM-файла, если установить опцию 'Edit\Options...\Autocutting' );
+<br>&nbsp;&nbsp;4 - фон, интерпретируемый, как прозрачный;
+<br>&nbsp;&nbsp;5 - логическая граница фрейма ( Если опция FrameAnimator 'Edit\Options...\Autocutting' не включена, то логическая граница совпадает с фактическими габаритами картинки. Для разных фреймов в коллекции логические границы различны ); 
+<br>&nbsp;&nbsp;H, W - высота и ширина фрейма;
+<br>&nbsp;&nbsp;OffsetX, OffsetY - смещение логического центра ( В FrameAnimator это значения FramesOffset[direction].X и FramesOffset[direction].Y ).
+<br>
+<h4>5. Настройка анимации</h4>
+<img src="image500.gif" width="289" height="371" alt="" border="0">
+<br>&nbsp;&nbsp;1 - фрейм стоящего персонажа (Не входит в анимацию ходьбы);
+<br>&nbsp;&nbsp;2 - фреймы анимации ходьбы;
+<br>&nbsp;&nbsp;3 - повторное воспроизведение фреймов анимации ходьбы ( воспроизведение повторяется до тех пор, пока персонжа не дойдет до нужного места на карте );
+<br>&nbsp;&nbsp;dx1, dy1 - смещение первого фрейма в момент начала воспроизведения анимации:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;FirstOffset[direction].Х = FramesOffsets[direction].X + FrameOffsets[direction][1].X
+<br>&nbsp;&nbsp;&nbsp;&nbsp;FirstOffset[direction].Y = FramesOffsets[direction].Y + FrameOffsets[direction][1].Y
+<br>&nbsp;&nbsp;dx2, dy2 - смещение между двумя соседними фреймами ( В FrameAnimator это значения FrameOffset[direction][i].X и FrameOffset[direction][i].Y. FrameAnimator рассчитает их автоматически, если не обрезать пустые поля изображений!!! );
+<br>&nbsp;&nbsp;dx3, dy3 - смещение между последним фреймом и первым фреймом при повторном воспроизведении анимации ( В FrameAnimator это значения FrameOffset[direction][1].X и FrameOffset[direction][1].Y Установите значение X и используйте кнопку 'OffsetWizard' в диалоговом окне 'FrameOffset' для расчета корректного значения Y ).
+</body>
+</html>
+
+<!-- This document saved from http://www.jochua.nm.ru/docs/frmantr.htm -->

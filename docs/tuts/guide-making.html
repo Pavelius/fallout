@@ -1,0 +1,52 @@
+<HTML>
+<HEAD>
+<TITLE>Making Mods</TITLE>
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+.table {color:#00bb00; font-size:10pt;}
+-->
+</style>
+<SCRIPT>
+<!--
+function openHelp(url,width,height) {
+        var Win = window.open(url,"openScript",'width=' + width + ',height=' + height + ',resizable=0,scrollbars=yes,menubar=no,status=no' );
+}
+//-->
+</SCRIPT>
+</HEAD>
+<body marginheight="2" marginwidth="2" leftmargin="2" topmargin="2">
+<div class="header">Making Mods</div>
+<div class="sub-header">Getting Started</div>
+<blockquote>
+
+		To mod any '.pro' file in Fallout, you'll need a hex editor (such as <a href="javascript:openHelp('../help/hexworkshop.html',600,300)">Hexworkshop</a>) to get started. Anyway, next, you'll need a program which unpacks the '/dat' files (such as <a href="javascript:openHelp('../help/f1undat.html',600,300)">F1unDAT</a> or <a href="javascript:openHelp('../help/f2undat.html',600,300)">F2unDAT</a>). Then, you'll need to explore the Fallout CD until you find 'master.dat'. Then you'll need to unpack it using the unpacking program (you don't have to use undat for Fallout 2, there are a number of other programs <a href="../utils.html">here</a>). <P>
+
+Now, let's select a file to mod. Find a pro file which you just unpacked (or download one <a href="../pro.html">here</a>). Start off with a simple pro file like a weapon. I'm going to choose the Pipe Rifle (00000299.pro). Now open it up in the hex editor and we can begin.<P>
+</blockquote>
+<div class="sub-header">The Joy of Hex?</div>
+<blockquote>
+Go to offset 0 (00 hex). This is the item's id. There is no point changing this at the moment, all we want to do is tinker with the actual weapon itself. Find offset 36 (24 hex). This is the items weight. It lasts for 4 bytes (each byte is a single hex value). The last byte has the information about the weight. Now, if we change this to 00, then the weapon is weightless. If you want to try out the mod and see that the weapon is weightless, then save the pro file and put it in the following directory; 'Fallout2\data\proto\items'. Make sure to set the pro file's attribute to read only. Then you can start a new game in Fallout 2 and when you get to Klamath, go to Vic's hut (far right hand corner of map, has a little Vic sign on it) and find a pipe rifle in his back room. Then you can have a look at it and see that it is weightless.<P>
+Next, let's change the item's price. Go to offset 44-47 (2C-2F hex). The last byte has the weapons price. Now, you probably want to put the price up, so that whenever you need some money, you can sell the pipe rifle. So start at offset 44 anf type FF until you reach the end of offset 47. Now you can put the mod in the right directory, remember to change its attributes to read only. Start a new game in Fallout 2 and go to Klamath, find Vic's hut and get the pipe rifle. Then go to someone and barter with them. Offer them the pipe rifle, and you should be able to see how much it goes for, which should be 268,435,455 credits (but you'll only be able to see the money displayed as 99,999).
+<P>
+
+Next, we'll changed its minimum damage. Search for offset 61-64 (3D-40 hex). Now, let's change it to do 55 damage minimum (we don't want to create too much of a monster weapon, the enemy can have pipe rifles too). 55 is the same as 37 hex. So in offset 64, type 37. Now you can go and test it if you want. But the second part of this is to change the maximum damage. Let's set this to 55 too (so you always know that it will do 55 damage). Go to the last offset between offsets 65-68 (41-44 hex). So in offset 68, type 37. Now, you really should go and test it, so start a new game in Fallout 2, go to Klamath, find Vic's pipe rifle, and open fire on the villagers. You'll see you do roughly 55 damage each time.<P>
+
+That's it for now. You have created your first mod! Pat yourself on the back. Now, you should be able to understand the advanced guides, so go and take a look for more info there.
+
+</blockquote>
+
+<BR><BR><BR>
+<div align=right><a href="javascript:history.back(1)">Back</a></div><P>
+<div align="right">Copyright 2000 by <a href="mailto:Smackrazor@mailandnews.com">Smackrazor</a>
+
+
+</BODY>
+</HTML>

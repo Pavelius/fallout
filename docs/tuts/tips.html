@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+<TITLE>Modding Tips</TITLE>
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+-->
+</style>
+</head>
+<body marginheight="2" marginwidth="2" leftmargin="2" topmargin="2"><a name="#top"></a>
+<div class="header">Modding Tips</div>
+<P>
+<blockquote>
+This is a selection of modding tips which should prove most useful to beginners, or people who need to clarify something.
+<P>
+Contents:
+<ul type=circle>
+<li><a href="#files">Which Files Do I Mod</a></li>
+<li><a href="#put">Where Do I Put My Files</a></li>
+<li><a href="#tips">Quick Tips</a></li>
+</ul>
+<BR>
+If you want to contribute more modding tips then please email them to <a href="mailto:Smackrazor@mailandnews.com">Smackrazor</a>.
+</blockquote>
+<hr noshade style="color:#00bb00;">
+<a name="#files"><P>
+<div class="sub-header">Which Files Do I Mod</div>
+<blockquote>
+There are well over 60,000 files in Fallout 2 for you to mod. These are located in the '<b>Master.Dat</b>' and '<b>Critter.Dat</b>' files. The '<b>Master.Dat</b>' conatins all of the main information such as weapons, critters, text, certain artwork etc. However, '<b>Critter.Dat</b>' contains everysingle one of the art files used for critters.
+<P>
+To extract the files that you want from these files you will need to download DATMan Light. Once this is done you can select which files you wish to extract or you could extract all the files at the touch of a button. 
+<P>
+After this, you will need to download a hex editor (TMS prefers Hex Workshop by Breakpoint Software, Inc). Then you just choose your favorite file and begin editing.
+<P>
+For more info on hex editing see the documentation on <a href="../pro.html">Pro Files</a> and <A href="guide-making.html">Making a Mod</a>.
+<P><div align=right><a href="#top">Top</a></div>
+</blockquote>
+
+
+<a name="#put"></a>
+<P>
+<div class="sub-header">Where Do I Put My Files</div>
+<blockquote>
+
+This is probably one of the key things in modding, and many a time I have been asked the same old question "Where do I put my files?", so I have decided to write an answer here.
+<BR>
+<ul type=circle>
+<li>[Fallout base directory]\Data\</li>
+<li>[Fallout base directory]\name.Dat\</li>
+<li>In a DAT</li>
+</ul>
+<BR>
+The Fallout base directory is where Fallout is located, for example:
+<P>
+<i>C:\Games\Interplay\Fallout 2</i>
+<P>
+The data folder is another common place where files go, the files in this folder <u><b>must</b></u> be <u><b>read-only</b></u>. You can make a file read only in Windows 9.x by right clicking on the file, selecting properties, and checkign the check box labelled 'read only'. These files only overwrite files contained in the 'Master.dat' or 'Critter.dat'.
+<P>
+You could also choose to extract all if the files from the DAT into a directory with the identical name, for example:
+<P>
+<i>Extracted files from the 'master.dat' must go in '[Fallout base directory]\master.dat' <b>and the folder must include the file extension.</b></i>
+<P>
+You can do this because of the way the Window's 9.x file system works, where directories are higher ranked than files.
+<BR>
+You need to modify this line in fallout2.cfg, too:
+<P>
+master_dat={path}
+<P>
+For example: <i>C:\Games\Interplay\Fallout 2\master.dat</i>
+<P>
+You could also opt to make a DAT file using DATMan Light and FAME. Make a DAT in DATMan Light by selecting <b>New</b> and then <b>add files</b> in order to add the required files. <I><U><b>Note:</b> You do not have to include any files in the DAT aside from the ones you have modded.</u></i><BR>
+Once this is done you can run FAME and start Fallout 2 using the DAT file(s) you have selected.
+<P><div align=right><a href="#top">Top</a></div>
+</blockquote>
+
+<a name="#tips"></a>
+<P>
+<div class="sub-header">Quick Tips</div>
+<blockquote>
+There are certain shortcuts which may help you in modding Fallout 1 or 2.
+<P>
+'<b>Ctrl</b>' + '<b>R</b>'&nbsp;-&nbsp;Loads a certain map from the 'Master.Dat' and the '[Fallout base directory]\Data\maps' directories and/or files, but without scripts or text files.<BR>
+'<b>F11</b>' or '<b>F12</b>'&nbsp;-&nbsp;Saves a screenshot, just so you can brag about your accomplishments to friends.<BR>
+<b>Never</b> ever forget the byte order most fallout files are big endian and the standard file io routines read little endian on an intel PC it can produce spectacularly wrong results. (Contributed by <a href="mailto:crazy_vasey@yahoo.com">Michael Vasey</a>)
+<P><div align=right><a href="#top">Top</a></div>
+</blockquote>
+<P>
+<DIV align=right>
+<a href="javascript:history.back(1)">Back</a>
+<P>Copyright 2000 Smackrazor (<I>Smackrazor@mailandnews.com</I>)
+</DIV><P><BR><BR>
+</BODY>
+</HTML>

@@ -187,12 +187,13 @@ enum material_s : unsigned char {
 	Glass, Metal, Plastic, Wood, Dirt, Stone, Cement, Leather
 };
 enum direction_s : unsigned char {
-	RightUp, Up, LeftUp, Right, Left, RightDown, Down, LeftDown,
+	LeftUp, Up, RightUp, Right, RightDown, Down, LeftDown, Left,
+	Center,
 };
 enum settlement_s : unsigned char {
 	SettlementArojo, SettlementDen, SettlementKlamath,
 };
-enum light_flag {
+enum light_flag : short unsigned {
 	NorthSouth = 0,
 	EastWest = 0x0800,
 	NorthCorner = 0x1000,
@@ -273,6 +274,11 @@ enum animation_s : unsigned char {
 	AnimateMachineGun = AnimateHeavyGun + 13,
 	AnimateRocketLauncher = AnimateMachineGun + 13,
 	LastAnimation = AnimateRocketLauncher + 13
+};
+enum map_object_s : short unsigned {
+	NoObject,
+	FirstWall = 1, LastWall = 1633,
+	FirstScenery = 2000, LastScenery = 3999,
 };
 enum color_s : unsigned char {
 	ColorDisable = 0x60, ColorText = 0xD7, ColorCheck = 0x03, ColorInfo = 0xE4, ColorButton = 0x3C,
@@ -458,8 +464,17 @@ struct wall_info {
 	int					fid;
 	const char*			name;
 	material_s			material;
-	unsigned			light;
+	light_flag			light;
 	unsigned			action;
+};
+struct land_info {
+	const char*			name;
+	unsigned char		percent;
+	short unsigned		central[4];
+	short unsigned		tiles[8];
+	short unsigned		corners[4];
+	short unsigned		random() const;
+	static short unsigned getlast();
 };
 struct item {
 	typedef bool		(item::*proctest)() const;
@@ -682,13 +697,6 @@ struct settlement {
 	char				size;
 	unsigned			flags;
 };
-struct scenery : drawable, point {
-	short unsigned		type;
-	constexpr scenery() : point{0, 0}, type(0) {}
-	point				getposition() const override { return *this; }
-	rect				getrect() const override { return {x - 64, y - 64, x + 64, y + 64}; }
-	void				painting(point position) const override;
-};
 struct ground_info : item {
 	point				position;
 };
@@ -698,21 +706,26 @@ struct map_info {
 	void				clear();
 	short unsigned		geth(int x, int y) const;
 	short unsigned		getm(int x, int y) const;
-	aref<scenery>		getscenes() { return scenes; }
+	static short unsigned getland(short unsigned tile);
+	unsigned short		getlandtile(short unsigned index, short unsigned value) const;
+	short unsigned		getobject(short unsigned index) const;
 	short unsigned		gettile(short unsigned index) const;
-	short unsigned		getwall(short unsigned index) const;
 	bool				isblocked(short unsigned index) const;
-	short unsigned		to(short unsigned index, direction_s d);
+	short unsigned		to(short unsigned index, direction_s d) const;
+	short unsigned		tot(short unsigned index, direction_s d) const;
 	void				serialize(bool write_mode);
-	void				setscene(int x, int y, short unsigned value);
+	void				setnone(short unsigned index);
+	void				setland(short unsigned index, short unsigned value);
+	void				setlandx(short unsigned index, short unsigned value);
+	void				setscene(short unsigned index, short unsigned value);
 	void				settile(short unsigned index, short unsigned value);
 	void				setwall(short unsigned index, short unsigned value);
 private:
 	friend archive;
 	unsigned short		tiles[width*height];
-	unsigned short		walls[width*height * 4];
+	unsigned short		objects[width*height * 4];
 	unsigned char		flags[width*height * 4];
-	adat<scenery, 512>	scenes;
+	void				updateland();
 };
 namespace draw {
 struct actinfo {
@@ -790,7 +803,6 @@ void					tiles(point screen);
 }
 const int				tile_width = 80; // Width of isometric tile
 const int				tile_height = 36; // Height of isometric tile
-template<> void			archive::set<scenery>(scenery& e);
 point					h2m(point pt);
 point					s2m(point s); // Convert screen coordinates to tile index
 inline short unsigned	m2i(short unsigned x, short unsigned y) { return (y << 8) + x; }
@@ -805,10 +817,10 @@ extern creature			player;
 extern adat<creature, 128> creature_data;
 extern resist_info		damage_data[];
 extern gender_info		gender_data[];
+extern land_info		land_data[];
 extern map_info			map;
 extern material_info	material_data[];
 extern perk_info		perk_data[];
-extern adat<scenery, 512> scenery_data;
 extern skill_info		skill_data[];
 extern tile_info		tile_data[];
 extern wall_info		wall_data[];

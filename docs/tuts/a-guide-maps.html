@@ -1,0 +1,678 @@
+<html>
+
+<head>
+<title>Map Modding</title>
+
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+.table {font-family: arial ,sans-serif; font-size: 10pt; color: #00BB00;}
+-->
+</style>
+
+</head>
+<body>
+<div class=header>Modding the Maps</div>
+<p>An important note: Everysingle map in Fallout 2 is different, so you'll have to get started with the 'artemple.map' and then work out things for other maps based on your findings here. In Fallout 2, the map files are
+split into 4 different areas:</font></p>
+
+<ul type=circle>
+<LI><a href="#thebasics">The Basics<BR></li></a>
+<LI><a href="#thetiles">The Tiles<BR></li></a>
+<LI><a href="#thescripts">The Scripts<BR></li></a>
+<LI><a href="#details">Details, Details, Details</li></ul><P></a>
+
+<HR style="color:#00bb00;"><BR>
+
+<div class=sub-header><a name=#thebasics>The Basics</div><P>
+<blockquote>
+Now lets begin with the basics. This starts at the begginning of the map at continues till the offset EC. The basics contains information on the map, such as the script file it uses and the grid size. Now to explain each of the parts, open up 'artemple.map' and I will explain each of the bits:<P>
+
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <TH bgcolor=#008000><font color=black>Offset</font></th>
+        <tH bgcolor=#008000><font color=black>Byte length</font></th>
+        <tH bgcolor=#008000><font color=black>Description</font></th>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>26h - 27h</font></td>
+        <td><font color=#00bb00>2</font></td>
+        <td><font color=#00bb00>associated script
+        number for the map</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>2bh</font></td>
+        <td><font color=#00bb00>1</font></td>
+        <td><font color=#00bb00>grid size, values can
+        be: </font><table border="0">
+            <tr>
+                <td><font color=#00bb00>0c</font></td>
+                <td><font color=#00bb00>100x100</font></td>
+                <td><font color=#00bb00>40,000 bytes</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>08</font></td>
+                <td><font color=#00bb00>100x200</font></td>
+                <td><font color=#00bb00>80,000 bytes</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>00</font></td>
+                <td><font color=#00bb00>100x300</font></td>
+                <td><font color=#00bb00>120,000 bytes</font></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>36h - 37h</font></td>
+        <td><font color=#00bb00>2</font></td>
+        <td><font color=#00bb00>Map name can be found
+        in \text\english\game\map.msg</font></td>
+    </tr>
+</table>
+<P>
+</blockquote>
+<div class=sub-header><a name=#thetiles>The Tiles</div>
+
+<blockquote>The tiles begin in every map at ECh, but vary when coming to where they end, in the above table where it says 0C - 100x100 - 40,000 bytes etc. means if at 28h it says 000C then the tiles will go for 40,000 bytes, etc. making it a 100x100 grid - heres the format of a tile.<P>
+RRRR
+FFFF
+<P>
+RRRR - the
+        frame number for a roof tile<BR>
+FFFF - The
+        frame number for a floor tile
+
+<p>For example:
+0001 00C5
+
+<P>Where 0001 is the roof and 00C5 is the floor. 0001 means no tile (this is for both the roof and the floor).
+
+<p>And in the game,
+the tiles always go from right to left, and from top to bottom.
+
+<P>
+</blockquote>
+<div class=sub-header><a name=#thescripts>The Scripts</div>
+<blockquote>
+
+<P>The scripts are located in the map right after the tiles have ended. However, the format of the scripts section in the map is not fully understood. Basically, this is how they are presented:
+
+<P>0001 FFFF FFFF 0000 0000 0000 0004
+
+<P>At the moment, it seems like the 0001 refers to an object in the map (not sure how this works), and then the 0004 refers to the script (in this case, script test 03).
+
+</blockquote>
+<P>
+
+<div class=sub-header><a name=#details>Details, Details, Details</div>
+<blockquote>
+<P>The section of the map after all of the scripts is the section which contains all of the screen-painting information. This section is the biggest section of the map.
+<P>The different object ID's are:
+
+<P><TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Object Type
+        <th bgcolor=#008000><font color=Black>Hex Number
+    </tr>
+    <tr>
+            <tr>
+                <td><font color=#00bb00>Items</td>
+                <td><font color=#00bb00>00</td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Critters</td>
+                <td><font color=#00bb00>01 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Scenery </td>
+                <td><font color=#00bb00>02 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Walls </td>
+                <td><font color=#00bb00>03 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Nothing </td>
+                <td><font color=#00bb00>04 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Misc </td>
+                <td><font color=#00bb00>05 </td>
+            </tr>
+        </td>
+    </tr>
+</table>
+
+<blockquote>
+<div class=sub-header>Items</div>
+
+<P><TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Object Type
+        <th bgcolor=#008000><font color=Black>Block Length
+    </tr>
+    <tr>
+            <tr>
+                <td><font color=#00bb00>Armor </td>
+                <td><font color=#00bb00>88</td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Container </td>
+                <td><font color=#00bb00>88 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Drug </td>
+                <td><font color=#00bb00>88 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Weapon </td>
+                <td><font color=#00bb00>96 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Ammo </td>
+                <td><font color=#00bb00>96 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Misc </td>
+                <td><font color=#00bb00>92 </td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Key </td>
+                <td><font color=#00bb00>92 </td>
+            </tr>
+        </td>
+    </tr>
+</table>
+
+<p>Now the offsets.
+If a container has items in it, go down to the inventory section,
+to learn how to put items into it. Also note, the offsets in the following sections use offsets for the item if it's starting offset is 00. <P>
+
+
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Offset</font></td>
+        <th bgcolor=#008000><font color=Black>Length(Byte)</font></td>
+        <th bgcolor=#008000><font color=Black>Description</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>00h - 03h</font></td>
+        <td><font color=#00bb00><div align=center>4</div></td>
+        <td><font color=#00bb00>Tile number</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Ch</font></td>
+        <td><font color=#00bb00><div align=center>1</div></td>
+        <td><font color=#00bb00>Object Type Id 00 -
+        Item</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Eh - 1Fh</font></td>
+        <td><font color=#00bb00><div align=center>2</div></td>
+        <td><font color=#00bb00>Frame of Item</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h</font></td>
+        <td><font color=#00bb00><div align=center>1</div></td>
+        <td><font color=#00bb00>Object Type Id 00</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>2Ah - 2Bh</font></td>
+        <td><font color=#00bb00><div align=center>2</div></td>
+        <td><font color=#00bb00>Object ID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h - 2Bh</font></td>
+        <td><font color=#00bb00><div align=center>4</div></td>
+        <td><font color=#00bb00>PID (Object type ID +
+        Object ID)</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>40h - 43h</font></td>
+        <td><font color=#00bb00><div align=center>4</div></td>
+        <td><font color=#00bb00>Script no. (FFFF FFFF
+        = no script)</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>44h - 47h</font></td>
+        <td><font color=#00bb00><div align=center>4</div></td>
+        <td><font color=#00bb00>No. of items (Container
+        only)</font></td>
+    </tr>
+</table>
+<P>
+
+<div class=sub-header>Critters</div><P>
+
+If a critter
+has items in it, refer to the inventory section<P>
+
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Offset</font></td>
+        <th bgcolor=#008000><font color=Black>Length(Byte)</font></td>
+        <th bgcolor=#008000><font color=Black>Description</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>00h - 03h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>Tile no.</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Bh</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Angle of Critter.
+        Values can be:<br>
+<TABLE BORDER="0" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+            <tr>
+                <td><font color=#00bb00>00</font></td>
+                <td><font color=#00bb00>Lower Right</td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>01</font></td>
+                <td><font color=#00bb00>Down</td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>02</font></td>
+                <td><font color=#00bb00>Lower Left</td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>03</font></td>
+                <td><font color=#00bb00>Higher Left</td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>04</font></td>
+                <td><font color=#00bb00>Up</td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>05</font></td>
+                <td><font color=#00bb00>High Right</td>
+            </tr>
+        </table>
+        </center></div></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Ch</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Object Type ID 01 -
+        Critter</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Eh - 1Fh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Frame of Critter</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Object Type ID 01</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>2Ah - 2Bh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Object ID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h - 2Bh</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>PID (Object Type ID +
+        Object ID)</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>40h - 43h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>Script No. (No script
+        means dead)</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>44h - 47h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>Number of Items if any</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>68h - 6Bh</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>Group id</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>70h - 73h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>hit Points</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>7Dh - 7Eh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Quantity of first item,
+        if they have items</font></td>
+    </tr>
+</table>
+<P>
+
+
+
+<div class=sub-header>Scenery</div><P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Object Subtype
+        <th bgcolor=#008000><font color=Black>Block Length
+
+            <tr>
+                <td><font color=#00bb00>Portal</font></td>
+                <td><font color=#00bb00>92</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Stairs</font></td>
+                <td><font color=#00bb00>96</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Elevator</font></td>
+                <td><font color=#00bb00>96</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Ladder down</font></td>
+                <td><font color=#00bb00>96</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Ladder Up</font></td>
+                <td><font color=#00bb00>96</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Generic</font></td>
+                <td><font color=#00bb00>88</font></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+<P>
+
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Offset</font></td>
+        <th bgcolor=#008000><font color=Black>Length(byte)</font></td>
+        <th bgcolor=#008000><font color=Black>Description</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>00h - 03h</font></td>
+        <td><font color=#00bb00>4</font></td>
+        <td><font color=#00bb00>Tile no.</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Ch</font></td>
+        <td><font color=#00bb00>1</font></td>
+        <td><font color=#00bb00>Object Type ID 02 -
+        Scenery</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Eh - 1Fh</font></td>
+        <td><font color=#00bb00>2</font></td>
+        <td><font color=#00bb00>Frame of Scenery</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h</font></td>
+        <td><font color=#00bb00>1</font></td>
+        <td><font color=#00bb00>Object type id 02</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>2Ah - 2Bh</font></td>
+        <td><font color=#00bb00>2</font></td>
+        <td><font color=#00bb00>Object ID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h - 2Bh</font></td>
+        <td><font color=#00bb00>4</font></td>
+        <td><font color=#00bb00>PID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>40h - 43h</font></td>
+        <td><font color=#00bb00>4</font></td>
+        <td><font color=#00bb00>Script no. (FFFF FFFF
+        - No script)</font></td>
+    </tr>
+</table>
+<P><div class=sub-header>Walls</div>
+<P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Offset</font></td>
+        <th bgcolor=#008000><font color=Black>Length(byte)</font></td>
+        <th bgcolor=#008000><font color=Black>Description</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>00h - 03h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>Tile no.</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Ch</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Object type ID 03 -
+        Wall</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Eh - 1Fh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Frame of Wall</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>20h - 23h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>Aligns the walls, not
+        all walls have this though.</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Object type ID 03</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>2Ah - 2Bh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Object ID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h - 2Bh</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>PID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>40h - 43h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>FFFF FFFF - Don't think
+        walls can have scripts</font></td>
+    </tr>
+</table>
+</center></div>
+
+<P><div class=sub-header>Misc</div>
+<P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Object type:
+        <th bgcolor=#008000><font color=Black>Block Length
+    </tr>
+
+            <tr>
+                <td><font color=#00bb00>Exit Grid</font></td>
+                <td><font color=#00bb00>104</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>Generic</font></td>
+                <td><font color=#00bb00>88</font></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+<P>
+
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+        <th bgcolor=#008000><font color=Black>Offset</font></td>
+        <th bgcolor=#008000><font color=Black>Length(byte)</font></td>
+        <th bgcolor=#008000><font color=Black>Description</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>00h - 03h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>Tile no.</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Ch</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Object Type ID 05 -
+        Misc</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>1Eh - 1Fh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Frame of Misc</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Object Type ID 05</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>2Ah - 2Bh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Object ID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>28h - 2Bh</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>PID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>40h - 43h</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>ffff ffff (Might be
+        able to have script)</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>56h - 57h</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Calls up that Map file
+        when you Step on a green exit grid (I think)</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>58h - 5Bh</font></td>
+        <td><font color=#00bb00><div align=center>4</font></td>
+        <td><font color=#00bb00>????, Tile no. for
+        what, Something to do with the exit grid</font></td>
+    </tr>
+</table>
+<P></blockquote></blockquote>
+<p align="center"><div class=sub-header>Inventory Editing</div>
+<blockquote>
+How to add new items to critters and containers.<P>
+
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+
+    <tr>
+        <th bgcolor=#008000><font color=Black>Subtype</font></td>
+        <th bgcolor=#008000><font color=Black>Block Length</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>Armor</font></td>
+        <td><font color=#00bb00>92</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>Container</font></td>
+        <td><font color=#00bb00>96</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>Drug</font></td>
+        <td><font color=#00bb00>92</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>Weapon</font></td>
+        <td><font color=#00bb00>100</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>Ammo</font></td>
+        <td><font color=#00bb00>96</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>Misc</font></td>
+        <td><font color=#00bb00>96</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>Key</font></td>
+        <td><font color=#00bb00>96</font></td>
+    </tr>
+</table>
+<P>Now here are
+the offsets for inventory:<P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <th bgcolor=#008000><font color=Black>Offset</font></td>
+        <th bgcolor=#008000><font color=Black>Length</font></td>
+        <th bgcolor=#008000><font color=Black>Description</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>24h</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Wielding or not
+        wielding, it sort of works, possible values:</font><div
+        align="center"><center><table border="0">
+            <tr>
+                <td><font color=#00bb00>00</font></td>
+                <td><font color=#00bb00>Not wielding</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>02</font></td>
+                <td><font color=#00bb00>is wielding</font></td>
+            </tr>
+            <tr>
+                <td><font color=#00bb00>0a</font></td>
+                <td><font color=#00bb00>??</font></td>
+            </tr>
+        </table>
+        </center></div></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>2Ch</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Object Type ID for
+        Inventory, Values same as above, I think</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>2Eh - 2Fh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>item ID</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>5Ah - 5Bh</font></td>
+        <td><font color=#00bb00><div align=center>2</font></td>
+        <td><font color=#00bb00>Amount of Ammo if any
+        (Weapon Only)</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>5Fh</font></td>
+        <td><font color=#00bb00><div align=center>1</font></td>
+        <td><font color=#00bb00>Ammunition Type, if
+        any (Weapon Only)</font></td>
+    </tr>
+    <tr>
+        <td><font color=#00bb00>5Ah - 5Fh</font></td>
+        <td><font color=#00bb00><div align=center>6</font></td>
+        <td><font color=#00bb00>If weapon doesnt have
+        ammuniton, then just 6 lots of FF</font></td>
+    </tr>
+</table>
+<p>
+<p>
+<div align=right><a href="javascript:history.back(1)">Back</a></div><P>
+<DIV ALIGN=RIGHT>Copyright 2000 by Neo (<I>kingpin131@hotmail.com</I>)<BR>
+corrections and additions made by Smackrazor (<I>sea_man_stains__@hotmail.com<I>)<BR>
+</DIV>
+</body>
+</html>

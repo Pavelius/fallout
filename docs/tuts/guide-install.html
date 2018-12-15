@@ -1,0 +1,142 @@
+<HTML>
+<HEAD>
+<TITLE>Installing Mods</TITLE>
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+.table {color:#00bb00; font-size:10pt;}
+-->
+</style>
+<SCRIPT>
+<!--
+function openHelp(url,width,height) {
+        var Win = window.open(url,"openScript",'width=' + width + ',height=' + height + ',resizable=0,scrollbars=yes,menubar=no,status=no' );
+}
+//-->
+</SCRIPT>
+</HEAD>
+<body marginheight="2" marginwidth="2" leftmargin="2" topmargin="2">
+<div class="header">Installing Mods</div>
+<blockquote>
+		Modding Fallout is incredibly easy. The only pieces of information you require are how to make the mod and how to install the mod. I'll cover the how to install a mod first, as people generally make a mod and then wonder how on earth they go about installing it.<p>
+		Anyway, first, you must locate the directory where your mod is to be installed. The directory which you should <i>always</i> look for first is the data directory. If you look in your Fallout directory, there should be this data directory. If you take a peek inside, there should be the following directories (at first there may not be all of the following directories, but is a good idea to add them):
+<ul type="circle">
+<li><a href="#art">art</a></li>
+<li><a href="#data">data</a></li>
+<li><a href="#maps">maps</li></a>
+<li><a href="#premade">premade</li></a>
+<li><a href="#proto">proto</li></a>
+<li><a href="#scripts">scripts</li></a>
+<li><a href="#sound">sound</li></a>
+<li><a href="#text">text</a></li>
+</ul>
+</blockquote>
+<a name="art">
+<div class="sub-header">The Art Directory</div>
+<blockquote>
+		Guess what? This is the directory where all of the art is stored. There are the following directories:<p>
+<table border=0 cellspacing=0 cellpadding=0 cols=2 width=90%>
+<TR><TD><font class="table">background</td><td><font class="table"> - This directory contains all of the backgrounds which appear behind the talking heads</td></tr>
+<TR><TD><font class="table">critters</td><td><font class="table"> - This directory contains every single '.frm' file which depicts a character in the game</td></tr>
+<TR><TD><font class="table">cuts</td><td><font class="table"> - This directory contains all of the movies (like the Interplay logo, PIPBoy movies etc)</td></tr>
+<TR><TD><font class="table">heads</td><td><font class="table"> - This directory contains all of the talking heads art files</td></tr>
+<TR><TD><font class="table">intrface</td><td><font class="table"> - This directory contains all of the '.frm' files which have something to do with how you interface with the game (start screen etc)</td></tr>
+<TR><TD><font class="table">inven</td><td><font class="table"> - This directory contains the art files for the items which you can get in your inventory</td></tr>
+<TR><TD><font class="table">items</td><td><font class="table"> - This directory contains the art for objects which are not part of the scenery, but you cannot pick up (bookshelves etc, only exception are the weapon and small box art)</td></tr>
+<TR><TD><font class="table">misc</td><td><font class="table"> - This directory contains art for the exit grids and stuff shot from guns (grenades, rockets)</td></tr>
+<TR><TD><font class="table">scenery</td><td><font class="table"> - This directory contains art for the, you guessed it, scenery</td></tr>
+<TR><TD><font class="table">skilldex</td><td><font class="table"> - This directory contains art for the skilldex skills</td></tr>
+<TR><TD><font class="table">splash</td><td><font class="table"> - This directory contains art for the splash screens shown when the game is loading ('.rix' format)</td></tr>
+<TR><TD><font class="table">tiles</td><td><font class="table"> - This directory contains art for the tiles</td></tr>
+<TR><TD><font class="table">walls</td><td><font class="table"> - This directory contains art for the walls</td></tr>
+</table>
+</blockquote>
+
+<a name="data">
+<div class="sub-header">The Data Directory</div>
+<blockquote>
+		The data sub directory contains certain text files which tell the game how to run. There is also a mapper screenshot ('.lbm' format), an acm file and a whole lot of '.msk' files. No one has really explored these files too much, so I suggest you leave them alone until you feel more confident.
+</blockquote>
+
+<a name="maps">
+<div class="sub-header">The Maps Directory</div>
+<blockquote>
+		This directory contains every single map file in Fallout 1 or 2. There are two major files, '.map' and '.gam'. The only person who was able to figure something out about these was Mad&copy;ow who mysteriously disappeared from the web in mid 1999. It seems that all of the random encounters just contain the '.map file', whereas all other maps (with the exception of cave06 and cave0, which just have the '.gam' file) have both a '.gam' and '.map' file.
+</blockquote>
+
+<a name="premade">
+<div class="sub-header">The Premade Directory</div>
+<blockquote>
+		The premade sub directory contains all  of the information about the three starting characters:<p>
+<table border=0 cellspacing=0 cellpadding=0 width=11% cols=2>
+<tr><td><font class="table">Combat</td><td><font class="table">- Narg</td></tr>
+<tr><td><font class="table">Diplomat</td><td><font class="table">- Chitsa</td></tr>
+<tr><td><font class="table">Stealth</td><td><font class="table">- Mingan</td></tr>
+</table><P>
+
+The '.bio' file contains the characters' biography, and the '.gcd' file contains the characters starting info. This is not like a regular '.gcd' file because it doesn't need all of the file info. The offsets are provided <a href="please fill in the url here now, or you shall die">here</a>.
+
+</blockquote>
+
+<a name="proto">
+<div class="sub-header">The Proto Directory</div>
+<blockquote>
+		This sub directory has all of the pro files in it. The only directory which you should concern yourself with is the items directory. You can find all of the '.pro' files in it <a href="">here</a>.
+</blockquote>
+
+<a name="scripts">
+<div class="sub-header">The Scripts Directory</div>
+<blockquote>
+		This sub directory contains a series of complied scripts known as '.int' files. The only way we will ever get to find out how to mod these is if Black Isle releases the scripts' source.
+</blockquote>
+
+<a name="sound">
+<div class="sub-header">The Sound Directory</div>
+<blockquote>
+		The sound sub directory contains every '.acm' file in Fallout. You can convert them to wave form files with <a href="javascript:openHelp('../help/acm2wav.html',600,300)">ACM2WAV</a>, however you may not under any circumstances distribute any of the copyrighted music files.
+</blockquote>
+
+<a name="text">
+<div class="sub-header">The Text Directory</div>
+<blockquote>
+		This section contains every single dialogue, credits and other messages in Fallout. 
+</blockquote>
+
+<hr noshade style="color:#00ff00;">
+
+<P>
+<div class="sub-header">Where do I put my mods?</div>
+<blockquote>
+		First off, there are two ways you can put your mod back into the game. There is the compressed mod, or the standard mod.<P>
+		<B>Compressed Mod:</b><BR>
+		Compressed mods are very easy to make and they require very little time. Also, if you have modded Fallout a lot, you  may want to think about compressing your mods. This is because uncompressed mods slow gameplay down whereas with compressed mods, you don't notice any difference. <P>
+		<B>Making a Compressed Mod:</b><BR>
+		First, you need to open gzip in the MS-Dos prompt. The, you'll need to remove the ending from your mod (for example I was modding 00000002.pro, I would have to make it 00000002 instead). Now, you locate the file with gzip and type the following:<p>
+		gzip.exe -n -9 00000002<p>
+		After you have done this, you must rename the file (00000002.gz) to its original ending (00000002.pro).<BR>
+		You may want to experiment with the commands, but this is usually what you need to type. If you want to get more commands from gzip, then type:<p>
+		gzip.exe -h<P>
+		<b>Uncompreesed Mods:</b><BR>
+		These are very simple to make. You really should only use these while you are putting final touches on a mod though. Once you've completed the mod, you should compress it.<P>
+		<B>Making an Uncompressed Mod:</b><BR>
+		After you locate the directory where your mod should be placed, all you have to do is set the file properties to <u>read only</u>. Well, some of you may wonder how that's done. Well all you do is right click once on the file and then select 'Properties'. The where it says Attributes, you should make sure that the read only box is checked.
+</blockquote>
+
+<div class="sub-header">In Conclusion</div>
+<blockquote>
+All in all, you should <i>always</i> put the mod you made back in the directory you found it and <i>make sure</i> that the file is set to <u>read only</u>, otherwise you'll be wondering where your mod went. You should <i>always</i> <u>backup</u> the files you are going to mod as well. And you <i>should</i> start a new game with every mod <i>if</i> you want a 100% chance of it working and not messing up your game. But once you've perfected the mod you can play a saved game with the mod without any fear of the saved game becoming corrupt (happened to me on one occasion and I had to completely reinstall Fallout 2).
+</blockquote>
+<BR><BR><BR>
+<div align=right><a href="javascript:history.back(1)">Back</a></div><P>
+<div align="right">Copyright 2000 by <a href="mailto:Smackrazor@mailandnews.com">Smackrazor</a>
+
+
+</BODY>
+</HTML>

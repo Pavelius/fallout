@@ -1,0 +1,74 @@
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=windows-1251">
+<TITLE>Vault - Tec Studio :: Fallout Editing Center</TITLE>
+<META NAME="description" CONTENT="Vault-Tec Studio. Центр создания и редактирования игр серии Fallout. Обучение, концепции, документы, статьи по разработке, освещение хода работ и многое другое.">
+<META NAME="copyright" CONTENT="Copyright (c) 2002 by Finsternis">
+<style type="text/css">
+<!--
+td { font-family: Verdana;  font-size: 10.0pt; color: #cfcfcf; }
+h3 { font-family: Verdana;  font-size: 8.0pt; color: #cfcfcf; font-weigth: bold; }
+-->
+</style>
+</HEAD>
+<BODY text=#cfcfcf vLink=#7d7d7d aLink=#ffffff link=#f5efb6 bgColor=#4f474f 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<center>
+
+<TABLE width="90%" cellSpacing=0 cellPadding=2 border=0>
+<TR>
+<TD>
+            <H3>Установка оригинального редактора Fallout 2.</H3>&nbsp;Автор:&nbsp;
+<A href="mailto:finsternis@list.ru">Finsternis</A><BR><BR>
+Итак, чтобы начать работу с редактором Fallout 2, вам потребуется выполнить следующие действия:<BR><BR>
+Прежде всего - установите Fallout 2 желательно, локализацию от Фаргуса.<BR>
+ПОЛНУЮ ИНСТАЛЯЦИЮ (600 с лишним Mb). 
+Желательно (но не обязательно) в папку C:\Games\Fallout2\. Я установил туда.
+Редактор использует данные из .dat библиотек игры, а именно - графический интерфейс, 
+изображения тайлов, спрайтов, объектов и прочее.
+Приятно удивило то, что Фаргусовские локализаторы перевели все... 
+Даже редактор. Ну не весь, конечно, но постарались конкретно. Сразу видно - переводили 
+все, что попадало под их горячую руку. Естественно, это будет, если у вас установлена русская версия от 
+Фаргуса, - другие пока не пробовал...<BR><BR>
+Второе - устанавливаем редактор в ЛЮБУЮ директорию, но лучше - прямо в C:\Games\Fallout2\.<BR><BR>
+Третье (и самое главное) - открываем файл <font color="#91A3FF">mapper2.cfg</font>, и начинаем править:<BR>
+а) блоки <font color="#bb77bb">[debug]</font> и <font color="#bb77bb">[mapper]</font> благополучно пропускаем.<BR>
+б) в блоке <font color="#bb77bb">[preferences]</font> находим показатель <font color="#A7DFFF">subtitles</font> и ставим его равным <font color="#A7DFFF">1</font> (<font color="#A7DFFF">subtitles=1</font>).<BR>
+в) в блоке <font color="#bb77bb">[sound]</font> находим строчки<BR>
+<font color="#A7DFFF">music_path1=<BR>
+music_path2=</font><BR>
+и меняем их на<BR>
+<font color="#A7DFFF">music_path1=C:\games\Fallout2\data\sound\music\<BR>
+music_path2=D:\data\sound\music\</font><BR>
+или свои пути.<BR>
+г) в блоке <font color="#bb77bb">[system]</font> находим значение <font color="#A7DFFF">art_cache_size=261</font><BR>
+и меняем его на<BR>
+<font color="#A7DFFF">art_cache_size=65</font><BR>
+строчки<BR>
+<font color="#A7DFFF">critter_dat=<BR>
+critter_patches=</font><BR>
+меняем на<BR>
+<font color="#A7DFFF">critter_dat=C:\games\Fallout2\critter.dat<BR>
+critter_patches=C:\games\Fallout2\data</font><BR>
+значение <font color="#A7DFFF">free_space=0</font> меняем на <font color="#A7DFFF">free_space=20480</font><BR>
+и последний штрих: строчки<BR>
+<font color="#A7DFFF">master_dat=<BR>
+master_patches=</font><BR>
+меняем на<BR>
+<font color="#A7DFFF">master_dat=C:\games\Fallout2\master.dat<BR>
+master_patches=C:\games\Fallout2\data</font><BR><BR>
+СОХРАНЯЕМ ФАЙЛ В ОДНОМ КАТАЛОГЕ С ФАЙЛОМ <font color="#91A3FF">MAPPER2.EXE</font>.<BR><BR>
+Вообще я не знаю точные ли это значения...<BR>
+Хотя все работает, я думаю можно и нужно поэкспериментировать с ними... 
+Например с <font color="#A7DFFF">free_space</font> и <font color="#A7DFFF">art_cache_size</font>.
+А еще лучше - запустите саму игру и сразу же выйдите из нее. 
+Образуется файл <font color="#91A3FF">fallout2.cfg</font>, где вы сможете посмотреть значения, используемые вашим компьютером.
+<BR><BR><BR><BR>
+</TD>
+</TR>
+</TABLE>
+
+<font color="#888888" size="1" face="Verdana">
+Все логотипы, торговые марки, статьи, изображения и переводы на данном сайте пренадлежат их законным владельцам.<BR>
+Ответственность за коментарии и сообщения несут их отправители. Все защищено © 2003 команда <a href="http://vaulttec.isometrix.org/team.html">Vault-Tec Studio</a>.
+</font>
+</BODY></HTML>

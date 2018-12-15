@@ -1,0 +1,650 @@
+<HTML>
+<HEAD>
+<TITLE>Guide: Critters</TITLE>
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+.table {color:#00bb00; font-size:10pt;}
+-->
+</style>
+</head>
+<BODY>
+<div class="header">Guide: Critters</div>
+
+<p>This document explains the PRO
+format file located in the <tt>Master.dat\Proto\Critters\</tt>
+directory. These files sets the overall characteristics of each NPC that can be
+found in the game. There are skills such as <i>lockpicking</i>
+or <i>science</i>, basic stats such as <i>strength</i>, <i>perception</i>,
+or <i>endurance</i>. <i>Hit points</i>, <i>carry weight</i> are located here, too. In less
+words, you can modify every aspect of a Fallout critter here, except what they look like.<p>All the files
+have a total of 416 bytes and they're read in a Big Endian fashion [L] [H],
+like every PRO file in Fallout. The critter PRO files are compatible both in
+Fallout and Fallout 2, so, you can export your own critters either to Fallout 1 or Fallout 2.<p>This document is an updated version of
+the critter document made by <i>Jaundice.</i>
+<hr>
+<blockquote>
+  <div class=sub-header>Index</div>
+  <ul>
+    <li><a href="#baseg">Base General Stats</a></li>
+    <li><a href="#based">Base Damage Stats (Resistances and Tresholds)</a></li>
+    <li><a href="#basem">Base Miscellaneous Stats</a></li>
+    <li><a href="#extrag">Extra General Stats</a></li>
+    <li><a href="#extrad">Extra Damage Stats (Resistances and Tresholds)</a></li>
+    <li><a href="#extram">Extra Miscellaneous Stats</a></li>
+    <li><a href="#skills">Skills Stats</a><br>
+    </li>
+    <li><a href="#proto">Proto.msg</a></li>
+  </ul>
+</blockquote>
+
+<div align=center>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000" width="785" height="2597">
+  <TBODY>
+  <TR>
+    <TH bgcolor="#008000" width="85"><font color=black>Hex Offset</th>
+    <TH bgcolor="#008000" width="100"><font color=black>Byte Length</th>
+    <TH bgcolor="#008000" width="100"><font color=black>Max/Min</font> </th>
+    <TH bgcolor="#008000"><font color=black>Description </th>
+  <TR>
+    <TD><font class="table">0000
+    <TD><font class="table">2
+    <TD><font class="table">---
+    <TD><font class="table">Identifies file as critter
+  <TR>
+    <TD><font class="table">0002
+    <TD><font class="table">2
+    <TD><font class="table">---
+    <TD><font class="table">Critter ID number
+  <TR>
+    <TD><font class="table">0004
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Critter ID number multiplied by 100
+      (pro_crit.msg)<br>
+      This number + 1 = description (found in pro_crit.msg, too)
+  <TR>
+    <TD><font class="table">0008
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Corresponds to critters.lst
+  <TR>
+    <TD><font class="table">000B-002F
+    <TD><font class="table">&nbsp;
+    <TD><font class="table">---
+    <TD><font class="table">Unknown
+  <TR>
+    <TD>
+    <TD>
+    <TD>
+    <TD width="487" height="16"><font class="table" size="4"><b><a name="baseg"></a>Base
+      General Stats</b></font>
+  <TR>
+    <TD><font class="table">0030
+    <TD><font class="table">4
+    <TD><font class="table">Max: 10 - Min: 1
+    <TD><font class="table">Base strength
+  <TR>
+    <TD><font class="table">0034
+    <TD><font class="table">4
+    <TD><font class="table">Max: 10 - Min: 1
+    <TD><font class="table">Base perception
+  <TR>
+    <TD><font class="table">0038
+    <TD><font class="table">4
+    <TD><font class="table">Max: 10 - Min: 1
+    <TD><font class="table">Base endurance
+  <TR>
+    <TD><font class="table">003C
+    <TD><font class="table">4
+    <TD><font class="table">Max: 10 - Min: 1
+    <TD><font class="table">Base charisma
+  <TR>
+    <TD><font class="table">0040
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 - Min: 1
+    <TD><font class="table">Base intelligence
+  <TR>
+    <TD><font class="table">0044
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 - Min: 1
+    <TD><font class="table">Base agility
+  <TR>
+    <TD><font class="table">0048
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 - Min: 1
+    <TD><font class="table">Base luck
+  <TR>
+    <TD><font class="table">004C
+    <TD><font class="table">4
+    <TD><font class="table">Max: 999 - Min: 1
+    <TD><font class="table">Base HPs
+  <TR>
+    <TD><font class="table">0050
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base APs
+  <TR>
+    <TD><font class="table">0054
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base AC
+  <TR>
+    <TD><font class="table">0058
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base unarmed damage
+  <TR>
+    <TD><font class="table">005C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base melee damage
+  <TR>
+    <TD><font class="table">0060
+    <TD><font class="table">4
+    <TD><font class="table">Max: 7128 - Min: 0
+    <TD><font class="table">Base carry weight
+  <TR>
+    <TD><font class="table">0064
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base Sequence
+  <TR>
+    <TD><font class="table">0068
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base healing rate
+  <TR>
+    <TD><font class="table">006C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base critical chance
+  <TR>
+    <TD><font class="table">0070
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base better criticals
+  <TR>
+    <TD>
+    <TD>
+    <TD>
+    <TD width="487" height="16"><font class="table" size="4"><b><a name="based"></a>Base
+      Damage</b></font>
+  <TR>
+    <TD><font class="table">0074
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DT (Damage Threshold) - Normal
+  <TR>
+    <TD><font class="table">0078
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DT - Laser
+  <TR>
+    <TD><font class="table">007C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DT - Fire
+  <TR>
+    <TD><font class="table">0080
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DT - Plasma
+  <TR>
+    <TD><font class="table">0084
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DT - Electrical
+  <TR>
+    <TD><font class="table">0088
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DT - EMP
+  <TR>
+    <TD><font class="table">008C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DT - Explode
+  <TR>
+    <TD><font class="table">0090
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR (Damage Resistance) - Normal
+  <TR>
+    <TD><font class="table">0094
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR - Laser
+  <TR>
+    <TD><font class="table">0098
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR - Fire
+  <TR>
+    <TD><font class="table">009C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR - Plasma
+  <TR>
+    <TD><font class="table">00A0
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR - Electrical
+  <TR>
+    <TD><font class="table">00A4
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR - EMP
+  <TR>
+    <TD><font class="table">00A8
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR - Explode
+  <TR>
+    <TD><font class="table">00AC
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR - Radiation
+  <TR>
+    <TD><font class="table">00B0
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Base DR - Poison
+  <TR>
+    <TD>
+    <TD>
+    <TD>
+    <TD width="487" height="16"><font class="table" size="4"><b><a name="basem"></a>Miscellaneous</b></font>
+  <TR>
+    <TD><font class="table">00B4
+    <TD><font class="table">4
+    <TD><font class="table">Max: 99 - Min 1
+    <TD><font class="table">Base age
+  <TR>
+    <TD><font class="table">00B8
+    <TD><font class="table">4
+    <TD><font class="table">Max: 1 - Min 0
+    <TD><font class="table">Gender (00=Male, 01=Female)
+  <TR>
+    <TD>
+    <TD>
+    <TD>
+    <TD width="487" height="16"><font class="table" size="4"><b><a name="extrag"></a>Extra General Stats</b></font>
+  <TR>
+    <TD><font class="table">00BC
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 -  Min: 0
+    <TD><font class="table">Extra strength
+  <TR>
+    <TD><font class="table">00C0
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 -  Min: 0
+    <TD><font class="table">Extra perception
+  <TR>
+    <TD><font class="table">00C4
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 - Min: 0
+    <TD><font class="table">Extra endurance
+  <TR>
+    <TD><font class="table">00C8
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 - Min: 0
+    <TD><font class="table">Extra charisma
+  <TR>
+    <TD><font class="table">00CC
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 - Min: 0
+    <TD><font class="table">Extra intelligence
+  <TR>
+    <TD><font class="table">00D0
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 - Min: 0
+    <TD><font class="table">Extra agility
+  <TR>
+    <TD><font class="table">00D4
+    <TD><font class="table">2
+    <TD><font class="table">Max: 10 - Min: 0
+    <TD><font class="table">Extra luck
+  <TR>
+    <TD><font class="table">00D8
+    <TD><font class="table">4
+    <TD><font class="table">Max: 999 - Min: 0
+    <TD><font class="table">Extra HPs
+  <TR>
+    <TD><font class="table">00DC
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra APs
+  <TR>
+    <TD><font class="table">00E0
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra AC
+  <TR>
+    <TD><font class="table">00E4
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra unarmed damage
+  <TR>
+    <TD><font class="table">00E8
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra melee damage
+  <TR>
+    <TD><font class="table">00EC
+    <TD><font class="table">4
+    <TD><font class="table">Max: 7128 - Min: 0
+    <TD><font class="table">Extra carry weight
+  <TR>
+    <TD><font class="table">00F0
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra sequence
+  <TR>
+    <TD><font class="table">00F4
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra healing rate
+  <TR>
+    <TD><font class="table">00F8
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra critical chance
+  <TR>
+    <TD><font class="table">00FC
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra  better criticals
+  <TR>
+    <TD>
+    <TD>
+    <TD>
+    <TD width="487" height="16"><font class="table" size="4" color="#33CC33"><b><a name="extrad"></a>Extra Damage</b></font>
+  <TR>
+    <TD><font class="table">0100
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DT - Normal
+  <TR>
+    <TD><font class="table">0104
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DT - Laser
+  <TR>
+    <TD><font class="table">0108
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DT - Fire
+  <TR>
+    <TD><font class="table">010C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DT - Plasma
+  <TR>
+    <TD><font class="table">0110
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DT - Electrical
+  <TR>
+    <TD><font class="table">0114
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DT - EMP
+  <TR>
+    <TD><font class="table">0118
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DT - Explode
+  <TR>
+    <TD><font class="table">011C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - Normal
+  <TR>
+    <TD><font class="table">0120
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - Laser
+  <TR>
+    <TD><font class="table">0124
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - Fire
+  <TR>
+    <TD><font class="table">0128
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - Plasma
+  <TR>
+    <TD><font class="table">012C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - Electrical
+  <TR>
+    <TD><font class="table">0130
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - EMP
+  <TR>
+    <TD><font class="table">0134
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - Explode
+  <TR>
+    <TD><font class="table">0138
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - Radiation
+  <TR>
+    <TD><font class="table">013C
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">Extra DR - Poison
+  <TR>
+    <TD>
+    <TD>
+    <TD>
+    <TD width="487" height="16"><b><font class="table" size="4" color="#33CC33"><a name="extram"></a>Extra
+      Miscellaneous</font></b>
+  <TR>
+    <TD><font class="table">0140
+    <TD><font class="table">4
+    <TD><font class="table">Max: 99 - Min: 0
+    <TD><font class="table">Extra age
+  <TR>
+    <TD><font class="table">0144
+    <TD><font class="table">4
+    <TD><font class="table">Max: 1 - Min: 0
+    <TD><font class="table">Extra gender (just in case something changes the creature gender)
+  <TR>
+    <TD>
+    <TD>
+    <TD>
+    <TD width="487" height="22"><b><font class="table" size="4" color="#33CC33"><a name="skills"></a>Skills</font></b>
+  <TR>
+    <TD><font class="table">0148
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Small guns
+  <TR>
+    <TD><font class="table">014C
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Big guns
+  <TR>
+    <TD><font class="table">0150
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Energy weapons
+  <TR>
+    <TD><font class="table">0154
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Unarmed
+  <TR>
+    <TD><font class="table">0158
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Melee
+  <TR>
+    <TD><font class="table">015C
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Throwing
+  <TR>
+    <TD><font class="table">0160
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">First aid
+  <TR>
+    <TD><font class="table">0164
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Doctor
+  <TR>
+    <TD><font class="table">0168
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Sneak
+  <TR>
+    <TD><font class="table">016C
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Lockpick
+  <TR>
+    <TD><font class="table">0170
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Steal
+  <TR>
+    <TD><font class="table">0174
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Traps
+  <TR>
+    <TD><font class="table">0178
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Science
+  <TR>
+    <TD><font class="table">017C
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Repair
+  <TR>
+    <TD><font class="table">0180
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Speech
+  <TR>
+    <TD><font class="table">0184
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Barter
+  <TR>
+    <TD><font class="table">0188
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Gambling
+  <TR>
+    <TD><font class="table">018C
+    <TD><font class="table">4
+    <TD><font class="table">Max: 300 - Min: 0
+    <TD><font class="table">Outdoorsmanship
+  <TR>
+    <TD><font class="table">0193
+    <TD><font class="table">4
+    <TD><font class="table">Max: Proto.msg
+    <TD><font class="table">Body type: see Proto.msg</font>
+      <p><font class="table">The reading structure is &quot;4&quot; &amp; Body
+      Type.<br>
+      For example: in the PRO file you will see just 00 or 01 or 02. But to be
+      able to handle messages, scripts, etc. You will have to do it in the
+      &quot;proto.msg&quot; way. That is 00 = 400, 01 = 401, etc.</font>
+  <TR>
+    <TD><font class="table">0194-197
+    <TD><font class="table">4
+    <TD><font class="table">---
+    <TD><font class="table">The amount of experience you gain from slaying the critter.</font>
+  <TR>
+    <TD><font class="table">0198-19A
+    <TD>
+    <TD>
+    <TD><font class="table">Unknown</font>
+  <TR>
+    <TD><font class="table">019B
+    <TD><font class="table">4
+    <TD><font class="table">Max: Proto.msg
+    <TD><font class="table">Kill type: see Proto.msg</font>
+      <p><font class="table">The reading structure is &quot;14&quot; &amp; (Body
+      Type + 50).<br>
+      Like above, it will only show 00, 01...10...15, etc. You have to sum that
+      number by 50 and add a &quot;14&quot; to it.<br>
+      For example: 00 = 1450, 15 = 1465, 10 = 1460, 5 = 1455, etc.</font>
+  <TR>
+    <TD><font class="table">019C-19F
+    <TD>
+    <TD>
+    <TD><font class="table">Unknown</font>
+ </TR></TBODY></TABLE>
+</div>
+<blockquote>
+  <ul>
+    <li><i>Extra stats</i> can be interpreted like <i>base stats modifiers. </i>Attention!
+      The real final stat will be <tt>(Base Stat)+(Extra
+      Stat)=Real Stat</tt>.</li>
+    <li>All the stats have a limit, some of them are known, but it's recommended
+      to not surpass the 999 limit (that is 0x03 0xE7).</li>
+    <li>Unkown offsets are just that, unknown. No changes were seen while
+      heavily modified them.</li>
+  </ul>
+  <P>&nbsp;
+</blockquote>
+<div class=sub-header><a name="proto"></a>Proto.msg</div>
+<blockquote>
+<P><B><u>Body Types</u></b><BR>
+400: Biped<br>
+401: Quadruped<br>
+402: Robotic
+<P><B><u>Kill Types</u></B><br>
+1450: Men<br>
+1451: Women<br>
+1452: Children<br>
+1453: Super Mutants<br>
+1454: Ghouls<br>
+1455: Brahmin<br>
+1456: Radscorpions<br>
+1457: Rats<br>
+1458: Floaters<br>
+1459: Centaurs<br>
+1460: Robots<br>
+1461: Dogs<br>
+1462: Manti<br>
+1463: DeathClaws<br>
+1464: Plants</blockquote>
+<font style="text-decoration: underline overline;"><B>Note: Fallout 2 adds the following Kill Types</font></b>
+<blockquote>
+1465: Geckos<br>
+1466: Aliens<br>
+1467: Giant Ants<br>
+1468: Big Bad Boss
+</blockquote>
+<P><font class="table">
+<BR>
+
+<DIV align=right>
+<a href="Java-Script:history.back(1)">Back</a>
+<P>Copyright 2000 by Jaundice (<I>rir_nip@hotmail.com</I>)<BR>
+Re-written by MatuX (matip@fibertel.com.ar)<br>
+Additional Researching by Grendelin (<I>usp09@hotmail.com</I>)<BR>
+And Smackrazor (<I>sea_man_stains__@hotmail.com</I>)
+
+</DIV></BODY></HTML>
+

@@ -1,0 +1,307 @@
+<html>
+
+<head>
+<title>DAT Specs</title>
+
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+.table {font-family: arial ,sans-serif; font-size: 10pt; color: #00BB00;}
+-->
+</style>
+
+</head>
+<body>
+<div class=header>DAT Specs Document</div>
+<p>You can see Fallout's DAT files as if they where common ZIPs, they're used to store
+the files that will be used later inside the game, you can store anything you
+want, compressed or not, having the length you want from a common TXT to a
+immense MVE, and if you want, you can include a nice but useless DLL file. At
+the bottom of the DAT it's included all the information about each one of these
+files and some information about the DAT itself.</p>
+
+<ul type=circle>
+<LI><a href="#Chapter1">The DAT Format<BR></a></li>
+<LI><a href="#Chapter2">The Data Block<BR></a></li>
+<LI><a href="#Chapter3">The Directory Tree</a>
+  <ul type="circle">
+    <li><a href="#Chapter3-1">Format of DirTree entries</a></li>
+    <li><a href="#Chapter3-2">Declaration of a DirEntry</a></li>
+    <li><a href="#Chapter3-3">Entry Example</a> <i><font size="1">thanks Serge
+      from Team X for this example</font></i></li>
+    <li><font size="2"><a href="#Chapter3-4">How to find a DirTreeAddr</a></font><a href="#Chapter3"><BR></a></li>
+  </ul>
+</li>
+</ul>
+
+<HR style="color:#00bb00;"><BR>
+
+<div class=sub-header><a name="#Chapter1"></a>The DAT Format</div>
+<blockquote>
+<p>DATs are divided in 3 parts, Data Block, Directory Tree and Fixed DAT Information
+block. Data Blocks contains all the files stored in the DAT, some of them needs to be GZipped, others
+don't. The Directory Tree contains all the information about each file stored in Data Block, as well as the offset where it's located, if it's compressed or not, packed/unpacked sizes, etc. And finally the Fixed DAT Information
+block that contains the size in bytes of both full DAT and the Directory Tree.</p>
+<p>Here you can see a small scheme of how DAT's structure:</p>
+<P>
+
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+    <tr>
+        <TH bgcolor=#008000><font color="black">Part</font></th>
+        <tH bgcolor=#008000><font color="black">Location</font></th>
+        <tH bgcolor=#008000><font color=black>Description</font></th>
+    </tr>
+    <tr>
+        <td><font color="#00bb00">DataBlock</font></td>
+        <td>
+          <p align="left"><font color="#00bb00">.............<br>
+          .............<br>
+          X</font></p>
+        </td>
+        <td><font color="#00bb00">Files stored in the archive</font></td>
+    </tr>
+    <tr>
+        <td><font color="#00bb00">FilesTotal</font></td>
+        <td><font color="#00bb00">X+1</font></td>
+        <td><font color="#00bb00">Number of files in the archive</font>
+        </td>
+    </tr>
+    <tr>
+        <td><font color="#00bb00">DirTree</font></td>
+        <td><font color="#00bb00">X+5<br>
+          .............<br>
+          Z</font></td>
+        <td><font color="#00bb00">Tree information about the files stored in the
+          archive</font></td>
+    </tr>
+    <tr>
+        <td><font color="#00bb00">TreeSize</font></td>
+        <td><font color="#00bb00">Z+1</font></td>
+        <td><font color="#00bb00">Size of DirTree in bytes</font></td>
+    </tr>
+    <tr>
+        <td>DataSize</td>
+        <td>Z+5</td>
+        <td>Full size of the archive in bytes</td>
+    </tr>
+</table>
+<blockquote>
+  <p>*FilesTotal + DirTree corresponds to Directory Tree block<br>
+  **TreeSize + DataSize corresponds to Fixed DAT Information block</p>
+</blockquote>
+</blockquote>
+<div class=sub-header><a name="#Chapter2"></a>The Data Block</div>
+
+<blockquote>
+  <p>The Data Block contains just plain files, their technical information is located
+  in the Directory Tree.<br>
+  <br>
+  Data Block starts from the very beginning of a DAT file. They can be compressed or not, (Fallout
+  engine uses zlib stream data compression), if they're compressed the signature 0x78DA appears at the begin of the file, if not, there is no signature,
+  the file starts without signature.<br>
+  <br>
+  The 0x78DA compression signature has an integer (2 bytes/WORD) nature.<br>
+  <br>
+	0x78DA in ASCII is "xÚ" as char is 120 for 'x' and 218 for 'Ú'<br>
+  <br>
+  Compressed files are "zlib stream data" (RFC-1950(zlib format), RFC-1951(deflate format), RFC-1952(gzip format)).<br>
+  <br>
+  However, if you attach this header&nbsp; <font face="Terminal">1F 8B 08 08 9F E8
+  B7 36 02 03</font> to the file, such file could been easily decompressed with WinZip.</p>
+</blockquote>
+<div class=sub-header><a name="#Chapter3"></a>The Directory Tree</div>
+<blockquote>
+
+<P>Directory Tree contains entries that specifies about a file stored in the Data Block.
+These entries can be varying depending on the FilenameSize of the file (Path + Filename).<br>
+<br>
+Like you saw in the scheme located at the beginning of this document, Directory Tree has been divided into 2 parts,
+FilesTotal and the DirTree. FilesTotal contains how many files are stored in the DAT,
+DirTree contains all the information about these files.<P>FilesTotal is declared
+as a DWORD (4 bytes/Long) type and is readed in INTEL L-H format.
+<blockquote>
+  <P><b><font size="3"><i><a name="#Chapter3-1"></a>Format of DirTree entries</i></font></b>
+</blockquote>
+<P>DirTree has a private structure. The length of this structure can vary
+depending on the length of the Filename (path + filename). All the entries are
+DWord types unless it's specified. At the end of this chapter you can find a
+scheme on the structure and the way it's declared on C and Visual Basic
+programming languages.
+<P>All the directories and files are stored in DOS 8.3 format, that is 8
+characters for the file name and 3 characters for the file extension. All the
+entries are sorted alphabetically in a descendent direction.<P><b>Structure scheme:
+</b>
+
+
+<i><font size="1">all Dwords are readed in INTEL L-H format.</font></i><b><br>
+</b>
+
+
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000" width="587">
+    <tr>
+        <th bgcolor=#008000 align="left" width="96"><font color="Black">Name</font>
+        <th bgcolor=#008000 align="left" width="116"><font color="Black">Type</font>
+        <th bgcolor=#008000 align="left" width="347"><font color=Black>Description</font>
+    </tr>
+    <tr>
+        <td align="left" width="96"><font color="#00bb00">FilenameSize</font></td>
+        <td align="left" width="116"><font color=#00bb00><div align=center>Dword</div></font></td>
+        <td align="left" width="347"><font color="#00bb00">Length of the ASCII
+          filename.</font></td>
+    </tr>
+    <tr>
+        <td align="left" width="96"><font color="#00bb00">Filename</font></td>
+        <td align="left" width="116"><font color=#00bb00><div align=center>String</div></font></td>
+        <td align="left" width="347"><font color="#00bb00">Path and name of the file, For example, "text\english\game\WORLDMP.MSG".</font>
+          <p><font color="#00bb00">The length of the Filename is FilenameSize.</font></p>
+        </td>
+    </tr>
+    <tr>
+        <td align="left" width="96"><font color="#00bb00">Type</font></td>
+        <td align="left" width="116"><font color=#00bb00><div align=center>Byte</div></font></td>
+        <td align="left" width="347"><font color="#00bb00">Compression boolean:</font>
+          <blockquote>
+            <p><font color="#00bb00">1 = Compressed<br>
+		0 = Decompressed</font></p>
+          </blockquote>
+        </td>
+    </tr>
+    <tr>
+        <td align="left" width="96"><font color="#00bb00">RealSize</font></td>
+        <td align="left" width="116"><font color=#00bb00><div align=center>Dword</div></font></td>
+        <td align="left" width="347"><font color="#00bb00">Size of the file
+          without compression.</font></td>
+    </tr>
+    <tr>
+        <td align="left" width="96"><font color="#00bb00">PackedSize</font></td>
+        <td align="left" width="116"><font color=#00bb00><div align=center>Dword</div></font></td>
+        <td align="left" width="347"><font color="#00bb00">Size of the
+          compressed file.</font></td>
+    </tr>
+    <tr>
+        <td align="left" width="96"><font color="#00bb00">Offset</font></td>
+        <td align="left" width="116"><font color=#00bb00><div align=center>Dword</div></font></td>
+        <td align="left" width="347"><font color="#00bb00">Address/Location of
+          the file.</font></td>
+    </tr>
+</table>
+<blockquote>
+  <P><font color="#00bb00">*Dword stands for 4 bytes/long integers 0xNN NN NN NN<br>
+  *Word stands for 2 bytes integers 0xNN NN<br>
+  *Byte stands for 1 byte integer 0xNN<br>
+  *String stands for common string bytes &quot;ABCDEF123456!@#$%/][\&quot;, etc.</font><P><b><font size="3"><i><a name="#Chapter3-2"></a>Declaration
+  of a DirEntry</i></font></b>
+  <blockquote>
+    <blockquote>
+      <P><i><b><font size="2" color="#00BB00">C decorated structure:</font></b></i>
+    </blockquote>
+    <P><font face="Terminal">		struct DirEntry<br>
+		{<br>
+    &nbsp;&nbsp;&nbsp; DWORD FilenameSize;<br>
+    &nbsp;&nbsp;&nbsp; char  Filename[FilenameSize];<br>
+    &nbsp;&nbsp;&nbsp; BYTE  Type;<br>
+    &nbsp;&nbsp;&nbsp; DWORD RealSize;<br>
+    &nbsp;&nbsp;&nbsp; DWORD PackedSize;<br>
+    &nbsp;&nbsp;&nbsp; DWORD Offset;<br>
+		};</font>
+    <blockquote>
+      <P><i><b>Visual Basic decorated structure:</b></i>
+    </blockquote>
+    <P><font face="Terminal">		Type DirEntryId<br>
+    &nbsp;&nbsp;&nbsp; FilenameSize As Long<br>
+    &nbsp;&nbsp;&nbsp; Filename As String * 255<br>
+    End Type<br>
+    <br>
+		Type DirEntry<br>
+    &nbsp;&nbsp;&nbsp; Type As Byte<br>
+    &nbsp;&nbsp;&nbsp; RealSize As Long<br>
+    &nbsp;&nbsp;&nbsp; PackedSize As Long<br>
+    &nbsp;&nbsp;&nbsp; Offset As Long<br>
+		End Type</font>
+  </blockquote>
+  <P><b><font size="3"><i><a name="#Chapter3-3"></a>Entry Example<br>
+  </i></font></b><TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000" width="498">
+    <tr>
+        <th bgcolor=#008000 width="45"><font color="Black">Offset</font>
+        <th bgcolor=#008000 width="131"><font color="Black">Values</font>
+        <th bgcolor=#008000 width="294"><font color="Black">Description</font>
+    </tr>
+    <tr>
+                <td width="45"><font color="#00bb00" face="Terminal">13CC46AD</font></td>
+                <td width="131"><font color="#00bb00" face="Terminal">16 00 00
+                  00</font></td>
+                <td width="294"><font color="#00bb00">FilenameSize,
+                  that is, 0x16</font></td>
+    </tr>
+    <tr>
+                <td width="45"><font color="#00bb00" face="Terminal">13CC46B1</font></td>
+                <td width="131"><font color="#00bb00" face="Terminal">61 72 74
+                  5C<br>
+                  62 61 63 6B<br>
+                  67 72 6E 64<br>
+                  5C 41 64 6F<br>
+                  62 65 2E 66<br>
+                  72 6D</font></td>
+                <td width="294"><font color="#00bb00">ASCII
+                  Filename, in this case:</font>
+                  <p><font color="#00bb00">art\backgrnd\Adobe.frm</font></td>
+    </tr>
+    <tr>
+                <td width="45"><font face="Terminal">13CC46C7</font></td>
+                <td width="131"><font face="Terminal">01</font></td>
+                <td width="294">Type: 0x1 = compressed</td>
+    </tr>
+    <tr>
+                <td width="45"><font face="Terminal">13CC46C8</font></td>
+                <td width="131"><font face="Terminal">6A 2F 01 00</font></td>
+                <td width="294">RealSize</td>
+    </tr>
+    <tr>
+                <td width="45"><font face="Terminal">13CC46CC</font></td>
+                <td width="131"><font face="Terminal">94 85 00 00</font></td>
+                <td width="294">PackedSize</td>
+    </tr>
+    <tr>
+                <td width="45"><font face="Terminal">13CC46D0</font></td>
+                <td width="131"><font face="Terminal">00 00 00 00</font></td>
+                <td width="294">Offset, location of the
+                  file. 0x00 1st file</td>
+    </tr>
+</table>
+
+  <blockquote>
+<P>
+
+*This exact example can be found on the Team X DAT specs document.
+  </blockquote>
+  <P><i>	<font size="3">
+
+<b>	<a name="#Chapter3-4"></a>	How to find a DirTreeAddr </b></font><font size="1">(starting location of
+  Directory Tree)</font></i><br>
+<br>
+To find the beginning of Directory Tree you can use this calculation:<br>
+<br>
+<font face="Terminal">     DirTreeAddr = DataSize - TreeSize - 4</font>
+</blockquote>
+
+</blockquote>
+<P>
+
+&nbsp;
+
+<a name=#details>
+<div align=right><a href="/redirect?Java-Script:history.back(1)">Back</a></div><P>
+<DIV ALIGN=RIGHT>Copyright 2000 by MatuX (<I>matip@fibertel.com.ar</I>)
+  unless it's specified.<br>
+
+</DIV>
+</body>
+</html>
+

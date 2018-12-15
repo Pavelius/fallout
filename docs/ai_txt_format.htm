@@ -1,0 +1,406 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+   <meta name="GENERATOR" content="Mozilla/4.6 [en] (Win95; U) [Netscape]">
+   <meta name="Author" content="Serge">
+   <title>Format of master.dat\\data\ai.txt</title>
+</head>
+<BODY TEXT="#000000" BGCOLOR="#E6E7EC" LINK="#FF0000" VLINK="#800080" ALINK="#0000FF">
+<tt><font size=-1>Last Updated: 27-Dec-1999</font></tt>
+<h2>
+Формат файла master.dat\\data\ai.txt
+<hr ALIGN=LEFT WIDTH="500"></h2>
+
+<blockquote>Здесь описан формат файла master.dat\\data\ai.txt, задающего
+параметры поведения для всех типов NPC в боевых ситуациях. Проще говоря,
+здесь задается искуственный интеллект (AI) NPC в бою.</blockquote>
+
+<h3>
+Содержание</h3>
+
+<blockquote><a href="#1. Формат">1. Формат файла</a>
+<br>&nbsp;
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=5 COLS=2 WIDTH="75%" >
+<tr ALIGN=LEFT VALIGN=TOP>
+<td><tt><font color="#000099"><font size=-1><a href="#[Имя">[Имя Класса]</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#aggression=N">aggression</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#area_attack_mode=string">area_attack_mode</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#attack_end=N">attack_end&nbsp;</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#attack_end=N">attack_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#attack_who=string">attack_who</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#best_weapon=string">best_weapon</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#body_type=string">body_type</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#called_freq=N">called_freq</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#chance=N">chance</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#chem_primary_desire=N">chem_primary_desire</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#chem_use=string">chem_use</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#color=N">color</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#disposition=mixed">disposition</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#distance=string">distance</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#font=N">font</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#general_type=string">general_type</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_eyes_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_eyes_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_groin_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_groin_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_head_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_head_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_left_arm_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_left_arm_start</a></font></font></tt></td>
+
+<td><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_left_leg_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_left_leg_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_right_arm_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_right_arm_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_right_leg_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_right_leg_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_torso_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hit_eyes_end=N">hit_torso_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#hurt_too_much=string">hurt_too_much</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#max_dist=N">max_dist</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#min_hp=N">min_hp</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#min_to_hit=N">min_to_hit</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#miss_end=N">miss_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#miss_end=N">miss_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#move_end=N">move_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#move_end=N">move_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#outline_color=N">outline_color</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#packet_num=N">packet_num</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#run_away_mode=string">run_away_mode</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#run_end=N">run_end</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#run_end=N">run_start</a></font></font></tt>
+<br><tt><font color="#000099"><font size=-1><a href="#secondary_freq=N">secondary_freq</a></font></font></tt></td>
+</tr>
+</table></center>
+
+<p><a href="#2.">2. Credits</a></blockquote>
+
+<h3>
+<a NAME="1. Формат"></a>1. Формат файла</h3>
+Файл состоит из описаний "боевых" параметров для PC и всех классов NPC,
+существующих в игре. Описания отделяются друг от друга пустой строкой.
+Каждое описание состоит из названия класса (уникально) и характеристик.
+Ниже приведен список характеристик по их алфавитному названию. Обозначение
+<tt><font color="#000099">string</font></tt>
+значит, что на этом месте должна быть строка, <tt><font color="#000099">N</font></tt>
+- числовое значение, <tt><font color="#000099">mixed</font></tt> - или
+строка, или значение.
+<p><a NAME="[Имя"></a><tt><font color="#000099">[Имя Класса]</font></tt>
+<blockquote>Этот параметр должен быть указан первым. Например,<tt> <font color="#663366">[Enclave
+Patrol]</font>, <font color="#663366">[Fighting Mantis]</font> или <font color="#663366">[Arroyo
+Villager]</font></tt>. Класс игрока называется <tt><font color="#663366">Player
+AI</font></tt>. При описании "своих" NPC, т.е. членов своей команды в игре
+(party NPC), для каждого из них должны указываться следующие классы:
+<p><tt><font color="#663366">[PARTY NAME AGGRESSIVE]</font></tt>
+<br><tt><font color="#663366">[PARTY NAME BERSERK]</font></tt>
+<br><tt><font color="#663366">[PARTY NAME COWARD]</font></tt>
+<br><tt><font color="#663366">[PARTY NAME CUSTOM]</font></tt>
+<br><tt><font color="#663366">[PARTY NAME DEFENSIVE]</font></tt>
+<p>, где <tt><font color="#663366">NAME</font></tt> - это имя члена команды,
+например: <tt><font color="#663366">DOC</font></tt>, <tt><font color="#663366">LENNY</font></tt>,
+<tt><font color="#663366">GORIS</font></tt>
+и т.д.
+<br>&nbsp;</blockquote>
+<a NAME="aggression=N"></a><tt><font color="#000099">aggression=N</font></tt>
+<blockquote>Скорее всего, это общий уровень агрессивности, который используется
+для того, чтобы начать бой. Либо же это изначальная вероятность попадания
+(в процентах) данного NPC в своего противника. (вероятность изменяется
+в зависимости от Armor Class-а противника, расстояния, освещенности и т.д.).
+Во всяком случае, у тех классов противников, которые известны как достаточно
+агрессивные и опасные, это значение велико.</blockquote>
+<a NAME="area_attack_mode=string"></a><tt><font color="#000099">area_attack_mode=string</font></tt>
+<blockquote>Режим стрельбы очередями. Существующие значения:
+<p><tt><font color="#663366">no_pref</font></tt>
+<br><tt><font color="#663366">always</font></tt>
+<br><tt><font color="#663366">sometimes</font></tt>
+<br><tt><font color="#663366">be_sure</font></tt>
+<br><tt><font color="#663366">be_careful</font></tt>
+<br><tt><font color="#663366">be_absolutely_sure</font></tt></blockquote>
+
+<p><br><a NAME="attack_end=N"></a><tt><font color="#000099">attack_end=N</font></tt>
+<br><tt><font color="#000099">attack_start=N</font></tt>
+<blockquote>Боевые крики при атаке. В начале атаки, случайным образом выбирается
+число между двумя указанными значениями. Затем из файла <tt><font color="#663366">master.dat\\text\english\game\combatai.msg</font></tt>
+выбирается и показывается сообщение с соответствующим номером. Порядок
+нумерации сообщений четко не определен, существуют общие правила (см. описание
+для файла combatai.msg).</blockquote>
+
+<p><br><a NAME="attack_who=string"></a><tt><font color="#000099">attack_who=string</font></tt>
+<blockquote>Как слышится, так и пишется. Указание на то, кого NPC должен
+атаковать в первую очередь. Существующие значения:
+<p><tt><font color="#663366">whomever_attacking_me</font></tt>
+<br><tt><font color="#663366">strongest</font></tt>
+<br><tt><font color="#663366">weakest</font></tt>
+<br><tt><font color="#663366">whomever</font></tt>
+<br><tt><font color="#663366">closest</font></tt></blockquote>
+
+<p><br><a NAME="best_weapon=string"></a><tt><font color="#000099">best_weapon=string</font></tt>
+<blockquote>Тип предпочтения оружия при атаке. Этот параметр существует
+не у всех NPC. Имеющиеся значения:
+<p><tt><font color="#663366">no_pref</font></tt>
+<br><tt><font color="#663366">never&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</font><i><font color="#000099">(Deathclaw)</font></i></tt>
+<br><tt><font color="#663366">random</font></tt>
+<br><tt><font color="#663366">unarmed</font></tt>
+<br><tt><font color="#663366">ranged_over_melee</font></tt>
+<br><tt><font color="#663366">melee_over_ranged</font></tt>
+<br><tt><font color="#663366">unarmed_over_thrown&nbsp;&nbsp;&nbsp; </font><i><font color="#000099">(Spore
+Plant)</font></i></tt>
+<p>Кстати, обратное последнему значение <tt><font color="#663366">thrown_over_unarmed</font></tt>
+почему-то ни у кого не указано, и непонятно, есть ли такое предпочтение
+вообще&nbsp; ;)))</blockquote>
+
+<p><br><a NAME="body_type=string"></a><tt><font color="#000099">body_type=string</font></tt>
+<blockquote>Предположительно, задает общий стиль поведения "тела" NPC (перемещения
+etc). Существующие значения (синим наклонным шрифтом указаны примеры из
+игры):
+<p><tt><font color="#663366">None</font></tt>
+<br><tt><font color="#663366">Primitive</font></tt>
+<br><tt><font color="#663366">Wimpy Person&nbsp;&nbsp;&nbsp;&nbsp; </font><i><font color="#000099">(Whimpy,
+Coward...)</font></i></tt>
+<br><tt><font color="#663366">Punk (SF)</font></tt>
+<br><tt><font color="#663366">Berserk Person&nbsp;&nbsp;&nbsp; </font><i><font color="#000099">(Kamakazi...)</font></i></tt>
+<br><tt><font color="#663366">Tough Person&nbsp;&nbsp;&nbsp;&nbsp; </font><i><font color="#000099">(Bounty
+Hunter, Caravan Driver...)</font></i></tt>
+<br><tt><font color="#663366">Boxer</font></tt>
+<br><tt><font color="#663366">Normal Person</font></tt>
+<br><tt><font color="#663366">Robot</font></tt>
+<br><tt><font color="#663366">Junkie&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font><i><font color="#000099">(Crazy
+Addict)</font></i></tt>
+<br><tt><font color="#663366">Elron&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font><i><font color="#000099">(Хабологисты)</font></i></tt>
+<br><tt><font color="#663366">Ghoul</font></tt>
+<br><tt><font color="#663366">Kaga</font></tt>
+<br><tt><font color="#663366">Raider (Khan)</font></tt>
+<br><tt><font color="#663366">Raider (Non-Khan)</font></tt>
+<br><tt><font color="#663366">Gangster&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font><i><font color="#000099">(Mobsters)</font></i></tt>
+<br><tt><font color="#663366">Shi</font></tt>
+<br><tt><font color="#663366">Super Mutant (Master Army)</font></tt>
+<br><tt><font color="#663366">Goris</font></tt>
+<br><tt><font color="#663366">Miron</font></tt>
+<br><tt><font color="#663366">Marcus</font></tt>
+<br><tt><font color="#663366">Lenny</font></tt>
+<br><tt><font color="#663366">Cassidy</font></tt>
+<br><tt><font color="#663366">Robo Brain (Hum/Cyb)</font></tt>
+<br><tt><font color="#663366">Sulik</font></tt></blockquote>
+
+<p><br><a NAME="called_freq=N"></a><tt><font color="#000099">called_freq=N</font></tt>
+<blockquote>Число, определяющее вероятность появления криков в бою для
+данного класса. Существующие значения - от <font color="#663366">0</font>
+(не кричит вообще) до <tt><font color="#663366">1000000</font></tt>! (это
+у насекомого <tt><font color="#663366">Mantis</font></tt>, которое, как
+известно, не кричит вообще ;))) А вот у класса <tt><font color="#663366">Child</font></tt>
+(дети любят покричать, когда им делают больно, хе-хе <tt>>:)</tt> <tt><font color="#663366">called_freq=10000</font>.</tt></blockquote>
+
+<p><br><a NAME="chance=N"></a><tt><font color="#000099">chance=N</font></tt>
+<blockquote>Скорее всего, вероятность критического попадания (Critical
+Hit Chance) NPC в своего противника. Существующие значения - от <tt><font color="#663366">0</font></tt>
+до <tt><font color="#663366">35</font></tt>.</blockquote>
+
+<p><br><a NAME="chem_primary_desire=N"></a><tt><font color="#000099">chem_primary_desire=N</font></tt>
+<blockquote>Предпочтения при употреблении наркотиков. Порядковые номера
+предметов, или <font color="#663366">-1</font>, если нет предпочтения.
+Если нужно указать несколько видов наркотиков, то они перечисляются через
+запятую. (напр. <tt><font color="#663366">284,81,103</font></tt>)</blockquote>
+
+<p><br><a NAME="chem_use=string"></a><tt><font color="#000099">chem_use=string</font></tt>
+<blockquote>Использование NPC наркотиков средств в бою. Существующие значения:
+<p><tt><font color="#663366">clean</font></tt>
+<br><tt><font color="#663366">sometimes</font></tt>
+<br><tt><font color="#663366">stims_when_hurt_little</font></tt>
+<br><tt><font color="#663366">stims_when_hurt_lots</font></tt>
+<br><tt><font color="#663366">anytime</font></tt>
+<br><tt><font color="#663366">always</font></tt></blockquote>
+
+<p><br><a NAME="color=N"></a><tt><font color="#000099">color=N</font></tt>
+<blockquote>Цвет. Вот только чего? ;)))))) Впрочем, для всех классов значение
+остается неизменным - <tt><font color="#663366">58</font></tt>. Возможно,
+этот параметр задает цвет обводки NPC тогда, когда NPC заслонен. (т.е.
+жёлтый цвет).</blockquote>
+<a NAME="disposition=mixed"></a><tt><font color="#000099">disposition=mixed</font></tt>
+<blockquote><font color="#000000">Предположительно, определяет поведение
+NPC в начале атаки. Существующие значения:</font>
+<p><tt><font color="#663366">-1</font></tt>
+<br><tt><font color="#663366">none</font></tt>
+<br><tt><font color="#663366">сoward</font></tt>
+<br><tt><font color="#663366">defensive</font></tt>
+<br><tt><font color="#663366">aggressive</font></tt>
+<br><tt><font color="#663366">berserk</font></tt></blockquote>
+
+<p><br><a NAME="distance=string"></a><tt><font color="#000099">distance=string</font></tt>
+<blockquote>Расстояние между NPC и его противником, тактика ведения боя.
+Существующие значения:
+<p><tt><font color="#663366">random </font><i><font color="#000099">(указан
+только для Mobsters и Tough Khan)</font></i></tt>
+<br><tt><font color="#663366">charge</font></tt>
+<br><tt><font color="#663366">on_your_own</font></tt>
+<br><tt><font color="#663366">stay</font></tt>
+<br><tt><font color="#663366">stay_close</font></tt>
+<br><tt><font color="#663366">snipe</font></tt></blockquote>
+
+<p><br><a NAME="font=N"></a><tt><font color="#000099">font=N</font></tt>
+<blockquote>Шрифт, используемый для печати боевых выкриков. Существующее
+значение в US-версии игры - <tt><font color="#663366">101</font></tt>.
+В остальных версиях встречаются также значения <tt><font color="#663366">102</font>,
+<font color="#663366">103</font>,
+<font color="#663366">104</font>.</tt></blockquote>
+
+<p><br><a NAME="general_type=string"></a><tt><font color="#000099">general_type=string</font></tt>
+<blockquote>Тип тела. Внешний вид NPC на экране. Типы примерно те же, что
+и в в переменной<tt> <font color="#000099"><a href="#body_type=string">body_type</a></font>:</tt>
+<p><tt><font color="#663366">Badger</font></tt>
+<br><tt><font color="#663366">Berserk Person</font></tt>
+<br><tt><font color="#663366">Bounty Hunter</font></tt>
+<br><tt><font color="#663366">Boxer</font></tt>
+<br><tt><font color="#663366">Cassidy</font></tt>
+<br><tt><font color="#663366">Chip</font></tt>
+<br><tt><font color="#663366">Crazed Robot</font></tt>
+<br><tt><font color="#663366">Cyberdog</font></tt>
+<br><tt><font color="#663366">Dragon (The)</font></tt>
+<br><tt><font color="#663366">Elron Guards</font></tt>
+<br><tt><font color="#663366">Gangster</font></tt>
+<br><tt><font color="#663366">Ghoul</font></tt>
+<br><tt><font color="#663366">Goris</font></tt>
+<br><tt><font color="#663366">Guard (Normal)</font></tt>
+<br><tt><font color="#663366">Guard (Tough)</font></tt>
+<br><tt><font color="#663366">Junkie</font></tt>
+<br><tt><font color="#663366">Kaga (1)</font></tt>
+<br><tt><font color="#663366">Lenny</font></tt>
+<br><tt><font color="#663366">Lo Pan</font></tt>
+<br><tt><font color="#663366">Marcus</font></tt>
+<br><tt><font color="#663366">Myron</font></tt>
+<br><tt><font color="#663366">None</font></tt>
+<br><tt><font color="#663366">Normal Person</font></tt>
+<br><tt><font color="#663366">OZ-7</font></tt>
+<br><tt><font color="#663366">OZ-9</font></tt>
+<br><tt><font color="#663366">Primitive</font></tt>
+<br><tt><font color="#663366">Raider</font></tt>
+<br><tt><font color="#663366">Raider Captain</font></tt>
+<br><tt><font color="#663366">Raider Mercs</font></tt>
+<br><tt><font color="#663366">Rat God</font></tt>
+<br><tt><font color="#663366">Robot</font></tt>
+<br><tt><font color="#663366">Ryan</font></tt>
+<br><tt><font color="#663366">Shi Guards</font></tt>
+<br><tt><font color="#663366">Sulik</font></tt>
+<br><tt><font color="#663366">Super Mutant (Master Army)</font></tt>
+<br><tt><font color="#663366">The Brain</font></tt>
+<br><tt><font color="#663366">Tough Person</font></tt>
+<br><tt><font color="#663366">Wimpy Person</font></tt>
+<p>Так, например, класс <tt><font color="#663366">Brain Mole Rat</font></tt>
+имеет <tt><font color="#663366">body_type=Berserk Person</font></tt>, а
+внешний вид <tt>(<font color="#663366">general_type</font>) - <font color="#663366">The
+Brain</font></tt>. Или класс <tt><font color="#663366">LoPan</font>: <font color="#663366">body_type=Shi</font>,
+<font color="#663366">general_type=Lo
+Pan</font>.</tt>
+<br>&nbsp;</blockquote>
+<a NAME="hit_eyes_end=N"></a><tt><font color="#000099">hit_eyes_end=N</font></tt>
+<br><tt><font color="#000099">hit_eyes_start=N</font></tt>
+<p><tt><font color="#000099">hit_groin_end=N</font></tt>
+<br><tt><font color="#000099">hit_groin_start=N</font></tt>
+<p><tt><font color="#000099">hit_head_end=N</font></tt>
+<br><tt><font color="#000099">hit_head_start=N</font></tt>
+<p><tt><font color="#000099">hit_left_arm_end=N</font></tt>
+<br><tt><font color="#000099">hit_left_arm_start=N</font></tt>
+<p><tt><font color="#000099">hit_left_leg_end=N</font></tt>
+<br><tt><font color="#000099">hit_left_leg_start=N</font></tt>
+<p><tt><font color="#000099">hit_right_arm_end=N</font></tt>
+<br><tt><font color="#000099">hit_right_arm_start=N</font></tt>
+<p><tt><font color="#000099">hit_right_leg_end=N</font></tt>
+<br><tt><font color="#000099">hit_right_leg_start=N</font></tt>
+<p><tt><font color="#000099">hit_torso_end=N</font></tt>
+<br><tt><font color="#000099">hit_torso_start=N</font></tt>
+<blockquote>Крики NPC при ранении в глаза, пах, голову, левую руку, левую
+ногу, правую руку, правую ногу и туловище соответственно. Более подробно
+- см. описание переменной&nbsp; <tt><font color="#000099"><a href="#attack_end=N">attack_end</a></font></tt>
+.</blockquote>
+
+<p><br><a NAME="hurt_too_much=string"></a><tt><font color="#000099">hurt_too_much=string</font></tt>
+<blockquote>Название переменной говорит само за себя. Предположительно,
+если эта переменная присутствует, то она указывает условие, при исполнении
+которого NPC считается слишком сильно раненным и падает на землю (возможно,
+пропуская при этом ход).&nbsp; При этом обычно пишется, что Условия могут
+перечисляться через запятую.
+<p><tt><font color="#663366">crippled</font></tt>
+<br><tt><font color="#663366">blind</font></tt>
+<br><tt><font color="#663366">crippled_arms</font></tt></blockquote>
+
+<p><br><a NAME="max_dist=N"></a><tt><font color="#000099">max_dist=N</font></tt>
+<blockquote>Неизвестно. Судя по некоторым признакам, речь идет о наибольшем
+расстоянии, на которое возможна стрельба данного NPC из оружия. Против
+того, что эта переменная задает наибольшее количество ходов (AP), разрешенных
+для данного NPC, говорит то, что у <tt><font color="#663366">Gun Turret</font></tt>,
+например, <tt><font color="#663366">max_dist=10</font></tt>. А, как известно,
+турельные пушки ног не имеют ;)</blockquote>
+<a NAME="min_hp=N"></a><tt><font color="#000099">min_hp=N</font></tt>
+<blockquote>Неизвестно. Можно было бы предположить, что тут задается минимальное
+значение Hit Points для NPC (в процентах?), но... Например, у End_Boss,
+т.е. у Frank Horrigan'а, <tt><font color="#663366">min_hp=0</font></tt>.
+И наоборот, у <tt><font color="#663366">Addict - Wimpy</font> <font color="#663366">min_hp=100</font></tt>.
+Средние же значения - <tt><font color="#663366">10..20</font></tt>. Скорее
+всего, когда указан <tt><font color="#663366">0</font></tt>, то этот параметр
+не принимается во внимание.</blockquote>
+
+<p><br><a NAME="min_to_hit=N"></a><tt><font color="#000099">min_to_hit=N</font></tt>
+<blockquote>Может быть, минимальное количество очков для нанесения повреждения
+данному NPC. Или это может быть минимальное количество очков (без учета
+модификаторов), на которое NPC может поранить своего противника. Значение
+может быть <tt><font color="#663366">0</font>.</tt></blockquote>
+
+<p><br><a NAME="miss_end=N"></a><tt><font color="#000099">miss_end=N</font></tt>
+<br><tt><font color="#000099">miss_start=N</font></tt>
+<blockquote>Крики NPC при промахе. Более подробно - см. описание переменной
+<tt><font color="#000099"><a href="#attack_end=N">attack_end</a></font></tt>
+.</blockquote>
+
+<p><br><a NAME="move_end=N"></a><tt><font color="#000099">move_end=N</font></tt>
+<br><tt><font color="#000099">move_start=N</font></tt>
+<blockquote>Крики NPC при передвижении с целью атаки (т.е. когда еще не
+добежал до врага, а уже покричать охота ;) Более подробно - см. описание
+переменной&nbsp; <tt><font color="#000099"><a href="#attack_end=N">attack_end</a></font></tt>
+.</blockquote>
+
+<p><br><a NAME="outline_color=N"></a><tt><font color="#000099">outline_color=N</font></tt>
+<blockquote>Опять цвет, опять неизвестно чего, судя по названию - цвет
+обводки. Для всех классов NPC он равен <tt><font color="#663366">55</font></tt>.</blockquote>
+
+<p><br><a NAME="packet_num=N"></a><tt><font color="#000099">packet_num=N</font></tt>
+<blockquote>Предположительно, номер оружия, находящегося где-нибудь у NPC
+в загашнике. Слово <tt><font color="#663366">Packet</font></tt> на военном
+жаргоне обозначает также пулю или снаряд - т.е. может быть, указывается
+номер боеприпаса. Наибольшее встречающееся значение - <tt><font color="#663366">186</font></tt>.
+Значение <tt><font color="#663366">0</font></tt> встречается&nbsp; только
+в описании класса самого игрока (класс <tt><font color="#663366">Player
+AI</font></tt>).</blockquote>
+
+<p><br><a NAME="run_away_mode=string"></a><tt><font color="#000099">run_away_mode=string</font></tt>
+<blockquote>Вероятность побега NPC с поля боя. Существующие значения:
+<p><tt><font color="#663366">none</font></tt>
+<br><tt><font color="#663366">coward</font></tt>
+<br><tt><font color="#663366">finger_hurts</font></tt>
+<br><tt><font color="#663366">bleeding</font></tt>
+<br><tt><font color="#663366">not_feeling_good</font></tt>
+<br><tt><font color="#663366">tourniquet</font></tt>
+<br><tt><font color="#663366">never</font></tt></blockquote>
+
+<p><br><a NAME="run_end=N"></a><tt><font color="#000099">run_end=N</font></tt>
+<br><tt><font color="#000099">run_start=N</font></tt>
+<blockquote>Крики NPC при побеге с поля боя. Более подробно - см. описание
+переменной&nbsp; <tt><font color="#000099"><a href="#attack_end=N">attack_end</a></font></tt>
+.</blockquote>
+
+<p><br><a NAME="secondary_freq=N"></a><tt><font color="#000099">secondary_freq=N</font></tt>
+<blockquote>Неизвестно. Разброс значений очень велик - <tt><font color="#663366">5,
+300, 200000</font></tt>.... Возможно, эта переменная является вспомогательной
+по отношению к <tt><font color="#663366">called_freq</font></tt>.</blockquote>
+
+<h3>
+<a NAME="2."></a>2. Credits
+<hr ALIGN=LEFT WIDTH="500"></h3>
+<i>This doc has been written by</i> <i><a href="mailto:w_master@softhome.net">Serge</a></i>,
+<i>master
+of</i> <font face="Arial,Helvetica"><font size=-1><b><i><a href="http://www.fallout.ru/undat/">unDAT
+division</a></i></b> <i>at</i> <i><b><a href="http://www.fallout.ru/">www.fallout.ru</a></b></i></font></font><i>
+.</i>
+<br>&nbsp;
+</body>
+</html>

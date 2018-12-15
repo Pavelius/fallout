@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Adding Maps to Fallout 2</title>
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+-->
+</style>
+</head>
+<body marginheight="2" marginwidth="2" leftmargin="2" topmargin="2">
+
+<div class="header">Adding Maps to Fallout 2</div>
+
+<p>I'm sure many of you Fallout players out there, at one point in time, have wanted to modify a random encounter, or add in a new location. This document explains the whole concept behind adding maps plus some additional information which may come in handy.
+<ul type=circle>
+<LI><a href="#Chapter1">Maps<BR></a></li>
+<LI><a href="#Chapter2">City<BR></a></li>
+<LI><a href="#Chapter3">Worldmap</a></li>
+<ul type=disc>
+<li><a href="#Chapter3-1">Random Encounter Tables</a></li>
+<li><a href="#Chapter3-2">PID Number</a></li>
+<li><a href="#Chapter3-3">Worldmap.msg</a></li>
+</ul>
+</ul>
+
+<HR style="color:#00bb00;"><BR>
+
+<div class=sub-header><a name="#Chapter1"></a>Maps</div>
+<blockquote>
+
+The <b>maps.txt</b> file, located in the <b>master.dat\data</b> folder, contains certain snippets of information about each individual area in the worldmap. So if you're wanting to mod an area's music or some other feature like that then this is the section for you.
+<P>
+<u><b>Some important things to remember:</b></u>
+<blockquote>
+<i>Maps can be added to this file as long as they are in order<BR>
+Random encounter maps <b>do</b> map back to a 'city'<BR>
+The index # <b>cannot change</b> without a code change in Worldmap.c<BR>
+</i></blockquote>
+First you'll need to know the file name of you're map and the actual name you've given to it - for example <b>Vault City Courtyard</b> is <b>vctyctyd.map</b>
+<P>
+Now you can start modifying the map's information:
+<blockquote>
+<u><b>Example 1 - An ordinary city:</b></u>
+<P>
+[<b>MAP 015</b>]<BR>
+<b>lookup_name</b>=Vault City Courtyard<BR>
+<b>map_name</b>=vctyctyd<BR>
+<b>music</b>=22vcity<BR>
+<b>ambient_sfx</b>=blank:40, brdchirp:25, brdchir1:25, potspans:5, potspan1:5<BR>
+<b>saved</b>=Yes<BR>
+<b>dead_bodies_age</b>=No<BR>
+<b>can_rest_here</b>=No,No,No<BR>
+<b>pipboy_active</b>=No<BR>
+<P>
+<b>MAP 015</b> - This is the area index number assigned to the map. These always have three digits and are labelled in ascending order.<BR>
+<b>lookup_name</b> - One of its uses is to set the name for the random encounters on the encounter table section at <b>worldmap.txt</b>. It is also used in <b>city.txt</b> to define which map will use the entrances on a certain area.<BR>
+<b>music</b> - This is the music file which will be played, note it is without a file extension.<BR>
+<b>ambient_sfx</b> - This is the music file which will be played as a sound effect. The file has no extension. <b>Blank</b> is the word assigned for no music. It is believed the number following the sound file is the length of time it will be played.<BR>
+<b>saved</b> - This tell sthe worldmap whether or not the area should be saved once the player exits it. If set to <b>no</b> the area resets itself each time you return. Default value is <b>yes</b> (that is what the value will be if you do not include it).<BR>
+<b>dead_bodies_age</b> - This tells the area whether or not it should save all the dead bodies or slowly reduce them into puddles of blood. Default value is <b>yes</b>.<BR>
+<b>can_rest_here</b> - This tells the PIPBoy if the player can rest at the current location or not. The three values are levels (first value being level one etc). Default value is <b>yes</b>.<BR>
+<b>pipboy_active</b> - This enables/disables the PIPBoy. Default value is <b>yes</b>.

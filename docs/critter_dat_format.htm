@@ -1,0 +1,325 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win95; I) [Netscape]">
+   <meta name="Author" content="twbbat">
+   <title>Format of Critter.dat</title>
+</head>
+<body text="#000000" bgcolor="#E6E7EC" link="#FF0000" vlink="#800080" alink="#0000FF">
+<tt><font size=-1>Last Updated: 13-Dec-2003</font></tt>
+<h2>
+Формат файла CRITTER.DAT</h2>
+<hr ALIGN=LEFT WIDTH="500">
+
+<blockquote>Этот документ является переводом "Fallout 2 CRITTER.DAT explained",
+написанного Borg Locutus. Здесь описана структура файла critter.dat. Это
+обычный DAT-файл, соответствующий формату. В нём содержатся frm-файлы персонажей,
+имена файлов при этом называются по определенной системе.</blockquote>
+
+<hr ALIGN=LEFT WIDTH="500">
+
+<P>Файлы <tt>*.frm</tt>, находящиеся в <tt><font color="#663366">critter.dat</font></tt>,
+состоят из множества кадров. Имя
+<br>файла <tt>*.frm</tt> делится на две части. Первые шесть букв обозначают
+персонажа,
+<br>а две другие описывают его текущие действия. Количество кадров в каждом
+<br>*.frm файле обычно кратно шести, по числу сторон шестиугольника в Fallout.
+(хексы, hexes). Обратите внимание, что существуют также файлы <tt>*.fr0
+.. *.fr5</tt>, это обычные <tt>*.frm</tt>-файлы, разделенные на шесть частей,
+но в основе это все тот же <tt>*.frm</tt>.</P>
+<p>Возьмем, к примеру, <tt><font color="#663366">critter.dat\\art\critters\HANPWRAB.FRM</font></tt>:
+
+<P><tt><font color="#000099">HANPWR</font></tt> - фигура в advanced power
+armor (см.<a href="#Таблица 1."> Таблицу 1</a>)
+<br><tt><font color="#000099">AB</font></tt> означает "идущий" (см.<a href="#Таблица 2.">
+Таблицу 2</a>)</P>
+
+<P>Другой пример дает <tt><font color="#663366">critter.dat\\art\critters\HFCMBTFB.FRM</font></tt>:
+
+<tt><font color="#000099">HFCMBT</font></tt> - женщина в combat armor
+<br><tt><font color="#000099">FB</font></tt> дальше делится на <tt><font color="#000099">F</font></tt>
+и <tt><font color="#000099">B</font></tt>. <tt><font color="#000099">F</font></tt>
+означает "держит sledgehammer", а <tt><font color="#000099">B</font></tt>
+означает "идет".</P>
+
+<p>Не всякий персонаж может иметь все типы действий, перечисленных
+в<a href="#Таблица 2."> Таблице 2</a>.<BR>
+Едва ли стоит ожидать от DeathClaw пальбы из ружья.</P>
+
+<P>
+Между Fallout 1 и Fallout 2 различий немного - во 2-ом просто появились новые персонажи и исчезли Повелитель (Master), Лейтенант, Гизмо и Смотритель (Overseer). Все остальные были перенесены практически без изменений (только MAROBO научился бегать - появилась фрм-ка MAROBOAT.frm и исчезли все фрм-ки с подъемом/спуском по лестницам - AG, AH, AI, AJ).
+</P>
+
+<P>
+Криттеры с HANPWR по HMWARR (в Fallout 2, кроме негров) очевидно, предназначены для отображения игрока. То же относится и к Fallout 1, но дикарей и APA там, конечно, нет.
+</P>
+
+<p><a NAME="Таблица 1."></a> <b><tt><font color="#FF0000"><font size=+1>Таблица
+1</font></font></tt></b>
+<br>
+<hr ALIGN=LEFT WIDTH="75%">
+<P>Fallout 2:</P>
+<P>Люди (гуманоиды):</P>
+&nbsp; <tt><font color="#000099">HANPWR Некто в advanced power armor (APA)</font></tt>
+<br><tt><font color="#000099">&nbsp;HAPOWR Некто в power armor (PA)</font></tt>
+<br><tt><font color="#000099">&nbsp;HAROBE Некто в purple robe</font></tt>
+<br><tt><font color="#000099">&nbsp;HFCMBT Женщина в combat armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HFJMPS Женщина в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;HFLTHR Женщина в leather armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HFMAXX Женщина в black armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HFMETL Женщина в metal armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HFPRIM Дикарка</font></tt>
+<br><tt><font color="#000099">&nbsp;HMBJMP Негр в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;HMBMET Негр в metal armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMCMBT Мужчина в combat armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMJMPS Мужчина в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;HMLTHR Мужчина в leather armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMMAXX Мужчина в black armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMMETL Мужчина в metal armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMWARR Дикарь</font></tt>
+<br><tt><font color="#000099">&nbsp;MABOS2 Frank Horrigan (умирающий)</font></tt>
+<br><tt><font color="#000099">&nbsp;MABOSS Frank Horrigan</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMTNT Super Mutant #2</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMTN2 Super Mutant #1</font></tt>
+<br><tt><font color="#000099">&nbsp;MAROBE Goris в накидке</font></tt>
+<br><tt><font color="#000099">&nbsp;NABLUE Некто в blue robe</font></tt>
+<br><tt><font color="#000099">&nbsp;NABRWN Некто в brown robe</font></tt>
+<br><tt><font color="#000099">&nbsp;NACHLD Ребенок</font></tt>
+<br><tt><font color="#000099">&nbsp;NAGHUL Ghoul (мертвяк)</font></tt>
+<br><tt><font color="#000099">&nbsp;NAGLOW Светящийся Ghoul (мертвяк)</font></tt>
+<br><tt><font color="#000099">&nbsp;NAPOWR Некто в power armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NAROBE Некто в brown robe</font></tt>
+<br><tt><font color="#000099">&nbsp;NAVGUL Ghoul (мертвяк)</font></tt>
+<br><tt><font color="#000099">&nbsp;NAWHIT Некто в grey robe</font></tt>
+<br><tt><font color="#000099">&nbsp;NFASIA Азиатка (в Сан-Франциско)</font></tt>
+<br><tt><font color="#000099">&nbsp;NFBRLP Женщина</font></tt>
+<br><tt><font color="#000099">&nbsp;NFLYNN Некто в jumpsuit (Линнетт)</font></tt>
+<br><tt><font color="#000099">&nbsp;NFMAXX Панкующая девица в black armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NFMETL Панкующая девица в metal armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NFNICE Блондинка (секретарша президента?)</font></tt>
+<br><tt><font color="#000099">&nbsp;NFPEAS Крестьянка</font></tt>
+<br><tt><font color="#000099">&nbsp;NFPRIM Дикарка</font></tt>
+<br><tt><font color="#000099">&nbsp;NFTRMP Женщина (шлюха)</font></tt>
+<br><tt><font color="#000099">&nbsp;NFVALT Женщина в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;NFVRED Рыжая девица в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;NMASIA Азиат (в Сан-Франциско)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBONC Гангстер (в Нью-Рено)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBOXX Боксер</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBPEA Крестьянин (негр)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBRLP Мужчина</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBRSR Гангстер (в Нью-Рено)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBSNP Мужчина (bald)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMCOPP Полицейский</font></tt>
+<br><tt><font color="#000099">&nbsp;NMDOCC Мужчина в белом (доктор, техник)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMFATT Толстый мужчина</font></tt>
+<br><tt><font color="#000099">&nbsp;NMGANG Гангстер (в Сан-Франциско)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMGRCH Низкорослый мужик, коротышка</font></tt>
+<br><tt><font color="#000099">&nbsp;NMLABB Scientist/Technician</font></tt>
+<br><tt><font color="#000099">&nbsp;NMLOSR Проигравший (наркоман)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMLTHR Мужчина в leather armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NMMAXX Мужчина в черном armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NMMEXI Мексиканец</font></tt>
+<br><tt><font color="#000099">&nbsp;NMMYRN Myron</font></tt>
+<br><tt><font color="#000099">&nbsp;NMNICE Мужчина в костюме (президент?)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMOLDD Старик</font></tt>
+<br><tt><font color="#000099">&nbsp;NMPEAS Крестьянин</font></tt>
+<br><tt><font color="#000099">&nbsp;NMRGNG Гангстер (в Сан-Франциско)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMVALT Vault Citizen</font></tt>
+<br><tt><font color="#000099">&nbsp;NMWARR Дикарь</font></tt>
+<P>
+Животные, роботы:
+</P>
+<tt><font color="#000099">&nbsp;MAANTT Mutant Ant (Мутировавший муравей)</font></tt>
+<br><tt><font color="#000099">&nbsp;MABRAN Rat King</font></tt>
+<br><tt><font color="#000099">&nbsp;MABROM Brahmin</font></tt>
+<br><tt><font color="#000099">&nbsp;MACLAW Deathclaw</font></tt>
+<br><tt><font color="#000099">&nbsp;MACLW2 Маленький deathclaw</font></tt>
+<br><tt><font color="#000099">&nbsp;MADDOG Mad dog</font></tt>
+<br><tt><font color="#000099">&nbsp;MADEGG Яйцо</font></tt>
+<br><tt><font color="#000099">&nbsp;MADETH Deathclaw</font></tt>
+<br><tt><font color="#000099">&nbsp;MAFIRE Fire gecko</font></tt>
+<br><tt><font color="#000099">&nbsp;MAGCKO Golden gecko</font></tt>
+<br><tt><font color="#000099">&nbsp;MAGKO2 Gecko</font></tt>
+<br><tt><font color="#000099">&nbsp;MALIEN Alien</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMANT Mantis</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMRAT Мутировавшая крыса</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMURT Mole Rat</font></tt>
+<br><tt><font color="#000099">&nbsp;MAPLNT Мутировавшее растение</font></tt>
+<br><tt><font color="#000099">&nbsp;MAQUEN Alien Queen</font></tt>
+<br><tt><font color="#000099">&nbsp;MASCP2 Маленький radscorpion</font></tt>
+<br><tt><font color="#000099">&nbsp;MASCRP Radscorpion</font></tt>
+<br><tt><font color="#000099">&nbsp;MASPHN Floater</font></tt>
+<br><tt><font color="#000099">&nbsp;MASRAT Крыса</font></tt>
+<br><tt><font color="#000099">&nbsp;MATHNG Centaur</font></tt>
+
+<br><tt><font color="#000099">&nbsp;MACYBR Cyber dog</font></tt>
+<br><tt><font color="#000099">&nbsp;MAFEYE Floating Eye Bot</font></tt>
+<br><tt><font color="#000099">&nbsp;MAGUN2 Пушечная турель</font></tt>
+<br><tt><font color="#000099">&nbsp;MAGUNN Пулеметная турель</font></tt>
+<br><tt><font color="#000099">&nbsp;MAHAND Робот (осьминожного типа)</font></tt>
+<br><tt><font color="#000099">&nbsp;MAROBO Робот</font></tt>
+<br><tt><font color="#000099">&nbsp;MAROBT Sentry Bot Mark II</font></tt>
+<P>Прочее:</P>
+<tt><font color="#000099">&nbsp;RESERV Пляшущий огонь</font></tt>
+
+<P>Fallout 1:</P>
+<P>Люди (гуманоиды):</P>
+<tt><font color="#000099">&nbsp;HAPOWR Некто в power armor (PA)</font></tt>
+<br><tt><font color="#000099">&nbsp;HAROBE Некто в purple robe</font></tt>
+<br><tt><font color="#000099">&nbsp;HFCMBT Женщина в combat armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HFJMPS Женщина в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;HFLTHR Женщина в leather armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HFMAXX Женщина в black armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HFMETL Женщина в metal armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMBJMP Негр в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;HMBMET Негр в metal armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMCMBT Мужчина в combat armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMJMPS Мужчина в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;HMLTHR Мужчина в leather armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMMAXX Мужчина в black armor</font></tt>
+<br><tt><font color="#000099">&nbsp;HMMETL Мужчина в metal armor</font></tt>
+<br><tt><font color="#000099">&nbsp;MALIEU Лейтенант</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMSTR Повелитель</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMTNT Super Mutant #2</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMTN2 Super Mutant #1</font></tt>
+<br><tt><font color="#000099">&nbsp;NABLUE Некто в blue robe</font></tt>
+<br><tt><font color="#000099">&nbsp;NABRWN Некто в brown robe</font></tt>
+<br><tt><font color="#000099">&nbsp;NACHLD Ребенок</font></tt>
+<br><tt><font color="#000099">&nbsp;NAGHUL Ghoul (мертвяк)</font></tt>
+<br><tt><font color="#000099">&nbsp;NAGLOW Светящийся Ghoul (мертвяк)</font></tt>
+<br><tt><font color="#000099">&nbsp;NAPOWR Некто в power armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NAROBE Некто в brown robe</font></tt>
+<br><tt><font color="#000099">&nbsp;NFBRLP Женщина</font></tt>
+<br><tt><font color="#000099">&nbsp;NFMAXX Панкующая девица в black armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NFMETL Панкующая девица в metal armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NFPEAS Крестьянка</font></tt>
+<br><tt><font color="#000099">&nbsp;NFTRMP Женщина (шлюха)</font></tt>
+<br><tt><font color="#000099">&nbsp;NFVRED Рыжая девица в jumpsuit</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBPEA Крестьянин (негр)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBRLP Мужчина</font></tt>
+<br><tt><font color="#000099">&nbsp;NMBSNP Мужчина (лысый)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMDOCC Мужчина в белом (доктор, техник)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMGRCH Низкорослый мужик, коротышка</font></tt>
+<br><tt><font color="#000099">&nbsp;NMGZMO Гизмо</font></tt>
+<br><tt><font color="#000099">&nbsp;NMLOSR Проигравший (наркоман)</font></tt>
+<br><tt><font color="#000099">&nbsp;NMLTHR Мужчина в leather armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NMMAXX Мужчина в черном armor</font></tt>
+<br><tt><font color="#000099">&nbsp;NMOVER Смотритель на башне</font></tt>
+<br><tt><font color="#000099">&nbsp;NMOVR2 Смотритель</font></tt>
+<br><tt><font color="#000099">&nbsp;NMPEAS Крестьянин</font></tt>
+<P>
+Животные, роботы:
+</P>
+<tt><font color="#000099">&nbsp;MABROM Brahmin</font></tt>
+<br><tt><font color="#000099">&nbsp;MACLAW Deathclaw</font></tt>
+<br><tt><font color="#000099">&nbsp;MADDOG Mad dog</font></tt>
+<br><tt><font color="#000099">&nbsp;MADEGG Яйцо</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMANT Mantis</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMRAT Мутировавшая крыса</font></tt>
+<br><tt><font color="#000099">&nbsp;MAMURT Mole Rat</font></tt>
+<br><tt><font color="#000099">&nbsp;MASCRP Radscorpion</font></tt>
+<br><tt><font color="#000099">&nbsp;MASPHN Floater</font></tt>
+<br><tt><font color="#000099">&nbsp;MASRAT Крыса</font></tt>
+<br><tt><font color="#000099">&nbsp;MATHNG Centaur</font></tt>
+<br><tt><font color="#000099">&nbsp;MAFEYE Floating Eye Bot</font></tt>
+<br><tt><font color="#000099">&nbsp;MAHAND Робот (осьминожного типа)</font></tt>
+<br><tt><font color="#000099">&nbsp;MAROBO Робот</font></tt>
+<P>Прочее:</P>
+<tt><font color="#000099">&nbsp;RESERV Пляшущий огонь</font></tt>
+
+<br>&nbsp;
+<p><a NAME="Таблица 2."></a><font color="#FF0000"> <b><tt><font size=+1>Таблица
+2</font></tt></b></font>
+<br>
+<hr ALIGN=LEFT WIDTH="75%">
+<P>Основные действия:</P>
+&nbsp;<font color="#663366"> <tt>AA - Stand animation</tt></font>
+<br><tt><font color="#663366">&nbsp;AB - Идет</font></tt>
+<br><tt><font color="#663366">&nbsp;AE - Карабкается (по лестницам и т.д.)</font></tt>
+<br><tt><font color="#663366">&nbsp;AK - Подбирает предметы (у Когтей Смерти и гекко есть какие-то движения лапами, у робота-охранника (MAROBT) - какое-то потягивание)</font></tt>
+<br><tt><font color="#663366">&nbsp;AL - Манипулирует предметами (открывает
+дверь, использует консоль ...) (у гекко - укус)</font></tt>
+<br><tt><font color="#663366">&nbsp;AN - Атакован с промахом, увернулся</font></tt>
+<br><tt><font color="#663366">&nbsp;AO - Атакован и получил</font></tt>
+<br><tt><font color="#663366">&nbsp;AP - Атакован сзади</font></tt>
+<br><tt><font color="#663366">&nbsp;AQ - Атака ближнего боя 1 (у людей - кулак, у животных - лапой, бодает, кусает, жалит и т.д.)</font></tt>
+<br><tt><font color="#663366">&nbsp;AR - Атака ближнего боя 2 (у людей - ногой, у животных - кусает)</font></tt>
+<br><tt><font color="#663366">&nbsp;AS - Метает</font></tt>
+<br><tt><font color="#663366">&nbsp;AT - Бежит</font></tt><tt><font color="#663366"></font></tt>
+<br><tt><font color="#663366">&nbsp;AU - Вскидывает руки вперед (только HMMETL, HMLTHR)</font></tt>
+<br><tt><font color="#663366">&nbsp;AG - Горис надевает и скидывает накидку (только MAROBE и MADETH - Goris) (в F1 это был подьем по лестнице, вид справа, вместе с AH, AI, AJ)</font></tt>
+<br><tt><font color="#663366">&nbsp;AH - Подъем по лестнице, вид слева (только в Fallout 1)</font></tt>
+<br><tt><font color="#663366">&nbsp;AI - Спуск по лестнице, вид справа (только в Fallout 1)</font></tt>
+<br><tt><font color="#663366">&nbsp;AJ - Спуск по лестнице, вид слева (только в Fallout 1)</font></tt>
+
+<P>Виды убийств:</P>
+<p><tt><font color="#663366">&nbsp;BA - В нокдауне (падает назад)</font></tt>
+<br><tt><font color="#663366">&nbsp;BB - В нокдауне (падает вперед)</font></tt>
+<br><tt><font color="#663366">&nbsp;BC - В нокдауне (падает назад - только HFCMBT)</font></tt>
+<br><tt><font color="#663366">&nbsp;BD - Убит (в режиме Bloody Mess - отлетает часть туловища)</font></tt>
+<br><tt><font color="#663366">&nbsp;BE - Убит (сгорает до смерти)</font></tt>
+<br><tt><font color="#663366">&nbsp;BF - Убит (отлетает голова)</font></tt>
+<br><tt><font color="#663366">&nbsp;BG - Убит (из пулемета)</font></tt>
+<br><tt><font color="#663366">&nbsp;BH - Убит (импульсным оружием)</font></tt>
+<br><tt><font color="#663366">&nbsp;BI - Убит (лазерным оружием - напополам)</font></tt>
+<br><tt><font color="#663366">&nbsp;BJ - Убит (сгорает до смерти)</font></tt>
+<br><tt><font color="#663366">&nbsp;BK - Убит (импульсным оружием - кучка пепла)</font></tt>
+<br><tt><font color="#663366">&nbsp;BL - Убит (взрывом)</font></tt>
+<br><tt><font color="#663366">&nbsp;BM - Убит (расплавлен)</font></tt>
+<br><tt><font color="#663366">&nbsp;BN - Убит (горит и бежит)</font></tt>
+<br><tt><font color="#663366">&nbsp;BO - Убит (лежит на земле и истекает кровью
+(лицом вверх))</font></tt>
+<br><tt><font color="#663366">&nbsp;BP - Убит (лежит на земле и истекает кровью
+(лицом вниз))</font></tt><tt><font color="#663366"></font></tt>
+<P>Поднимается из нокдауна:</P>
+<p><tt><font color="#663366">&nbsp;CH - В нокдауне (лицом вниз), но приходит
+в сознание</font></tt>
+<br><tt><font color="#663366">&nbsp;CJ - В нокдауне (лицом вверх), но приходит
+в сознание</font></tt><tt><font color="#663366"></font></tt>
+<P>3D каркас:</P>
+<p><tt><font color="#663366">&nbsp;NA - 3D каркас (в режиме прицела)</font></tt><tt><font color="#663366"></font></tt>
+<P>Трупы:</P>
+<p><tt><font color="#663366">&nbsp;Rx - Различные виды трупов/останков, х
+изменяется от А до Р, причем каждое Rx соответсвует Bx</font></tt><tt><font color="#663366"></font></tt>
+<P>Анимация с оружием:</P>
+<p><tt><font color="#663366">&nbsp;D? - Нож</font></tt>
+<br><tt><font color="#663366">&nbsp;E? - Bat - дубинка</font></tt>
+<br><tt><font color="#663366">&nbsp;F? - Sledgehammer - кувалда</font></tt>
+<br><tt><font color="#663366">&nbsp;G? - Копье</font></tt>
+<br><tt><font color="#663366">&nbsp;H? - Small gun (пистолет)</font></tt>
+<br><tt><font color="#663366">&nbsp;I? - Submachine gun (автомат)</font></tt>
+<br><tt><font color="#663366">&nbsp;J? - Rifle (винтовка)</font></tt>
+<br><tt><font color="#663366">&nbsp;K? - Big gun (тяжелое оружие - включая огнемет)</font></tt>
+<br><tt><font color="#663366">&nbsp;L? - Minigun (пулемет)</font></tt>
+<br><tt><font color="#663366">&nbsp;M? - Гранатомет</font></tt><tt><font color="#663366"></font></tt>
+<p><tt><font color="#663366">&nbsp; Где ? может быть:</font></tt><tt><font color="#663366"></font></tt>
+<p><tt><font color="#663366">&nbsp; A - stand animation с оружием</font></tt>
+<br><tt><font color="#663366">&nbsp; B - Идет, держа оружие</font></tt>
+<br><tt><font color="#663366">&nbsp; C - Достает оружие</font></tt>
+<br><tt><font color="#663366">&nbsp; D - Прячет оружие</font></tt>
+<br><tt><font color="#663366">&nbsp; E - Закрывается, держа оружие</font></tt>
+<br><tt><font color="#663366">&nbsp; F - Колющий удар холодным оружием</font></tt>
+<br><tt><font color="#663366">&nbsp; G - Рубящий удар холодным оружием</font></tt>
+<br><tt><font color="#663366">&nbsp; H - Наставляет оружие на противника (прицеливается)</font></tt>
+<br><tt><font color="#663366">&nbsp; I - Опускает (отводит в сторону) оружие после выстрела</font></tt>
+<br><tt><font color="#663366">&nbsp; J - Стреляет (одиночный выстрел)</font></tt>
+<br><tt><font color="#663366">&nbsp; K - Стреляет очередью</font></tt>
+<br><tt><font color="#663366">&nbsp; L - Стреляет из огнемета</font></tt>
+<br><tt><font color="#663366">&nbsp; M - Метает</font></tt>
+<br>&nbsp;</dl>
+
+<h3>
+Credits
+<hr ALIGN=LEFT WIDTH="500"></h3>
+<i>Origin: <a href="mailto:dystopia@iname.com">Borg Locutus</a></i>
+<br><i>Sent by <a href="mailto:iceman345@mail.ru">Iceman</a></i>
+<br><i>Translated by <a href="mailto:uprint@mail.ru">Petr</a></i>
+<br><i>Redocumented by</i> <i><a href="mailto:w_master@softhome.net">Serge</a></i>,
+<i>master
+of</i> <font face="Arial,Helvetica"><font size=-1><b><i><a href="http://www.fallout.ru/undat/">unDAT
+division</a></i></b> <i>at</i> <i><b><a href="http://www.fallout.ru/">www.fallout.ru</a></b></i></font></font><i>
+.</i>
+<BR><I>Additions and corrections by <A HREF="mailto:perceptron@pisem.net">Perceptron</A></I>
+</body>
+</html>

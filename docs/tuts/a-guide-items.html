@@ -1,0 +1,217 @@
+<HTML><HEAD><TITLE>Guide: Items</TITLE>
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+.table {color:#00bb00; font-size:10pt;}
+-->
+</style></head>
+<BODY>
+<div class="header">Guide: Items</div><P>
+
+This document describes the format of <I>proto\items\xxxxxxxx.pro</I> ,which 
+stores item data. xxxxxxxx is usually the Item Id, but some exceptions are: 
+<P>
+<CENTER>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+<TR>
+    <TH bgcolor="#008000"><font color=black>xxxxxxxx</TH>    <TH bgcolor="#008000"><font color=black>Item Id</TH></TR>
+<TR>    <TD><font class="table">00000001</TD>    <TD><font class="table">2</TD></TR>
+<TR>    <TD><font class="table">00000002</TD>    <TD><font class="table">9</TD></TR>
+<TR>    <TD><font class="table">00000003</TD>    <TD><font class="table">1</TD></TR>
+<TR>    <TD><font class="table">00000004</TD>    <TD><font class="table">8</TD></TR>
+<TR>    <TD><font class="table">00000005</TD>    <TD><font class="table">6</TD></TR>
+<TR>    <TD><font class="table">00000006</TD>    <TD><font class="table">12</TD></TR>
+<TR>    <TD><font class="table">00000007</TD>    <TD><font class="table">13</TD></TR>
+<TR>    <TD><font class="table">00000008</TD>    <TD><font class="table">14</TD></TR>
+<TR>    <TD><font class="table">00000009</TD>    <TD><font class="table">5</TD></TR>
+<TR>    <TD><font class="table">00000010</TD>    <TD><font class="table">11</TD></TR>
+<TR>    <TD><font class="table">00000011    <TD><font class="table">10</TD></TR>
+<TR>    <TD><font class="table">00000012    <TD><font class="table">4</TD></TR>
+<TR>    <TD><font class="table">00000013</TD>    <TD><font class="table">7</TD></TR>
+<TR>    <TD><font class="table">00000014</TD>    <TD><font class="table">3 </TR>
+</TABLE></CENTER>
+<P>Example: The item file for Item Id 397 is <I>proto\items\00000397.pro</I>, 
+but the item file for Item Id 5 is <I>proto\items\00000009.pro</I> instead of 
+<I>proto\items\00000005.pro</I>. 
+<P>Unless specified, all values are in <B>big-endian</B> fashion. 
+<P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+<TR>
+    <TH bgcolor="#008000" width=90><font color=black>Offset</TH>    <TH bgcolor="#008000" width=120><font color=black>Length (byte)</TH>    <TH bgcolor="#008000"><font color=black>Description</TH></TR>
+<TR>    <TD><font class="table">00h - 03h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Item Id</TD></TR>
+<TR>    <TD><font class="table">04h - 07h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Item Id multiplied by 100. Use this value to locate the description of 
+the item in <I>text\english\game\pro_item.msg </I></TD></TR>
+<TR>    <TD><font class="table">08h - 0Bh</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Frame of the item (when it was on the ground). Example: this value for 
+Vindicator Minigun is 1Fh (31). Look at line #31 (line #0 means the 1st 
+line, so actually it is the 32nd line) of <I>art\items\items.lst</I>, and 
+you'll find "minigun.frm". ( <I>art\items\minigun.frm</I>) </TD></TR>
+<TR>    <TD><font class="table">1Bh</TD>    <TD><font class="table">1</TD>
+    <TD><font class="table">Attack mode. This value is meaningful only for weapon items. This 
+single-byte value can be divided into two nibbles, and each nibble means: 
+<FONT SIZE=-1><PRE>0: None     1: Punch    3: Swing   4: Thrust  
+5: Throw    6: Shoot    7: Burst   8: Flame
+</PRE><FONT SIZE=3>Example: this value for Spear is 54h, which means its 
+attack mode 2 is Throw (5) and attack mode 1 is Thrust (4).</TD></TR>
+<TR>    <TD><font class="table">23h</TD>    <TD><font class="table">1</TD>
+    <TD><font class="table">Item type: (refer to line #23 - 29 of 
+<I>text\english\game\proto.msg</I>) <FONT SIZE=-1><PRE>0: Armor    1: Container  2: Drug  3: Weapon   
+4: Ammo     5: Misc       6: Key
+<FONT SIZE=+1>
+</FONT></PRE></FONT></TD></TR>
+<tr>    <TD><font class="table">24h - 27h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Material type: refer to <I>text\english\game\proto.msg</I> <FONT SIZE=-1><PRE>0: Glass    1: Metal    2: Plastic<FONT SIZE=+1></FONT></PRE></FONT></TD></TR>    
+<TR>    <TD><font class="table">2Ch - 2Fh</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Weight</TD></TR>
+<TR>    <TD><font class="table">30h - 33h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Base price</TD></TR>
+<TR>    <TD><font class="table">34h - 37h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Frame of the item (when it was in the inventory). Example: this value 
+for Vindicator Minigun is 117h (279). Look at line #279 (line #0 means the 
+1st line, so actually it is the 280th line) of <I>art\inven\inven.lst</I>, 
+and you'll find "vminigun.frm". (<I>art\inven\vminigun.frm</I>) </TD></TR>
+<TR>    <TD><font class="table">38h -</TD>    <TD><font class="table">indefinite</TD>
+    <TD><font class="table">Bytes after offset 38h have different interpretations for different 
+item types. See tables below. </TD></TR></TABLE><P>
+<div class=sub-header>Weapon Item Type</div><P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+<TR>    <TH bgcolor="#008000" width=90><font color=black>Offset</TH>    <TH bgcolor="#008000" width=120><font color=black>Length (byte)</TH>    <TH bgcolor="#008000"><font color=black>Description</TH></TR>
+<TR>    <TD><font class="table">3Ch</TD>    <TD><font class="table">1</TD>
+    <TD><font class="table">Frame of the figure when he/she was holding the weapon. <FONT SIZE=-1><PRE>0: None         1: Knife            2: Bat
+3: Sledgehammer 4: Spear            5: Energy Gun
+6: Small Gun    7: Sub-machinegun   8: Big Gun
+9: Minigun      10: Rocket Launcher
+</PRE><FONT SIZE=3>Example: this value for Vindicator Minigun is 9, which 
+means when the figure is holding it, it looks like he/she is holding a 
+minigun. </FONT></FONT></TD></TR>
+<TR>    <TD><font class="table">3Dh - 40h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Minimum damage </TD></TR>
+<TR>    <TD><font class="table">41h - 44h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Maximum damage </TD></TR>
+<TR>    <TD><font class="table">48h</TD>    <TD><font class="table">1</TD>
+    <TD><font class="table">Damage type: (refer to line #44 - 50 of 
+<I>text\english\game\proto.msg</I>) <FONT SIZE=-1><PRE>0: Normal      1: Laser   2: Fire      3: Plasma
+4: Electrical  5: EMP     6: Explosion
+</PRE><FONT SIZE=3>Note: EMP (Electromagnetic Pulse) inflicts no damage on 
+biological entities. </FONT></FONT></TD></TR>
+<TR>    <TD><font class="table">49h - 4Ch</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Range for mode 1</TD></TR>
+<TR>    <TD><font class="table">4Dh - 50h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Range for mode 2</TD></TR>
+<TR>    <TD><font class="table">51h</TD>    <TD><font class="table">1</TD>
+    <TD><font class="table">Where firing frame is taken form<FONT SIZE=-1><PRE>01: proto_crit  05: proto_misc</TD></TR>
+<TR>    <TD><font class="table">52h - 54h</TD>    <TD><font class="table">3</TD>
+    <TD><font class="table">Firing frame<FONT SIZE="-1"><PRE>00 or FF: None  01: Rocket  02: Plasma  03: Explosion
+</PRE><FONT SIZE=3>Other firing frames please refer to <I>text\english\game\pro\misc.msg</I></FONT></TD></TR>
+<TR>    <TD><font class="table">55h - 58h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Min ST to use weapon</td>
+<TR>    <TD><font class="table">59h - 5Ch</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table"><A NAME=AP>Action points for attack mode 1. </A></TD></TR>
+<TR>    <TD><font class="table">5Dh - 60h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Action points for attack mode 2. </TD></TR>
+<TR>    <TD><font class="table">61h - 64h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Action points for reload. </TD></TR>
+<TR>    <TD><font class="table">69h - 6Ch</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Number of ammo fired per shot in burst mode. </TD></TR>
+<TR>    <TD><font class="table">6Dh - 70h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Caliber types: <FONT SIZE=-1><PRE>
+0: None  1: Rocket  2: Flamethrower Fuel 
+3: C Energy Cell    4: D Energy Cell    
+5: .223    6: 5mm   7: .40 cal
+</PRE><FONT SIZE=3>Other caliber types please refer to line #55 - 73 of 
+<I>text\english\game\proto.msg</I> </FONT></TD></TR>
+<TR>    <TD><font class="table">71h - 74h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Item Id of default ammo. Example: this value for Vindicator Minigun is 
+167h (359), which is the item id for "4.7mm Caseless". </TD></TR>
+<TR>    <TD><font class="table">75h - 78h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Capacity </TD></TR>
+<TR>    <TD><font class="table">79h</TD>    <TD><font class="table">1</TD>    <TD><font class="table">firing sound id </TD></TR>
+</TABLE><P>
+<div class=sub-header>Ammo Item Type</div><P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+<TR>
+    <TH bgcolor="#008000" width=90><font color=black>Offset</TH>    <TH bgcolor="#008000" width=120><font color=black>Length (byte)</TH>    <TH bgcolor="#008000"><font color=black>Description</TH></TR>
+<TR>    <TD><font class="table">39h - 3Ch</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Caliber types: <FONT SIZE=-1><PRE>0: None  1: Rocket  2: Flamethrower Fuel
+</PRE><FONT SIZE=3>Other caliber types please refer to line #55 - 73 of 
+<I>text\english\game\proto.msg</I> </FONT></FONT></TD></TR>
+<TR>    <TD><font class="table">3Dh - 40h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Number of ammo in a magazine </TD></TR>
+<TR>    <TD><font class="table">41h - 44h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">AC modifier </TD></TR>
+<TR>    <TD><font class="table">45h - 48h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DR modifier </TD></TR>
+<TR>    <TD><font class="table">49h - 4Ch</TD>    <TD><font class="table">4</TD>    <TD><font class="table">AC damage modifier</TD> </TR>
+<TR>    <TD><font class="table">4Dh - 50h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DR damage modifier</TD>
+</TR></TABLE><P>
+<div class=sub-header>Armor Item Type</div><P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+<TR>    <TH bgcolor="#008000" width=90><font color=black>Offset</TH>    <TH bgcolor="#008000" width=120><font color=black>Length (byte)</TH>    <TH bgcolor="#008000"><font color=black>Description</TH></TR>
+<TR>    <TD><font class="table">39h - 3Ch</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Armor class (AC) </TD></TR>
+<TR>    <TD><font class="table">3Dh - 40h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Normal Damage Resistance (DR) </TD></TR>
+<TR>    <TD><font class="table">41h - 44h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DR Laser </TD></TR>
+<TR>    <TD><font class="table">45h - 48h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DR Fire </TD></TR>
+<TR>    <TD><font class="table">49h - 4Ch</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DR Plasma </TD></TR>
+<TR>    <TD><font class="table">4Dh - 50h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DR Electrical </TD></TR>
+<TR>    <TD><font class="table">51h - 54h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DR EMP </TD></TR>
+<TR>    <TD><font class="table">55h - 58h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DR Explosion </TD></TR>
+<TR>    <TD><font class="table">59h - 5Ch</TD>    <TD><font class="table">4</TD>    <TD><font class="table">Normal Damage Threshold (DT) </TD></TR>
+<TR>    <TD><font class="table">5Dh - 60h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DT Laser </TD></TR>
+<TR>    <TD><font class="table">61h - 64h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DT Fire </TD></TR>
+<TR>    <TD><font class="table">65h - 68h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DT Plasma </TD></TR>
+<TR>    <TD><font class="table">69h - 6Ch</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DT Electrical </TD></TR>
+<TR>    <TD><font class="table">6Dh - 70h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DT EMP </TD></TR>
+<TR>    <TD><font class="table">71h - 74h</TD>    <TD><font class="table">4</TD>    <TD><font class="table">DT Explosion</TD></TR>
+<TR>    <TD><font class="table">7Ah - 7Ch</TD>    <TD><font class="table">3</TD>    <TD><font class="table">What a male hero will look like in the armor</TD></TR>
+<TR>    <TD><font class="table">7Eh - 80h</TD>    <TD><font class="table">3</TD>
+    <TD><font class="table">What a female hero will look like in the armor	</TD>			
+</PRE><FONT SIZE=3>refer to armor.htm to see what # refers to what armor</TD>
+</TR></TABLE>
+<P>
+<div class=sub-header>Drug Item Type</div>
+<FONT SIZE=-1>(Added on March 3,1999)</FONT> <p>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+<TR>    <TH bgcolor="#008000" width=90><font color=black>Offset</TH>    <TH bgcolor="#008000" width=120><font color=black>Length (byte)</TH>    <TH bgcolor="#008000"><font color=black>Description </TH></TR>
+<TR>    <TD><font class="table">39h - 3Ch</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Stat to be affected by taking the drug. We'll call this Stat Id 1. 
+Values can be <FONT SIZE=-1><PRE>0: Strength      1:Perception  2:Endurance   3:Charisma
+4: Intelligence  5:Agility     6:Luck        7:Max HP
+8: Max AP
+</PRE><FONT SIZE=3>Other values please refer to line #7 - 44 of 
+<I>text\english\game\stat.msg</I> </FONT></FONT></TD></TR>
+<TR>    <TD><font class="table">3Dh - 40h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Stat Id 2, the same as above. </TD></TR>
+<TR>    <TD><font class="table">41h - 44h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Stat Id 3, the same as above. </TD></TR>
+<TR>    <TD><font class="table">45h - 48h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 1, immediate effect </TD></TR>
+<TR>    <TD><font class="table">49h - 4Ch</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 2, immediate effect </TD></TR>
+<TR>    <TD><font class="table">4Dh - 50h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 3, immediate effect </TD></TR>
+<TR>    <TD><font class="table">51h - 54h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Mid-term effect will take place after this value (unit: minute. In the 
+game, use Pipboy to get current time.) </TD></TR>
+<TR>    <TD><font class="table">55h - 58h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 1, mid-term effect </TD></TR>
+<TR>    <TD><font class="table">59h - 5Ch</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 2, mid-term effect </TD></TR>
+<TR>    <TD><font class="table">5Dh - 60h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 3, mid-term effect </TD></TR>
+<TR>    <TD><font class="table">61h - 64h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Long-term effect will take place after this value (unit: minute.) This 
+value cannot be less than the mid-term value. </TD></TR>
+<TR>    <TD><font class="table">65h - 68h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 1, long-term effect </TD></TR>
+<TR>    <TD><font class="table">69h - 6Ch</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 2, long-term effect </TD></TR>
+<TR>    <TD><font class="table">6Dh - 70h</TD>    <TD><font class="table">4</TD>
+    <TD><font class="table">Modifier for Stat Id 3, long-term effect </TD></TR></TABLE>
+<P>I'll take Psycho (Item Id: 110) as the example:
+<P>The stat ids for Psycho are 5h, 4h and 18h, which means taking a dose of 
+Psycho will affect character's agility (AG), intelligence (IN), and damage 
+resistance (DR). Its immediate effects are: increasing AG by 3h, IN by FFFFFFFDh (which is -3, so actually IN decreases), and DR by 32h (50). 
+<P>After F0h (240) minutes, its mid-term effects are: increasing AG by FFFFFFFDh (-3), IN by 1h, and DR by FFFFFFE7h (-25). 
+<P>After 1E0h (480) minutes , its long-term effects are: increasing AG by 0h, IN by 2h, and DR by FFFFFFE7h (-25). 
+<p>
+<p>
+<div align=right><a href="javascript:history.back(1)">Back</a></div><P>
+<DIV ALIGN=RIGHT>Copyleft 1999 by Borg Locutus (<I>dystopia@iname.com</I>)<BR>
+corrections and additions made by Grendelin (<I>usp09@hotmail.com<I>)<BR>
+</P>
+</DIV></BODY></HTML>

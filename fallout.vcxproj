@@ -140,6 +140,7 @@
     <ClCompile Include="attack.cpp" />
     <ClCompile Include="caliber.cpp" />
     <ClCompile Include="critical.cpp" />
+    <ClCompile Include="land.cpp" />
     <ClCompile Include="lst_criters.cpp" />
     <ClCompile Include="lst_pro_crit.cpp" />
     <ClCompile Include="lst_pro_item_en.cpp" />
@@ -154,7 +155,6 @@
     <ClCompile Include="action.cpp" />
     <ClCompile Include="scale2x.c" />
     <ClCompile Include="parameter.cpp" />
-    <ClCompile Include="scenery.cpp" />
     <ClCompile Include="sprite_util.cpp" />
     <ClCompile Include="szdup.cpp" />
     <ClCompile Include="tile.cpp" />

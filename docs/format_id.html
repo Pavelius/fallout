@@ -1,0 +1,765 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+<title>Форматы идентификаторов в Fallout</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><!-- base href="http://teamx.ru/" -->
+<style type="text/css">
+</style>
+</head><body>
+<div class="section-1">
+<div id="node-120" class="section-2">
+<h1 class="book-heading">Форматы идентификаторов в Fallout</h1>
+<p>
+В документе приводится описание форматов идентификаторов FRM-файла (FRM ID или FID),
+идентификатора прототипа (Prototype ID или PID), идентификатора скрипта (Script ID или SID) и
+идентификатора звукового эффекта (Sound Code ID) для Fallout.
+Информация о них была получена в ходе разбора соответствующей функции в файлах Fallout2.exe, Fallout.exe и Mapper2.exe.
+</p>
+
+<p><b>Автор документа: Anchorite</b> (<a href="mailto:anchorite2001@yandex.ru">anchorite2001@yandex.ru</a>).</p>
+<div id="node-121" class="section-3">
+<h1 class="book-heading">1. Общие сведения</h1>
+<p>
+Идентификаторы представляют собой четырехбайтовые числа однозначно описывающие объекты с которыми оперирует Fallout.
+Исключением является 'Идентификатор звукового эффекта' (Sound Code ID), который является символом и имеет размер 1 байт.
+</p></div>
+<div id="node-122" class="section-3">
+<h1 class="book-heading">2. Формат идентификатора FRM-файла (FID)</h1>
+<p>
+В общем случае FID представляет собой число следующего вида:
+</p>
+
+<pre><font size="1">
++--|--------|-----------|-----------------------|-----------|-----------------------------------+
+|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
++--|--------|-----------|-----------------------|-----------|-----------------------------------+
+ |      |         |                 |                 |                       |
+ |      |         |                 |                 |                       ------------------- Индекс в LST-файл
+ |      |         |                 |                 ------------------------------------------- ID1
+ |      |         |                 ------------------------------------------------------------- ID2
+ |      |         ------------------------------------------------------------------------------- Тип объекта (ObjType)
+ |      ----------------------------------------------------------------------------------------- ID3
+ ------------------------------------------------------------------------------------------------ Не используется
+</font>
+</pre>
+ 
+                                                                                                  
+<p>
+Поля 'Тип объекта и 'Индекс в лист-файл' используются всегда, а поля
+'ID3', 'ID2' и 'ID1' могут игнорироваться в зависимости от значения
+поля 'Тип объекта' (Таблица 1.1). Значение не используемого бита может
+быть любым.
+</p>
+
+
+<br>
+<table width="100%" border="1" bordercolor="#cccccc">
+    <caption>Таблица 2.1 - Использование полей ID3, ID2 и ID1</caption>
+    <colgroup>
+        <col width="40%">
+        <col width="20%">
+        <col width="20%">
+        <col width="20%">
+    </colgroup>
+
+    <tbody><tr>
+        <th>ObjType</th>
+        <th>ID3</th>
+        <th>ID2</th>
+        <th>ID1</th>
+</tr>
+    <tr>
+        <td align="center">0x00: items<br>(предметы)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">0x01: critters<br>(существа)</td>
+        <td align="center">x</td>
+        <td align="center">x</td>
+        <td align="center">x</td>
+</tr>
+    <tr>
+        <td align="center">0x02: scenery<br>(пейзаж)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">0x03: walls<br>(стены)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">0x04: tiles<br>(плитки пола)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">0x05: misc<br>(разное)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">0x06: interface<br>(интерфейс)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">0x07: invent<br>(инвентарь)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">0x08: heads<br>(говорящие головы)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">х</td>
+        <td align="center">х</td>
+</tr>
+    <tr>
+        <td align="center">0x09: backgrnd<br>(фон)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">0x0A: skilldex<br>(умения)</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+        <td align="center">&nbsp;</td>
+</tr>
+</tbody></table>
+
+<p>
+Для FID, не относящегося к существам и «говорящим головам», именем файла является соответствующий Индексу элемент LST-файла.
+</p><div id="node-123" class="section-4">
+<h1 class="book-heading">2.1. FID существа (critter)</h1>
+<p>
+Имя FRM-файла существа имеет следующий вид
+</p>
+
+<pre>
+    RootSuffix1Suffix2.frExtSuffix
+
+где Root      - корень имени файла (6 символов)
+    Suffix1   - первый суффикс (1 символ)
+    Suffix2   - второй суффикс (1 символ)
+    ExtSuffix - суффикс расширения имени файла (1 символ)
+
+</pre>
+<p>
+<b><u>Пример</u></b>
+</p>
+<p>
+Пусть имя файла HAPOWRBA.FR0
+</p>
+<pre>
+тогда Root      - HAPOWR
+      Suffix1   - B
+      Suffix2   - A
+      ExtSuffix - 0
+
+</pre>
+
+<p>
+В FID существа используются все поля. ID1 определяет Suffix1, ID2 - Suffix2, ID3 - ExtSuffix.<br>
+Идентификаторы имеют следующее назначение:
+</p><ul>
+<li>ID1 - Weapon code - код определяющий тип активного оружия в руках
+существа (см. документ "Формат PRO-файлов Fallout2", поле Weapon Anim
+Code)
+</li><li>ID2 - Animation code - код определяющий действие производимое существом (см. <a href="#6.+%D0%A4%D0%B0%D0%B9%D0%BB+ANIMCOMD.H">Файл ANIMCOMD.H</a>)
+</li><li>ID3 - Direction code - код определяющий ориентацию существа в пространстве
+</li></ul>
+
+
+<p>
+При ID2 равном 0x1B&nbsp;(27&nbsp;-&nbsp;ANIM_electrify), 0x1D&nbsp;(29&nbsp;-&nbsp;ANIM_burned_to_nothing),
+0x1E&nbsp;(30&nbsp;-&nbsp;ANIM_electrified_to_nothing), 0x37&nbsp;(55&nbsp;-&nbsp;ANIM_electrify_sf),
+0x39&nbsp;(57&nbsp;-&nbsp;ANIM_burned_to_nothing_sf), 0x3A&nbsp;(58&nbsp;-&nbsp;ANIM_electrified_to_nothing_sf),
+0x21&nbsp;(33&nbsp;-&nbsp;ANIM_fire_dance), 0x40&nbsp;(64&nbsp;-&nbsp;called shot interface picture)
+происходит изменение Индекса в LST-файл.
+Индекс меняется на первое число, стоящее после строки с корнем имени файла.
+</p>
+
+<p>
+<b><u>Пример</u></b>
+</p>
+<p>Требуется заменить индекс 0x62(98). Смотрим 99 строку файла
+critters.lst. Там находится nmoldd,11. Соответственно измененный Индекс
+будет 0x0B(11).
+</p>
+
+<p>
+Соответствия между значениями ID1, ID2 и Suffix1, Suffix2 преведены в Таблице 2.2, а между ID3 и ExtSuffix в Таблице 2.3.
+</p>
+
+
+ <br>
+<table width="100%" border="1" bordercolor="#cccccc">
+    <caption>Таблица 2.2 - Соответствие между значениями ID1, ID2 и Suffix1, Suffix2</caption>
+    <colgroup>
+        <col width="20%">
+        <col width="16%">
+        <col width="16%">
+        <col width="16%">
+        <col width="32%">
+    </colgroup>
+
+    <tbody><tr>
+        <th>ID2</th>
+        <th>ID1</th>
+        <th>Suffix1</th>
+        <th>Suffix2</th>
+        <th>Примечания</th>
+</tr>
+    <tr>
+        <td align="center">-</td>
+        <td align="center">ID1 ≥ 0x0B(11)</td>
+        <td align="center">-</td>
+        <td align="center">-</td>
+        <td>Недопустимое значение</td>
+</tr>
+    <tr>
+        <td rowspan="2" align="center">0x26(38) ≤ ID2 ≤ 0x2F(47)</td>
+        <td align="center">ID1 = 0x00(0)</td>
+        <td align="center">-</td>
+        <td align="center">-</td>
+        <td>Недопустимое значение</td>
+</tr>
+    <tr>
+        <td align="center">ID1 ≠ 0x00(0)</td>
+        <td align="center">char(ID1 + 0x63(99))<br>'d' + (ID1 - 1)</td>
+        <td align="center">char(ID2 + 0x3D(61))<br>'c' + (ID2 - 38)</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">ID2 = 0x24(36)</td>
+        <td align="center">-</td>
+        <td align="center">'c'</td>
+        <td align="center">'h'</td> 
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">ID2 = 0x25(37)</td>
+        <td align="center">-</td>
+        <td align="center">'c'</td>
+        <td align="center">'j'</td> 
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">ID2 = 0x40(64)</td>
+        <td align="center">-</td>
+        <td align="center">'n'</td>
+        <td align="center">'a'</td> 
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">ID2 ≥ 0x30(48)</td>
+        <td align="center">-</td>
+        <td align="center">'r'</td>
+        <td align="center">char(ID2 + 0x31(49))<br>'a' + (ID2 - 48)</td>    
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">ID2 ≥ 0x14(20)</td>
+        <td align="center">-</td>
+        <td align="center">'b'</td>
+        <td align="center">char(ID2 + 0x4D(77))<br>'a' + (ID2 - 20)</td>    
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td rowspan="3" align="center">ID2 = 0x12(18)</td>
+        <td align="center">ID1 = 0x01(1)</td>
+        <td align="center">'d'</td>
+        <td align="center">'m'</td> 
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">ID1 = 0x04(4)</td>
+        <td align="center">'g'</td>
+        <td align="center">'m'</td> 
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">-</td>
+        <td align="center">'a'</td>
+        <td align="center">'s'</td> 
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td rowspan="2" align="center">ID2 = 0x0D(13)</td>
+        <td align="center">ID1 &gt; 0x00(0)</td>
+        <td align="center">char(ID1 + 0x63)<br>'d' + (ID1 - 1)</td>
+        <td align="center">'e'  </td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">ID1 = 0x00</td>
+        <td align="center">'a'</td>
+        <td align="center">'n'</td> 
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">ID2 ≤ 0x01(1)</td>
+        <td align="center">ID1 &gt; 0x00(0)</td>
+        <td align="center">char(ID1 + 0x63(99))<br>'d' + (ID1 - 1)</td>
+        <td align="center">char(ID2 + 0x61(97))<br>'a' + ID2</td>   
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td align="center">-</td>
+        <td align="center">-</td>
+        <td align="center">'a'</td>
+        <td align="center">char(ID2 + 0x61(97))<br>'a' + ID2</td>
+        <td align="center">&nbsp;</td>
+</tr>
+    <tr>
+        <td colspan="5"><strong>Примечание:</strong> Условия из верхних строк таблицы имеют приоритет над условиями из нижних строк</td>
+</tr>
+</tbody></table>
+
+<br>
+<table width="100%" border="1" bordercolor="#cccccc">
+    <caption>Таблица 2.3 - Соответствие между значениями ID3 и ExtSuffix</caption>
+    <colgroup>
+        <col width="50%">
+        <col width="50%">
+    </colgroup>
+
+    <tbody><tr>
+        <th>ID3</th>
+        <th>ExtSuffix</th>
+</tr>
+    <tr>
+        <td align="center">0x00</td>
+        <td align="center">'m'</td>
+</tr>
+    <tr>
+        <td align="center">0x01</td>
+        <td align="center">'0'</td>
+</tr>
+    <tr>
+        <td align="center">0x02</td>
+        <td align="center">'1'</td>
+</tr>
+    <tr>
+        <td align="center">0x03</td>
+        <td align="center">'2'</td>
+</tr>
+    <tr>
+        <td align="center">0x04</td>
+        <td align="center">'3'</td>
+</tr>
+    <tr>
+        <td align="center">0x05</td>
+        <td align="center">'4'</td>
+</tr>
+    <tr>
+        <td align="center">0x06</td>
+        <td align="center">'5'</td>
+</tr>
+    <tr>
+        <td align="center">0x07</td>
+        <td align="center">'6'</td>
+</tr>
+</tbody></table></div>
+<div id="node-124" class="section-4">
+<h1 class="book-heading">2.2. FID "говорящей головы" (head)</h1>
+<p>
+Имя FRM-файла «говорящей головы» имеет следующий вид
+</p>
+
+<pre>
+    RootSuffix1Suffix2[Sufix3].frm
+
+где Root    - корень имени файла (5 символов)
+    Suffix1 - первый суффикс (1 символ)
+    Suffix2 - второй суффикс (1 символ)
+    Suffix3 - третий суффикс (обычно 1 символ, но теоретически может быть и больше, не обязателен)
+</pre>
+
+<p>
+ID2 определяет Suffix1 и Suffix2, а ID1 - Suffix3 (Таблицы 2.4, 2.5). 
+</p>
+
+<br>
+<table width="100%" border="1" bordercolor="#cccccc">
+    <caption>Таблица 2.4 - Соответствие между значениями ID2 и Suffix1, Suffix2</caption>
+    <colgroup>
+        <col width="33%">
+        <col width="33%">
+        <col width="33%">
+    </colgroup>
+
+    <tbody><tr>
+        <th>ID2</th>
+        <th>Suffix1</th>
+        <th>Suffix2</th>
+</tr>
+    <tr>
+        <td align="center">0x00</td>
+        <td align="center">'g'</td>
+        <td align="center">'v'</td>
+</tr>
+    <tr>
+        <td align="center">0x01</td>
+        <td align="center">'g'</td>
+        <td align="center">'f'</td>
+</tr>
+    <tr>
+        <td align="center">0x02</td>
+        <td align="center">'g'</td>
+        <td align="center">'n'</td>
+</tr>
+    <tr>
+        <td align="center">0x03</td>
+        <td align="center">'n'</td>
+        <td align="center">'g'</td>
+</tr>
+    <tr>
+        <td align="center">0x04</td>
+        <td align="center">'n'</td>
+        <td align="center">'f'</td>
+</tr>
+    <tr>
+        <td align="center">0x05</td>
+        <td align="center">'n'</td>
+        <td align="center">'b'</td>
+</tr>
+    <tr>
+        <td align="center">0x06</td>
+        <td align="center">'b'</td>
+        <td align="center">'n'</td>
+</tr>
+    <tr>
+        <td align="center">0x07</td>
+        <td align="center">'b'</td>
+        <td align="center">'f'</td>
+</tr>
+    <tr>
+        <td align="center">0x08</td>
+        <td align="center">'b'</td>
+        <td align="center">'v'</td>
+</tr>
+    <tr>
+        <td align="center">0x09</td>
+        <td align="center">'g'</td>
+        <td align="center">'p'</td>
+</tr>
+    <tr>
+        <td align="center">0x0A</td>
+        <td align="center">'n'</td>
+        <td align="center">'p'</td>
+</tr>
+    <tr>
+        <td align="center">0x0B</td>
+        <td align="center">'b'</td>
+        <td align="center">'p'</td>
+</tr>
+    <tr>
+        <td colspan="3"><strong>Примечание:</strong> Если значения Suffix2 = 'f', то в имени FRM файла используется Suffix3</td>
+</tr>
+</tbody></table>
+
+<br>
+<table width="100%" border="1" bordercolor="#cccccc">
+    <caption class="tableCaption">Таблица 2.5 - Соответствие между значениями ID1 и Suffix3</caption>
+    <colgroup>
+        <col width="50%">
+        <col width="50%">
+    </colgroup>
+
+    <tbody><tr>
+        <th>ID2</th>
+        <th>Suffix3</th>
+</tr>
+    <tr>
+        <td align="center">0x00</td>
+        <td align="center">'0'</td>
+</tr>
+    <tr>
+        <td align="center">0x01</td>
+        <td align="center">'1'</td>
+</tr>
+    <tr>
+        <td align="center">0x02</td>
+        <td align="center">'2'</td>
+</tr>
+    <tr>
+        <td align="center">...</td>
+        <td align="center">...</td>
+</tr>
+</tbody></table></div>
+</div>
+<div id="node-125" class="section-3">
+<h1 class="book-heading">3. Формат идентификатора прототипа (PID)</h1>
+<p>
+Идентификатор прототипа (PID) представляет собой число следующего вида:
+</p>
+
+<pre><font size="1">
++-----------------------|-----------------------------------------------------------------------+
+|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
++-----------------------|-----------------------------------------------------------------------+
+            |                                            |                     
+            |                                            ---------------------------------------- Индекс в LST-файл
+            ------------------------------------------------------------------------------------- Тип объекта (ObjType)
+</font>
+</pre>
+
+<p>
+На значение 'Типа объекта' накладывается следующее ограничение:
+</p>
+<pre>    0x00 ≤ ObjType ≤ 0x0B
+</pre>
+<p>
+но PRO-файлы существуют только для объектов с 
+</p>
+<pre>    0x00 ≤ ObjType ≤ 0x05
+</pre>
+<p>
+(0x00:&nbsp;items&nbsp;(предметы), 0x01:&nbsp;critters&nbsp;(существа), 0x02:&nbsp;scenery&nbsp;(пейзаж),
+0x03:&nbsp;walls&nbsp;(стены), 0x04:&nbsp;tiles&nbsp;(плитки пола), 0x05:&nbsp;misc&nbsp;(разное)).
+</p>
+
+<p>
+На индекс в LST-файл ограничений нет.
+</p>
+<p>
+Однако из-за особенностей инициализации внутренних структур Mapper может создать PID только с индексом начиная с единицы.
+Поэтому PID с нулевым индесом не существует.
+</p>
+
+<p>
+<strong>Внимание:</strong>
+</p>
+<p>Индекс в LST-файл нового PID создаваемого Mapper-ом от BIS является
+числом уже существующих PRO-файлов для данного типа объекта.
+Mapper не проверяет существование PRO-файла для нового PID и поэтому
+возможна ситуация, когда быдет создан PID уже сществующего прототипа. </p></div>
+<div id="node-126" class="section-3">
+<h1 class="book-heading">4. Формат идентификатора скрипта (SID)</h1>
+<p>
+Идентификатор скрипта (SID) представляет собой число следующего вида:
+</p>
+
+<pre><font size="1">
++-----------------------|-----------------------------------------------------------------------+
+|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
++-----------------------|-----------------------------------------------------------------------+
+            |                                            |                     
+            |                                            ---------------------------------------- Индекс в LST-файл
+            ------------------------------------------------------------------------------------- Тип скрипта (ScriptType)
+</font>
+</pre>
+
+<p>
+На значение 'Типа скрипта' накладывается следующее ограничение:
+</p>
+
+<pre>    0x00 ≤ ScriptType ≤ 0x04
+</pre>
+
+
+<p>
+На индекс в LST-файл ограничений нет.
+</p>
+
+
+<p>
+Типы скриптов приведены в таблице 3.1
+</p>
+
+<br>
+<table width="100%" border="1" bordercolor="#cccccc">
+    <caption>Таблица 3.1 - Типы скриптов</caption>
+    <colgroup>
+        <col width="30%">
+        <col>
+        <col>
+
+    </colgroup><tbody><tr>
+        <th>Тип скрипта<br>(ScriptType)</th>
+        <th>Тип<br>(по информации от SeaWolf)</th>
+        <th>Тип<br>(по информации из Mapper2.exe)</th>
+</tr>
+    <tr>
+        <td align="center">0x00</td>
+        <td align="center">-</td>
+        <td align="center">s_system</td>
+</tr>
+    <tr>
+        <td align="center">0x01</td>
+        <td align="center">spatial</td>
+        <td align="center">s_spatial</td>
+</tr>
+    <tr>
+        <td align="center">0x02</td>
+        <td align="center">items</td>
+        <td align="center">s_time</td>
+</tr>
+    <tr>
+        <td align="center">0x03</td>
+        <td align="center">scenery</td>
+        <td align="center">s_item</td>
+</tr>
+    <tr>
+        <td align="center">0x04</td>
+        <td align="center">critters</td>
+        <td align="center">s_critter</td>
+</tr>
+</tbody></table>
+
+
+<p>
+Также следует отметить, что автору не встречались карты (MAP-файлы) в которых использовались скрипты типов 0x00 и 0x02.
+</p></div>
+<div id="node-127" class="section-3">
+<h1 class="book-heading">5. Идентификатор звукового эффекта (Sound Code ID)</h1>
+<p>
+Идентификатор звукового эффекта (Sound Code ID) представляет собой символ в имени файла звукового эффекта.
+Расположение этого символа в имени файла варьируется в зависимости от типа объекта.
+Может принимать значение '0' - '9','A' - 'Z', '!','@','#','$','_'. 
+</p></div>
+<div id="node-128" class="section-3">
+<h1 class="book-heading">6. Файл ANIMCOMD.H</h1>
+<pre><font size="1">
+/*
+    Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#ifndef ANIMCOMD_H
+#define ANIMCOMD_H
+
+/************************************************************
+   Filename: AnimComd.h
+
+   Purpose: This file contains all of the defines for
+            animations used in the game. Please do not
+            alter them unless Jesse Reynolds says you
+            can, as they are used for various purposes
+            throughout the game.
+
+   Created: November 20, 1997
+
+   Log:
+
+************************************************************/
+
+// Animation macros &amp; defines //
+#define ANIMATE_WALK                (0)
+#define ANIMATE_RUN                 (1)
+#define ANIMATE_INTERRUPT           (16)
+
+#define ANIMATE_FORWARD             (0)
+#define ANIMATE_REVERSE             (1)
+
+#define animate_move_to_tile(X)         animate_move_obj_to_tile(self_obj, X, ANIMATE_WALK)
+#define animate_run_to_tile(X)          animate_move_obj_to_tile(self_obj, X, ANIMATE_RUN)
+#define animate_stand                   animate_stand_obj(self_obj)
+#define animate_stand_reverse           animate_stand_reverse_obj(self_obj)
+#define animate_move_to_tile_force(X)   animate_move_obj_to_tile(self_obj, X, (ANIMATE_WALK bwor ANIMATE_INTERRUPT))
+#define animate_run_to_tile_force(X)    animate_move_obj_to_tile(self_obj, X, (ANIMATE_RUN bwor ANIMATE_INTERRUPT))
+#define ANIMATE_ROTATION                (1000)
+#define ANIMATE_SET_FRAME               (1010)
+#define MAX_ROTATIONS                   (6)
+#define animate_rotation(X)             anim(self_obj, ANIMATE_ROTATION, X)
+#define animate_set_frame(FRAME)        anim(self_obj, ANIMATE_SET_FRAME, FRAME)
+
+// basic animations  0-19
+#define ANIM_stand                    (0)
+#define ANIM_walk                     (1)
+#define ANIM_jump_begin               (2)
+#define ANIM_jump_end                 (3)
+#define ANIM_climb_ladder             (4)
+#define ANIM_falling                  (5)
+#define ANIM_up_stairs_right          (6)
+#define ANIM_up_stairs_left           (7)
+#define ANIM_down_stairs_right        (8)
+#define ANIM_down_stairs_left         (9)
+#define ANIM_magic_hands_ground      (10)
+#define ANIM_magic_hands_middle      (11)
+#define ANIM_magic_hands_up          (12)
+#define ANIM_dodge_anim              (13)
+#define ANIM_hit_from_front          (14)
+#define ANIM_hit_from_back           (15)
+#define ANIM_throw_punch             (16)
+#define ANIM_kick_leg                (17)
+#define ANIM_throw_anim              (18)
+#define ANIM_running                 (19)
+// knockdown and death   20-35
+#define ANIM_fall_back               (20)
+#define ANIM_fall_front              (21)
+#define ANIM_bad_landing             (22)
+#define ANIM_big_hole                (23)
+#define ANIM_charred_body            (24)
+#define ANIM_chunks_of_flesh         (25)
+#define ANIM_dancing_autofire        (26)
+#define ANIM_electrify               (27)
+#define ANIM_sliced_in_half          (28)
+#define ANIM_burned_to_nothing       (29)
+#define ANIM_electrified_to_nothing  (30)
+#define ANIM_exploded_to_nothing     (31)
+#define ANIM_melted_to_nothing       (32)
+#define ANIM_fire_dance              (33)
+#define ANIM_fall_back_blood         (34)
+#define ANIM_fall_front_blood        (35)
+// change positions  36-37
+#define ANIM_prone_to_standing       (36)
+#define ANIM_back_to_standing        (37)
+// weapon 38-47
+#define ANIM_take_out                (38)
+#define ANIM_put_away                (39)
+#define ANIM_parry_anim              (40)
+#define ANIM_thrust_anim             (41)
+#define ANIM_swing_anim              (42)
+#define ANIM_point                   (43)
+#define ANIM_unpoint                 (44)
+#define ANIM_fire_single             (45)
+#define ANIM_fire_burst              (46)
+#define ANIM_fire_continuous         (47)
+// single-frame death animations (the last frame of knockdown and death animations)   48-63
+#define ANIM_fall_back_sf            (48)
+#define ANIM_fall_front_sf           (49)
+#define ANIM_bad_landing_sf          (50)
+#define ANIM_big_hole_sf             (51)
+#define ANIM_charred_body_sf         (52)
+#define ANIM_chunks_of_flesh_sf      (53)
+#define ANIM_dancing_autofire_sf     (54)
+#define ANIM_electrify_sf            (55)
+#define ANIM_sliced_in_half_sf       (56)
+#define ANIM_burned_to_nothing_sf    (57)
+#define ANIM_electrified_to_nothing_sf  (58)
+#define ANIM_exploded_to_nothing_sf  (59)
+#define ANIM_melted_to_nothing_sf    (60)
+//#define ANIM_fire_dance_sf           (61)// doesn't exist, but keeps the enums ordered
+#define ANIM_fall_back_blood_sf      (61)
+#define ANIM_fall_front_blood_sf     (62)
+// called shot interface picture     64
+#define ANIM_called_shot_pic         (63)
+#define ANIM_max_anim                (65)   // 65
+
+/* Anim Commands */
+#define RB_UNRESERVED   1    // unreserved animation sequence, may fail if no available slots
+#define RB_RESERVED     2    // reserved animation sequence, should never fail
+#define REG_ANIM_BEGIN  1
+#define REG_ANIM_CLEAR  2
+#define REG_ANIM_END    3
+#define reg_anim_begin()    reg_anim_func(REG_ANIM_BEGIN, RB_UNRESERVED)
+#define reg_anim_clear(who) reg_anim_func(REG_ANIM_CLEAR, who)
+#define reg_anim_end()      reg_anim_func(REG_ANIM_END, 0)
+
+#endif // ANIMCOMD_H
+</font>
+</pre></div>
+</div>
+</div>
+
+</body></html>

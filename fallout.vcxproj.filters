@@ -196,14 +196,14 @@
     <ClCompile Include="critical.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="scenery.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="archive.cpp">
       <Filter>support</Filter>
     </ClCompile>
     <ClCompile Include="map_render.cpp">
       <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="land.cpp">
+      <Filter>logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

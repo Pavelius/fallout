@@ -1,0 +1,457 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+<title>Смещения в движке Fallout2</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><!-- base href="http://teamx.ru/" -->
+<style type="text/css">
+</style>
+</head><body>
+<div class="section-1">
+<div id="node-137" class="section-2">
+<h1 class="book-heading">Смещения в движке Fallout2</h1>
+<p><b>Условные обозначения:</b></p>
+Изменения:<br>
+"--" - не требуются<br>
+Достоверность:<br>
+"!!!" - точно проверено<br>
+"?!?" - скорее всего верно<br>
+"???" - не проверено
+<p><b>Авторы: Fallout Community</b><br>
+<b>Собрал и дополнил: Ray</b> (<a href="mailto:alrays@yandex.ru">alrays@yandex.ru</a>)</p><div id="node-140" class="section-3">
+<h1 class="book-heading">"ЛК - 7Волк"</h1>
+<table width="100%" border="1" bordercolor="#cccccc">
+<tbody><tr>
+            <th>Смещение</th>
+        <th>Оригинальное значение</th>
+        <th>Изменения</th>
+        <th>Достоверность</th>
+        <th>Описание</th>
+</tr>
+<tr>
+        <td align="center">0x00FD008</td>
+        <td align="center">FALLOUT II %d.%02d </td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>Mod Name (Main Menu)</td>
+</tr>
+<tr>
+        <td align="center">0x00F09C8</td>
+        <td align="center">patch%03d.dat</td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>DAT Name</td>
+</tr>
+<tr>
+        <td align="center">0x0107AB8</td>
+        <td align="center">artemple.map</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовая локация</td>
+</tr>
+<tr>
+        <td align="center">0x00ACED8<br>0x00ACEDD<br>0x00ACC60<br>0x00ACC65<br>0x010C2FC<br>0x010C300</td>
+        <td align="center">AD<br>7A<br>AD<br>7A<br>00<br>00</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовое положение на карте мира (по X)<br>Стартовое положение на карте мира (по Y) <br>World Highlight X<br>World Highlight Y<br>World Viewport X<br>World Viewport Y  </td>
+</tr>
+<tr>
+        <td align="center">0x00EE8D8</td>
+        <td align="center">hmwarr<br>hfprim<br>hmjmps<br>hfjmps</td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>Начальный вид персонажа (муж.) <br> Начальный вид персонажа (жен.) <br> Стандартный вид персонажа (муж.) <br> Стандартный вид персонажа (жен.)</td>
+</tr>
+<tr>
+        <td align="center">0x009363C</td>
+        <td align="center">C108</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовый год</td>
+</tr>
+<tr>
+        <td align="center">0x0093652</td>
+        <td align="center">06</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовый месяц</td>
+</tr>
+<tr>
+        <td align="center">0x0093626</td>
+        <td align="center">18</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовый день</td>
+</tr>
+<tr>
+        <td align="center">0x00954D1</td>
+        <td align="center">049D40</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Начальное время в тиках(не дата) </td>
+</tr>
+<tr>
+        <td align="center">0x00AF68B</td>
+        <td align="center">74</td>
+        <td align="center">EB</td>
+        <td align="center">!!!   </td>   
+        <td> Снимает лимит на количество локаций</td>
+</tr>
+<tr>
+        <td align="center">0x00B09BA</td>
+        <td align="center">23</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Встреча с Френки (23 - на 35 день; 00 - сразу)</td>
+</tr>
+<tr>
+        <td align="center">0x00B09A8</td>
+        <td align="center">75</td>
+        <td align="center">EB</td>
+        <td align="center">!!!   </td>   
+        <td>Выключить неслучайную встречу с Френки</td>
+</tr>
+<tr>
+        <td align="center">0x003EF0E <br> 0x003EF0F</td>
+        <td align="center">25 <br> FF</td>
+        <td align="center">B8 <br> 01</td>
+        <td align="center">!!!</td>
+        <td>ПИП-бой в начале, нет снов, все видео показаны</td>
+</tr>
+<tr>
+        <td align="center">0x00939DF <br> 0x00939E0 <br> 0x00939E1 <br> 0x00939E4 <br> 0x0093A87</td>
+        <td align="center">0F <br> 85 <br> 94 <br> 00 <br> 75 </td>
+        <td align="center">E9 <br> 95 <br> 00 <br> 90 <br> EB</td>
+        <td align="center">!!!</td>
+        <td>Нет снов</td>
+</tr>
+<tr>
+        <td align="center">0x00872E1</td>
+        <td align="center">75</td>
+        <td align="center">EB</td>
+        <td align="center">!!!</td>
+        <td>Пипбой в начале </td>
+</tr>
+<tr>
+        <td align="center">0x008FC7F <br> 0x008FC80</td>
+        <td align="center">74 <br> 05</td>
+        <td align="center">90 <br> 90</td>
+        <td align="center">!!!</td>
+        <td>Костюм избранного в начале </td>
+</tr>
+<tr>
+        <td align="center">0x00FDD80<br>0x00FDD88</td>
+        <td align="center">23world<br>20car</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>
+        <td>Имя файлов acm с музыкой для карты мира</td>
+</tr>
+<tr>
+        <td align="center">0x00F9480</td>
+        <td align="center">07desert</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Имя файла acm с музыкой для главного меню</td>
+</tr>
+</tbody></table></div>
+<div id="node-138" class="section-3">
+<h1 class="book-heading">"Фаргус"</h1>
+<table width="100%" border="1" bordercolor="#cccccc">
+<tbody><tr>
+            <th>Смещение</th>
+        <th>Оригинальное значение</th>
+        <th>Изменения</th>
+        <th>Достоверность</th>
+        <th>Описание</th>
+</tr>
+<tr>
+        <td align="center">0x00FD018</td>
+        <td align="center">FALLOUT II %d.%02d</td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>Mod Name (Main Menu)</td>
+</tr>
+<tr>
+        <td align="center">0x00F09C8</td>
+        <td align="center">patch%03d.dat</td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>DAT Name</td>
+</tr>
+<tr>
+        <td align="center">0x0107AC8</td>
+        <td align="center">artemple.map</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовая локация</td>
+</tr>
+<tr>
+        <td align="center">0x00AD008<br>0x00AD00D<br>0x00ACD90<br>0x00ACD95<br>0x010C42C<br>0x010C430</td>
+        <td align="center">AD<br>7A<br>AD<br>7A<br>00<br>00</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовое положение на карте мира (по X)<br>Стартовое положение на карте мира (по Y)<br>World Highlight X<br>World Highlight Y<br>World Viewport X<br>World Viewport Y  </td>
+</tr>
+<tr>
+        <td align="center">0x00EE8D8</td>
+        <td align="center">hmwarr<br>hfprim<br>hmjmps<br>hfjmps</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Начальный вид персонажа (муж.) <br> Начальный вид персонажа (жен.) <br> Стандартный вид персонажа (муж.) <br> Стандартный вид персонажа (жен.)</td>
+
+</tr>
+<tr>
+        <td align="center">0x009376C</td>
+        <td align="center">C108</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовый год</td>
+</tr>
+<tr>
+        <td align="center">0x0093782</td>
+        <td align="center">06</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовый месяц</td>
+</tr>
+<tr>
+        <td align="center">0x0093756</td>
+        <td align="center">18</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовый день</td>
+</tr>
+<tr>
+        <td align="center">0x0095601</td>
+        <td align="center">049D40</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Начальное время в тиках(не дата)</td>
+</tr>
+<tr>
+        <td align="center">0x00AF7BB</td>
+        <td align="center">74</td>
+        <td align="center">EB</td>
+        <td align="center">!!!   </td>   
+        <td> Снимает лимит на количество локаций</td>
+</tr>
+<tr>
+        <td align="center">0x00B0AEA</td>
+        <td align="center">23</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Встреча с Френки (23 - на 35 день; 00 - сразу)</td>
+</tr>
+<tr>
+        <td align="center">0x00B0AD8</td>
+        <td align="center">75</td>
+        <td align="center">EB</td>
+        <td align="center">!!!   </td>   
+        <td>Выключить неслучайную встречу с Френки</td>
+</tr>
+<tr>
+        <td align="center">0x003EF0E <br> 0x003EF0F</td>
+        <td align="center">25 <br> FF</td>
+        <td align="center">B8 <br> 01</td>
+        <td align="center">!!!   </td>   
+        <td>ПИП-бой в начале, нет снов, все видео показаны</td>
+</tr>
+<tr>
+        <td align="center">0x0093B0F <br> 0x0093B10 <br> 0x0093B11 <br> 0x0093B14 <br> 0x0093BB7</td>
+        <td align="center">0F <br> 85 <br> 94 <br> 00 <br> 75 </td>
+        <td align="center">E9 <br> 95 <br> 00 <br> 90 <br> EB</td>
+        <td align="center">!!!   </td>   
+        <td>Нет снов</td>
+</tr>
+<tr>
+        <td align="center">0x0087411</td>
+        <td align="center">75</td>
+        <td align="center">EB</td>
+        <td align="center">!!!</td>
+        <td>Пипбой в начале</td>
+</tr>
+<tr>
+        <td align="center">0x008FDAF  0x008FDB0</td>
+        <td align="center">74 <br> 05</td>
+        <td align="center">90 <br> 90</td>
+        <td align="center">!!!</td>
+        <td>Костюм избранного в начале</td>
+</tr>
+<tr>
+        <td align="center">0x000A998</td>
+        <td align="center">74</td>
+        <td align="center">EB</td>
+        <td align="center">!!!   </td>   
+        <td>Исправляет баг, когда вся озвучка персонажей превращяется в шипение</td>
+</tr>
+<tr>
+        <td align="center">0x00FDD90<br>0x00FDD98</td>
+        <td align="center">23world<br>20car</td>
+        <td align="center">--</td>
+        <td align="center">!!!       </td>
+        <td>Имя файлов acm с музыкой для карты мира</td>
+</tr>
+<tr>
+        <td align="center">0x00F9480</td>
+        <td align="center">07desert</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Имя файла acm с музыкой для главного меню</td>
+</tr>
+<tr>
+        <td align="center">0x0069583<br>0x006958B</td>
+        <td align="center">02<br>03 </td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>радиус взрыва гранат<br>радиус взрыва ракет</td>
+</tr>
+</tbody></table></div>
+<div id="node-139" class="section-3">
+<h1 class="book-heading">English v.1.02d</h1>
+<table width="100%" border="1" bordercolor="#cccccc">
+<tbody><tr>
+            <th>Смещение</th>
+        <th>Оригинальное значение</th>
+        <th>Изменения</th>
+        <th>Достоверность</th>
+        <th>Описание</th>
+</tr>
+<tr>
+        <td align="center">0x00FD018</td>
+        <td align="center">FALLOUT II %d.%02d </td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>Mod Name (Main Menu)</td>
+</tr>
+<tr>
+        <td align="center">0x00F09C8</td>
+        <td align="center">patch%03d.dat</td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>DAT Name</td>
+</tr>
+<tr>
+        <td align="center">0x0107AC8</td>
+        <td align="center">artemple.map</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовая локация</td>
+</tr>
+<tr>
+        <td align="center">0x00AD008<br>0x00AD00D<br>0x00ACD90<br>0x00ACD95<br>0x010C42C<br>0x010C430</td>
+        <td align="center">AD<br>7A<br>AD<br>7A<br>00<br>00</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовое положение на карте мира (по X)<br>Стартовое положение на карте мира (по Y)<br>World Highlight X<br>World Highlight Y<br>World Viewport X<br>World Viewport Y  </td>
+</tr>
+<tr>
+        <td align="center">0x00EE8D8</td>
+        <td align="center">hmwarr<br>hfprim<br>hmjmps<br>hfjmps</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Начальный вид персонажа (муж.) <br> Начальный вид персонажа (жен.) <br> Стандартный вид персонажа (муж.) <br> Стандартный вид персонажа (жен.)</td>
+
+</tr>
+<tr>
+        <td align="center">0x009376C</td>
+        <td align="center">C108</td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>      
+        <td>Стартовый год</td>
+</tr>
+<tr>
+        <td align="center">0x0093782</td>
+        <td align="center">06</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовый месяц</td>
+</tr>
+<tr>
+        <td align="center">0x0093756</td>
+        <td align="center">18</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Стартовый день</td>
+</tr>
+<tr>
+        <td align="center">0x0095601</td>
+        <td align="center">049D40</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Начальное время в тиках(не дата)</td>
+</tr>
+<tr>
+        <td align="center">0x00AF7BB</td>
+        <td align="center">74</td>
+        <td align="center">EB</td>
+        <td align="center">!!!   </td>   
+        <td> Снимает лимит на количество локаций</td>
+</tr>
+<tr>
+        <td align="center">0x00B0AEA</td>
+        <td align="center">23</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Встреча с Френки (23 - на 35 день; 00 - сразу)</td>
+</tr>
+<tr>
+        <td align="center">0x00B0AD8</td>
+        <td align="center">75</td>
+        <td align="center">EB</td>
+        <td align="center">!!!   </td>   
+        <td>Выключить неслучайную встречу с Френки</td>
+</tr>
+<tr>
+        <td align="center">0x003EF0E <br> 0x003EF0F</td>
+        <td align="center">25 <br> FF</td>
+        <td align="center">B8 <br> 01</td>
+        <td align="center">!!!   </td>   
+        <td>ПИП-бой в начале, нет снов, все видео показаны</td>
+</tr>
+<tr>
+        <td align="center">0x0093B0F <br> 0x0093B10 <br> 0x0093B11 <br> 0x0093B14 <br> 0x0093BB7</td>
+        <td align="center">0F <br> 85 <br> 94 <br> 00 <br> 75 </td>
+        <td align="center">E9 <br> 95 <br> 00 <br> 90 <br> EB</td>
+        <td align="center">!!!</td>
+        <td>Нет снов</td>
+</tr>
+<tr>
+        <td align="center">0x0087411</td>
+        <td align="center">75</td>
+        <td align="center">EB</td>
+        <td align="center">!!!</td>
+        <td>Пипбой в начале</td>
+</tr>
+<tr>
+        <td align="center">0x008FDAF <br> 0x008FDB0</td>
+        <td align="center">74 <br> 05</td>
+        <td align="center">90 <br> 90</td>
+        <td align="center">!!!</td>
+        <td>Костюм избранного в начале</td>
+</tr>
+<tr>
+        <td align="center">0x00FDD90<br>0x00FDD98</td>
+        <td align="center">23world<br>20car</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Имя файлов acm с музыкой для карты мира</td>
+</tr>
+<tr>
+        <td align="center">0x00F9480</td>
+        <td align="center">07desert</td>
+        <td align="center">--</td>
+        <td align="center">!!!   </td>   
+        <td>Имя файла acm с музыкой для главного меню</td>
+</tr>
+<tr>
+        <td align="center">0x0069583<br>0x006958B</td>
+        <td align="center">02<br>03 </td>
+        <td align="center">--</td>
+        <td align="center">!!!</td>
+        <td>радиус взрыва гранат<br>радиус взрыва ракет</td>
+</tr>
+</tbody></table></div>
+</div>
+</div>
+
+</body></html>

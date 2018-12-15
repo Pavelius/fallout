@@ -1,0 +1,115 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+   <meta name="Author" content="twbbat">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win95; I) [Netscape]">
+   <title>Format of *frm files</title>
+</head>
+<body text="#000000" bgcolor="#E6E7EC" link="#FF0000" vlink="#800080" alink="#0000FF">
+<tt><font size=-1>Last Updated: 06-Feb-2000</font></tt>
+<br>&nbsp;
+<h2>
+Формат файлов *.FRM</h2>
+
+<h2>
+
+<hr ALIGN=LEFT WIDTH="500"></h2>
+В этом документе описан формат FRM-файлов Fallout 2 (файлы с изображениями).
+В этих файлах хранится вся графика игры.
+<h3>
+Содержание</h3>
+
+<blockquote><a href="#1. Описание">1. Описание формата</a>
+<blockquote><font size=-1><a href="#1.1. Формат">1.1. Формат заголовка</a></font>
+<br><font size=-1><a href="#1.2. Формат">1.2. Формат данных</a></font></blockquote>
+<a href="#2.">2. Credits</a></blockquote>
+
+<h3>
+<a NAME="1. Описание"></a>1. Описание формата
+<hr ALIGN=LEFT WIDTH="500"></h3>
+Изображения в файле хранятся построчно в 256-цветном формате. Файл может
+состоять как из одного, так и из нескольких изображений. Все контрольные
+значения в файле хранятся в формате Motorola, т.е.&nbsp; <tt><font color="#663366">[H][L]</font></tt>.
+<p>С самого начала файла идет заголовок, затем идут данные.
+<br>&nbsp;
+<br>&nbsp;
+<h3>
+<a NAME="1.1. Формат"></a>1.1. Формат заголовка
+<hr ALIGN=LEFT WIDTH="500"></h3>
+<tt><font color="#000099">Offset |</font></tt>
+<br><tt><font color="#000099">-------+--------------------</font></tt>
+<br><tt><font color="#000099">0x00&nbsp;&nbsp; | ID = 00 00 00 04</font></tt>
+<br><tt><font color="#000099">-------+--------------------</font></tt>
+<br><tt><font color="#000099">0x04&nbsp;&nbsp; | Количество указателей
+на фреймы</font></tt>
+<br><tt><font color="#000099">-------+--------------------</font></tt>
+<br><tt><font color="#000099">0x06&nbsp;&nbsp; | F - количество фреймов</font></tt>
+<br><tt><font color="#000099">-------+--------------------</font></tt>
+<br><tt><font color="#000099">0x0a&nbsp;&nbsp; | Неизвестно что, но для
+каждого фрейма - 2 байта</font></tt>
+<br><tt><font color="#000099">-------+--------------------</font></tt>
+<br><tt><font color="#000099">0x0a+(2*F)| PTRs - Массив указателей (4 байта
+каждый), указывают на фреймы</font></tt>
+<p>Размер заголовка - 3Eh байт, хотя его поля дают намек на разную длинну,
+а именно:
+<blockquote><tt><font color="#663366">size = 0x0a + F*2+PTRs*4</font></tt></blockquote>
+
+<h3>
+<a NAME="1.2. Формат"></a>1.2. Формат данных
+<hr ALIGN=LEFT WIDTH="500"></h3>
+Далее для каждого из фреймов идет вот что (смещение приведено от начала
+фрейма):
+<p><tt><font color="#000099">........</font></tt>
+<br><tt><font color="#000099">[frame begin]</font></tt>
+<br><tt><font color="#000099">[0x00] Размер по X</font></tt>
+<br><tt><font color="#000099">[0x02] Размер по Y</font></tt>
+<br><tt><font color="#000099">[0x04] Размер картинки (X*Y)</font></tt>
+<br><tt><font color="#000099">[0x08] Предположительно, сдвиг по X относительно
+предыдущего фрейма</font></tt>
+<br><tt><font color="#000099">[0x0a] Предположительно, то же, но по Y</font></tt>
+<br><tt><font color="#000099">[0x0c] Собственно картинка размером X на
+Y, 256 цветов. (8 бит на пиксел)</font></tt>
+<br><tt><font color="#000099">......</font></tt>
+<br><tt><font color="#000099">[next frame begin]</font></tt>
+<p>Каждый из байт, составляющих собственно картинку, соответствует одному
+пикселу на экране. Значение байта - это порядковый номер (индекс) этого
+цвета в палитре, состоящей из 256 эл-тов. Палитра хранится в формате BGR.
+<p>Например, если байт изображения равен 0x5, то для отображения соответствующего
+<br>пиксела на экране нужно взять пятый цвет из палитры, т.е.
+<p>&nbsp;&nbsp;&nbsp;&nbsp; <font color="#663366">5(номер цвета) * 3(кол-во
+байт на один цвет в палитре) = 15.</font>
+<p>В палитре, по смещению 15 (0xF) от её начала, будут находиться 3 байта,
+обозначающих
+<br>интенсивность (0..0xFF) синего, зелёного и красного цветов для данного
+пиксела
+<br>соответственно.
+<p>Сама палитра хранится в формате BGR (не RGB!!!) либо в одноименном *.pal-файле,
+либо в файле <tt><font color="#663366">master.dat\\color.pal</font></tt>
+. Точнее говоря, если верить <a href="mailto:iceman345@mail.ru">Iceman</a>-у,
+то в этом файле существует несколько палитр с разным уровнем яркости для
+разных степеней освещенности сцены. <font color="#663366"><i>(можно только
+догадываться, как они там расположены, потому что лично у меня нормальная
+работа получалась с палитрой, которая идет первой, по смещению 0 от начала
+</i><tt>color.pal</tt><i>
+. - Serge)</i></font><i>.
+</i>Самая первая палитра в <tt>color.pal</tt>
+имеет очень темную гамму, поэтому для нормального вывода цветов их значения
+нужно умножать примерно на 4.
+<p>Это пока всё, что известно про данный формат. Если вы знаете больше
+- <a href="mailto:undat@fallout.ru">пишите</a>.
+<br>&nbsp;
+<br>&nbsp;
+<h3>
+<a NAME="2."></a>2. Credits
+<hr ALIGN=LEFT WIDTH="500"></h3>
+<i>Origin: <a href="mailto:andrew@uic.nnov.ru">Andrey</a> , <a href="mailto:iceman345@mail.ru">Iceman</a></i>
+<br><i>Slightly rewritten by</i> <i><a href="mailto:w_master@softhome.net">Serge</a></i>,
+<i>master
+of</i> <font face="Arial,Helvetica"><font size=-1><b><i><a href="http://www.fallout.ru/undat/">unDAT
+division</a></i></b> <i>at</i> <i><b><a href="http://www.fallout.ru/">www.fallout.ru</a></b></i></font></font><i>
+.</i>
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

@@ -1,0 +1,84 @@
+<HTML><HEAD><TITLE>Guide: Combat AI</TITLE>
+<style type="text/css">
+<!--
+body {  background: #000000; color: #00BB00; font-family : helvetica, arial, sans serif;  text-decoration:none; font-size : 10pt; }
+A:link  { color: #00ff00; text-decoration: none; }
+A:visited { color: #00ff00; text-decoration: none; }
+A:active { color: #00bb00; text-decoration: underline; }
+A:hover { color: #00bb00; text-decoration: underline; }
+.blurb {font-family: arial ,sans-serif; font-size: 8pt; color: #00BB00;}
+.header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: center; }
+.sub-header {font-family: arial ,sans-serif; font-size: 14pt; color: #00BB00; text-align: left;}
+.table {color:#00bb00; font-size:10pt;}
+-->
+</style></head>
+<BODY>
+<div class="header">Guide: Combat AI</div><p>
+
+This document describes <I>data\ai.txt</I>, which controls combat AI. The file 
+format is straightforward, so I just explain each field and its possible values. 
+
+<P>
+<TABLE BORDER="1" CELLSPACING="2" CELLPADDING="2" BORDERCOLOR="#008000">
+  <TBODY>
+  <TR>
+    <TH bgcolor="#008000"><font color=black>Field
+    <TH bgcolor="#008000"><font color=black>Description 
+  <TR>
+    <TD><font class="table">aggression
+    <TD><font class="table">Aggressiveness. Value ranges from 0 to 100. 
+  <TR>
+    <TD><font class="table">attack_start<BR>attack_end
+    <TD><font class="table">When attack begins, the game randomly picks a number between these two 
+      values, and shows the battle cry message corresponding to the number. 
+      Refer to <I>text\english\game\combatai.msg</I>.
+      <P>Example: the values for "Arroyo Elder" are 2640 and 2651, and line 
+      #1511 - 1522 of <I>text\english\game\combatai.msg</I> are the 
+      corresponding battle cry messages. </P>
+  <TR>
+    <TD><font class="table">hit_eyes_start<BR>hit_eyes_end
+    <TD><font class="table">The same as above, except this time the battle cries will be shown 
+      when the critter's eyes are hit. 
+  <TR>
+    <TD><font class="table">called_freq<BR>chance
+    <TD><font class="table">The chance that the critter will shout battle cries. If 0, it remains 
+      silent during combat. 
+  <TR>
+    <TD><font class="table">font
+    <TD><font class="table">Font used to show battle cries. Values can be <TT>101</TT>, 
+      <TT>102</TT>, <TT>103</TT>, <TT>104</TT> 
+  <TR>
+    <TD><font class="table">area_attack_mode
+    <TD><font class="table">Burst. Refer to FO2 manual pp.74. Values can be <TT>always</TT>, 
+      <TT>sometimes</TT>, <TT>be_sure</TT>, <TT>be_careful</TT> 
+      <TT>be_absolutely_sure</TT> 
+  <TR>
+    <TD><font class="table">attack_who
+    <TD><font class="table">Values can be <TT>whomever_attacking_me</TT>, <TT>strongest</TT>, 
+      <TT>weakest</TT>, <TT>whomever</TT>, <TT>closest</TT> 
+  <TR>
+    <TD><font class="table">best_weapon
+    <TD><font class="table">Values can be <TT>random</TT>, <TT>no_pref</TT>, <TT>never</TT>, 
+      <TT>unarmed</TT> , <TT>melee</TT>, <TT>ranged</TT>, 
+      <TT>ranged_over_melee</TT> ,<TT>melee_over_ranged</TT> 
+  <TR>
+    <TD><font class="table">distance
+    <TD><font class="table">Values can be <TT>charge</TT>, <TT>on_your_own</TT>, <TT>stay</TT>, 
+      <TT>stay_close</TT> , <TT>snipe</TT> 
+  <TR>
+    <TD><font class="table">disposition
+    <TD><font class="table">Values can be <TT>coward</TT>, <TT>defensive</TT>, 
+      <TT>aggressive</TT>, <TT>berserk</TT> 
+  <TR>
+    <TD><font class="table">run_away_mode
+    <TD><font class="table">Values can be <TT>none</TT>, <TT>coward</TT>, <TT>finger_hurts</TT>, 
+      <TT>bleeding</TT>, <TT>not_feeling_good</TT>, <TT>tourniquet</TT>, 
+      <TT>never</TT> </TR></TBODY></TABLE>
+<P><font class="table">I've tried to modify some fields like disposition and aggression, but it 
+seems of no effect. 
+<BR>
+
+<DIV align=right>
+<a href="javascript:history.back(1)">Back</a>
+<P>Copyleft 1999 by Borg Locutus 
+(<I>dystopia@iname.com</I>)</DIV></BODY></HTML>

@@ -1,0 +1,376 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win95; I) [Netscape]">
+   <title>Format of DAT file</title>
+</head>
+<body text="#000000" bgcolor="#E6E7EC" link="#FF0000" vlink="#800080" alink="#0000FF">
+<tt><font size=-1>Last Updated: 05-Feb-2000</font></tt>
+<br>&nbsp;
+<h2>
+Формат файлов DAT для Fallout 2.
+<hr ALIGN=LEFT WIDTH="500"></h2>
+
+<blockquote>Здесь описана структура и состав файлов ресурсов для Fallout
+2,
+<br>имеющих расширение DAT (DAT-файлы). Всего существует 2 основных
+<br>DAT-файла: <tt><font color="#000099">master.dat</font></tt> и <tt><font color="#000099">critters.dat</font></tt>.
+В файле <tt><font color="#000099">master.dat</font></tt> содержится
+<br>большинство графики, музыка, сценарии, тексты и т.д.
+<br>В файле <tt><font color="#000099">critters.dat</font></tt> содержатся
+спрайты созданий (creatures, critters).</blockquote>
+
+<blockquote>Данное описание справедливо и для файлов-патчей типа <tt>patch000.dat</tt>
+.</blockquote>
+
+<h3>
+Содержание</h3>
+
+<blockquote><a href="#1. Общая структура">1. Общая структура DAT-файлов</a>
+<br><a href="#2. Формат дерева">2. Формат дерева каталогов</a>
+<br><a href="#3. Список каталогов файла">3. Список каталогов файла master.dat</a>
+<br><a href="#4. Формат блока">4. Формат блока данных</a>
+<br><a href="#5. Zlib stream data">5. Zlib stream data format</a>
+<br><a href="#5.">6. Credits</a></blockquote>
+
+<h3>
+<a NAME="1. Общая структура"></a>1. Общая структура DAT-файлов.
+<hr ALIGN=LEFT WIDTH="500"></h3>
+DAT состоит из трех частей. Сначала идёт блок данных
+<br>(т.е. набор компрессированных файлов), затем дерево каталогов,
+<br>в котором содержится информация о файлах внутри DAT-файла.
+<br>В самом конце DAT-файла находится информация об его размере.
+<br>В самом конце дерева каталогов находится информация о размере этого
+дерева.
+<p>(BOF = begin of file, EOF=end)
+<p><tt><font color="#000099">Тип&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+Смещение</font></tt>
+<br><tt><font color="#000099">----------+-0 ---</font></tt>
+<br><tt><font color="#000099">Файлы&nbsp;&nbsp;&nbsp;&nbsp; | .... |</font></tt>
+<br><tt><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+| .... | Блок данных</font></tt>
+<br><tt><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+| N&nbsp;&nbsp;&nbsp; |</font></tt>
+<br><tt><font color="#000099">----------+------|</font></tt>
+<br><tt><font color="#000099">FilesTotal| N+1&nbsp; | количество файлов
+в данном DAT (23120 для master.dat)</font></tt>
+<br><tt><font color="#000099">----------+------|</font></tt>
+<br><tt><font color="#000099">Дерево&nbsp;&nbsp;&nbsp; | N+5&nbsp; |</font></tt>
+<br><tt><font color="#000099">Каталогов | .... | Каталог файлов блока данных</font></tt>
+<br><tt><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+| M&nbsp;&nbsp;&nbsp; |</font></tt>
+<br><tt><font color="#000099">----------+------|</font></tt>
+<br><font color="#000099"><tt>TreeSize&nbsp; | M+1, 4 bytes (DWORD at EOF-8)
+</tt><i><font size=-2>размер
+дерева каталогов, включая DWORD FilesTotal.</font></i></font>
+<br><font color="#000099"><tt>DataSize&nbsp; | M+5, 4 bytes (DWORD at EOF-4)
+</tt><i><font size=-2>размер
+самого DAT-файла.</font></i></font>
+<br><tt><font color="#000099">------------EOF--</font></tt>
+<p>Для того, чтобы найти начало дерева каталогов, необходимо сделать следующее:
+<blockquote><tt><font color="#000099">DirTreeAddr = DataSize - TreeSize
+- 4</font></tt></blockquote>
+Все контрольные числовые значения в файле хранятся в формате Intel. То
+есть, [L] [H].
+<br>&nbsp;
+<br>&nbsp;
+<h3>
+<a NAME="2. Формат дерева"></a>2. Формат дерева каталогов
+<hr ALIGN=LEFT WIDTH="500"></h3>
+Дерево состоит из элементов. Один элемент-описатель (дескриптор) описывает
+один файл. Размер одного дескриптора варьируется. Дескриптор состоит из
+данных об имени файла, его размерах и другой информации. Имя файла состоит
+из пути файла и собственно имени. Все дескрипторы, описывающие файлы, которые
+принадлежат к одному и тому же подкаталогу, хранятся в дереве каталогов
+вместе.
+<p>Формат дескриптора файла:
+<blockquote><tt><font color="#000099">struct DirEntry</font></tt>
+<br><tt><font color="#000099">{</font></tt>
+<br><tt><font color="#000099">&nbsp; DWORD FilenameSize; </font><font color="#663366">//Размер
+ASCII-имени файла</font></tt>
+<br><tt><font color="#000099">&nbsp; char&nbsp; Filename[FilenameSize];
+</font><font color="#663366">//
+Имя файла и путь к нему. Например, "text\english\game\WORLDMP.MSG"</font></tt>
+<br><tt><font color="#000099">&nbsp; BYTE&nbsp; Type; </font><font color="#663366">//если
+там 1, то файл считается компрессированым.</font></tt>
+<br><tt><font color="#000099">&nbsp; DWORD RealSize; </font><font color="#663366">//Размер
+файла без декомпрессии</font></tt>
+<br><tt><font color="#000099">&nbsp; DWORD PackedSize; </font><font color="#663366">//Размер
+сжатого файла</font></tt>
+<br><tt><font color="#000099">&nbsp; DWORD Offset; </font><font color="#663366">//Адрес
+файла в виде смещения от начала DAT-файла.</font></tt>
+<br><tt><font color="#000099">};</font></tt></blockquote>
+Итого: 17 байт + длина имени файла.
+<p>Пример. Дескриптор для самого первого файла (<tt><font color="#663366">Adobe.frm</font></tt>)
+в <tt><font color="#663366">master.dat</font></tt>.
+<br>Дескриптор находится по смещению <tt><font color="#663366">0x13CC46AD</font></tt>
+от начала DAT-файла.
+<blockquote><tt><font color="#000099">13CC46AD:&nbsp; 16 00 00 00 <font size=-1>FilenameSize
+(размер ASCII-имени файла), 0x16</font></font></tt>
+<br><tt><font color="#000099">13CC46B1:&nbsp; 61 72 74 5C</font></tt>
+<br><tt><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+62 61 63 6B&nbsp;&nbsp; <font size=-1>Имя файла в ASCII, в данном случае</font></font></tt>
+<br><tt><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+67 72 6E 64</font></tt>
+<br><tt><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+5C 41 64 6F&nbsp;&nbsp; <font size=-1>art\backgrnd\Adobe.frm</font></font></tt>
+<br><tt><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+62 65 2E 66</font></tt>
+<br><tt><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+72 6D</font></tt>
+<br><tt><font color="#000099">13СС46С7:&nbsp; 01&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<font size=-1>Type (признак компрессии?), 0x1 = компрессирован</font></font></tt>
+<br><tt><font color="#000099">13CC46C8:&nbsp; 6A 2F 01 00&nbsp;&nbsp; <font size=-1>RealSize
+(размер файла после декомпрессии), 0x12f6a</font></font></tt>
+<br><tt><font color="#000099">13CC46CC:&nbsp; 94 85 00 00&nbsp;&nbsp; <font size=-1>PackedSize
+(текущий размер файла), 0x8594</font></font></tt>
+<br><tt><font color="#000099">13CC46D0:&nbsp; 00 00 00 00&nbsp;&nbsp; <font size=-1>Offset
+от начала DAT, 0x0 (т.е. с самого начала)</font></font></tt></blockquote>
+
+<h3>
+<a NAME="3. Список каталогов файла"></a>3. Список каталогов файла master.dat
+<hr ALIGN=LEFT WIDTH="500"></h3>
+<tt><b><font color="#FF0000"><font size=+1>art</font></font></b>\backgrnd\</tt>
+<br><tt>&nbsp;&nbsp; \cuts\ Фильмы</tt>
+<br><tt>&nbsp;&nbsp; \heads\ "Говорящие головы".</tt>
+<br><tt>&nbsp;&nbsp; \intrface\ файлы интерфейса, например картинки городов
+etc.</tt>
+<br><tt>&nbsp;&nbsp; \inven\ Изображения предметов (такими, какими они
+находятся у игрока).</tt>
+<br><tt>&nbsp;&nbsp; \items\ Изображения предметов (такими, какими они
+лежат на земле).</tt>
+<br><tt>&nbsp;&nbsp; \misc\ Special effects (взрывы etc.)</tt>
+<br><tt>&nbsp;&nbsp; \scenery\ Декорации (т.е. спрайты, не играющие роли)
+- кресла, стены, лестницы, фонари, вертибёрды...</tt>
+<br><tt>&nbsp;&nbsp; \skilldex\ Рисунки, показываемые для каждого skill/trait/stat.</tt>
+<br><tt>&nbsp;&nbsp; \splash\ Сплэш - экраны (splash screens). Те, которые
+появляются при загрузке Fallout 2...</tt>
+<br><tt>&nbsp;&nbsp; \tiles\ "Пол". Плитки пола.</tt>
+<br><tt>&nbsp;&nbsp; \walls\ "Стены". Элементы стен.</tt>
+<p><tt><b><font color="#FF0000"><font size=+1>data</font></font></b>\ Текстовые
+файлы, обильно комментированые. Содержат информацию о том, что должно происходить
+в игре.</tt>
+<p><tt><b><font color="#FF0000"><font size=+1>maps</font></font></b>\ Карты
+городов, местности (пустыня) и случайных встреч (random encounters).</tt>
+<p><tt><b><font color="#FF0000"><font size=+1>premade</font></font></b>\
+Файлы с данными для "встроенных" героев, которых можно выбрать при начале
+новой игры.(Narg, Chitsa...)</tt>
+<p><tt><b><font color="#FF0000"><font size=+1>proto</font></font></b>\
+Файлы описаний для предметов, существ, стен, пола и т.д. См. тж.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \critters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"Концепция объектов в Fallout 2".</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \items</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \misc</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \scenery</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \tiles</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \walls</tt>
+<p><tt><b><font color="#FF0000"><font size=+1>scripts</font></font></b>\
+Компилированные скрипты, которые управляют ходом игры. Формат пока что
+неизвестен полностью, вкратце - это dword-овый байт-код. См. соотв. документы
+на сайте.</tt>
+<p><tt><b><font color="#FF0000"><font size=+1>sound</font></font></b>\</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \sfx\ Звуки в формате ACM</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \speech\ Музыка в формате ACM</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\bosss</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\elder</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\haku2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\hakun</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\hrld2</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\lynet</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\mrcus</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\myron</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\narrator</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\power</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\presi</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\sulik</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\tndi2</tt>
+<p><tt><b><font color="#FF0000"><font size=+1>text</font></font></b>\</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; \english\</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; \cuts Титры в фильмах.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; \dialog Диалоги. Один диалог соответствует
+одному компилированному скрипту. Например, файл text\english\dialog\acbrahmn.msg
+взаимосвязан с файлом scripts\acbrahmn.int .</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; \game Сообщения в игре.</tt>
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<h3>
+<a NAME="4. Формат блока"></a>4. Формат блока данных
+<hr ALIGN=LEFT WIDTH="500"></h3>
+Начинается с самого начала DAT. Состоит из файлов, информация о которых
+<br>хранится в дескрипторах <a href="#2. Формат дерева">дерева каталогов</a>.
+В том случае, если файл начинается
+<br>с сигнатуры
+<blockquote><tt><font color="#000099">unsigned short int 0xDA78; //В памяти
+наоборот - 78 DA</font></tt></blockquote>
+то файл считается компрессированным.
+<p>Сам файл, за исключением сигнатуры, содержит только данные в формате
+<a href="#5. Zlib stream data">zlib
+stream data</a>. Для того, чтобы файл превратить в полноценный gz-архив
+(спецификации <tt>RFC-1950(zlib format), RFC-1951(deflate format), RFC-1952(gzip
+format)</tt>), к нему необходимо "приклеить" gz-заголовок (в самое начало
+файла), а также 4 байта контрольной суммы и 4 байта размера файла к концу
+файла. Всю дальнейшую информацию, программы и библиотеки можно получить
+по адресу <a href="http://www.gzip.org">http://www.gzip.org</a>.
+<p>Однако, если к файлу в самое начало "приклеить" примерно следующий gzip-заголовок:
+<blockquote><font color="#000099">1F 8B 08 08 9F E8 B7 36 02 03</font></blockquote>
+и больше ничего с ним не делать, то такой файл прекрасно распакуется WinZip'ом
+(опробовано на версии WinZip 7.0, <a href="http://www.winzip.com">http://www.winzip.com</a>).
+<br>&nbsp;
+<br>&nbsp;
+<h3>
+<a NAME="5. Zlib stream data"></a>5. Zlib stream data format
+<hr ALIGN=LEFT WIDTH="500"></h3>
+Здесь приведена выдержка из документа <i>"ZLIB Compressed Data Format</i>
+<br><i>Specification version 3.3". </i>Пакованные файлы в <tt><font color="#000099">master.dat</font></tt>
+имеют <tt><font color="#000099">CMF</font></tt> и <tt><font color="#000099">FLG</font></tt>
+78h и DAh соответственно, а поле <tt>dictid</tt> не используется.
+<p><font color="#000099">A zlib stream has the following structure:</font>
+<pre><font color="#000099">&nbsp; 0&nbsp;&nbsp; 1&nbsp;&nbsp;
++---+---+
+|CMF|FLG|&nbsp;&nbsp; (more-->)
++---+---+</font></pre>
+<font color="#000099">(if FLG.FDICT set)</font>
+<pre><font color="#000099">&nbsp; 0&nbsp;&nbsp; 1&nbsp;&nbsp; 2&nbsp;&nbsp; 3
++---+---+---+---+
+|&nbsp;&nbsp;&nbsp;&nbsp; DICTID&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; (more-->)
++---+---+---+---+</font></pre>
+
+<pre><font color="#000099">+=====================+---+---+---+---+
+|...compressed data...|&nbsp;&nbsp;&nbsp; ADLER32&nbsp;&nbsp;&nbsp; |
++=====================+---+---+---+---+</font></pre>
+<font color="#000099">Any data which may appear after ADLER32 are not part
+of the zlib stream.</font>
+<dl>
+<dt>
+<b><font color="#000099">CMF (Compression Method and flags)</font></b></dt>
+
+<dd>
+<font color="#000099">This byte is divided into a 4-bit compression method
+and a 4-bit information field depending on the compression method.</font></dd>
+
+<pre><font color="#000099">bits 0 to 3&nbsp; CM&nbsp;&nbsp;&nbsp;&nbsp; Compression method
+bits 4 to 7&nbsp; CINFO&nbsp; Compression info</font></pre>
+
+<dt>
+<b><font color="#000099">CM (Compression method)</font></b></dt>
+
+<dd>
+<font color="#000099">This identifies the compression method used in the
+file. CM = 8 denotes the "deflate" compression method with a window size
+up to 32K. This is the method used by gzip and PNG. CM = 15 is reserved.
+It might be used in a future version of this specification to indicate
+the presence of an extra field before the compressed data.</font></dd>
+
+<br>&nbsp;
+<dt>
+<b><font color="#000099">CINFO (Compression info)</font></b></dt>
+
+<dd>
+<font color="#000099">For CM = 8, CINFO is the base-2 logarithm of the
+LZ77 window size, minus eight (CINFO=7 indicates a 32K window size). Values
+of CINFO above 7 are not allowed in this version of the specification.
+CINFO is not defined in this specification for CM not equal to 8.</font></dd>
+
+<br>&nbsp;
+<dt>
+<b><font color="#000099">FLG (FLaGs)</font></b></dt>
+
+<dd>
+<font color="#000099">This flag byte is divided as follows:</font></dd>
+
+<pre><font color="#000099">bits 0 to 4&nbsp; FCHECK&nbsp; (check bits for CMF and FLG)
+bit&nbsp; 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FDICT&nbsp;&nbsp; (preset dictionary)
+bits 6 to 7&nbsp; FLEVEL&nbsp; (compression level)</font></pre>
+<font color="#000099">The FCHECK value must be such that CMF and FLG, when
+viewed as a 16-bit unsigned integer stored in MSB order (CMF*256 + FLG),
+is a multiple of 31.</font>
+<br>&nbsp;
+<dt>
+<b><font color="#000099">FDICT (Preset dictionary)</font></b></dt>
+
+<dd>
+<font color="#000099">If FDICT is set, a DICT dictionary identifier is
+present immediately after the FLG byte. The dictionary is a sequence of
+bytes which are initially fed to the compressor without producing any compressed
+output. DICT is the Adler-32 checksum of this sequence of bytes (see the
+definition of ADLER32 below). The decompressor can use this identifier
+to determine which dictionary has been used by the compressor.</font></dd>
+
+<br>&nbsp;
+<dt>
+<b><font color="#000099">FLEVEL (Compression level)</font></b></dt>
+
+<dd>
+<font color="#000099">These flags are available for use by specific compression
+methods. The "deflate" method (CM = 8) sets these flags as follows:</font></dd>
+
+<pre><font color="#000099">0 - compressor used fastest algorithm
+1 - compressor used fast algorithm
+2 - compressor used default algorithm
+3 - compressor used maximum compression, slowest algorithm</font></pre>
+<font color="#000099">The information in FLEVEL is not needed for decompression;
+it is there to indicate if recompression might be worthwhile.</font>
+<br>&nbsp;
+<b><font color="#000099">Сompressed data</font></b>
+<dd>
+<font color="#000099">For compression method 8, the compressed data is
+stored in the deflate compressed data format as described in the document
+"DEFLATE Compressed Data Format Specification" by L. Peter Deutsch.</font></dd>
+
+<dd>
+<font color="#000099">Other compressed data formats are not specified in
+this version of the zlib specification.</font></dd>
+
+<br>&nbsp;
+<dt>
+<b><font color="#000099">ADLER32 (Adler-32 checksum)</font></b></dt>
+
+<dd>
+<font color="#000099">This contains a checksum value of the uncompressed
+data (excluding any dictionary data) computed according to Adler-32 algorithm.
+This algorithm is a 32-bit extension and improvement of the Fletcher algorithm,
+used in the ITU-T X.224 / ISO 8073 standard.</font></dd>
+
+<dd>
+<font color="#000099">Adler-32 is composed of two sums accumulated per
+byte: s1 is the sum of all bytes, s2 is the sum of all s1 values. Both
+sums are done modulo 65521. s1 is initialized to 1, s2 to zero. The Adler-32
+checksum is stored as s2*65536 + s1 in most-significant-byte first (network)
+order.</font></dd>
+
+<br>&nbsp;</dl>
+
+<h3>
+<a NAME="5."></a>6. Credits
+<hr ALIGN=LEFT WIDTH="500"></h3>
+<i>This doc has been written by</i> <i><a href="mailto:w_master@softhome.net">Serge</a></i>,
+<i>master
+of</i> <font face="Arial,Helvetica"><font size=-1><b><i><a href="http://www.fallout.ru/undat/">unDAT
+division</a></i></b> <i>at</i> <i><b><a href="http://www.fallout.ru/">www.fallout.ru</a></b></i></font></font><i>
+.</i>
+<br><i>Thanks to <a href="mailto:dystopia@iname.com">Borg Locutus</a>&nbsp;
+for f2re sources.</i>
+<br><i>Thanks to <a href="mailto:abel@krasu.ru">Alexander Belyakov</a>&nbsp;
+for important additions.</i>
+<br><i>"ZLIB Compressed Data Format Specification version 3.3" developed
+and written by</i>
+<br><i><a href="mailto:ghost@alladin.com">L. Peter Deutsch</a> and <a href="mailto:gzip@prep.ai.mit.edu">Jean-Loup
+Gailly</a> .</i>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win95; I) [Netscape]">
+   <meta name="Author" content="twbbat">
+   <title>My Experience with INT files</title>
+</head>
+<body text="#000000" bgcolor="#E6E7EC" link="#FF0000" vlink="#800080" alink="#0000FF">
+<tt><font size=-1>Last Updated: 06-Feb-2000</font></tt>
+<br>&nbsp;
+<h2>
+My experience with .INT files
+<hr ALIGN=LEFT WIDTH="500"></h2>
+
+<blockquote>Это перевод одного любопытного документа, оставшегося в наследство
+от Borg Locutus, который описывает свой опыт в исследовании файлов скриптов
+(файлы с расширением int).</blockquote>
+
+<h3>
+
+<hr ALIGN=LEFT WIDTH="500"></h3>
+Требуемые знания:
+<ul>
+<li>
+Ассемблер для x86</li>
+
+<li>
+Язык C</li>
+
+<li>
+Концепция виртуальной машины</li>
+</ul>
+Требуемые программы:
+<ul>
+<li>
+<a href="http://www.compuware.com">Soft-ICE for Win95</a>, монитор-отладчик.</li>
+
+<li>
+F2RE <font color="#663366">(<i>или любой экстрактор DAT-файлов. - прим.
+пер.)</i></font></li>
+
+<li>
+Hex-редактор</li>
+</ul>
+Дополнительные программы:
+<ul>
+<li>
+<a href="http://www.datarescue.com">IDA</a> (Interactive Disassembler)</li>
+
+<li>
+Falche2</li>
+</ul>
+
+<hr>
+<br>INT-файлы&nbsp; - это компилированные скрипты, которые управляют ходом
+игры. Они состоят из множества двухбайтовых операционных кодов (опкоды),
+и каждый опкод имеет уникальную функцию. Другими словами, представьте,
+что Fallout 2 - это виртуальная машина, исполняющая свои собственные инструкции,
+а INTы - это её исполняемые файлы.
+<br>
+<hr>
+<br>Я начну с исследования Клинта (Klint) у входа в Arroyo Temple. <font color="#663366">(<i>начальная
+локация - прим. пер.)</i></font>
+<p>Если ваш персонаж имеет высокие PE и IN (Perception/Intelligence), то
+когда вы осматриваете (examine) Клинта (символ бинокля в выпадающем по
+нажатию правой кнопки меню), то появится следующее сообщение (если нет,
+используйте Falshe2 для изменения сохраненной отгрузки и попробуйте опять):
+<pre><font color="#663366">You see a young man with bulging muscles and a very confident air about him.</font></pre>
+Используйте F2RE для извлечения файлов <tt><font color="#663366">scripts\acklint.int</font></tt>
+и <tt><font color="#663366">text\english\dialog\acklint.msg</font></tt>
+из <tt><font color="#663366">MASTER.DAT</font></tt>, и давайте взглянем
+на последний файл: с вышеупомянутым сообщением связан номер 102. Поскольку
+мы предполагаем, что <tt>*.int-ы </tt>контролируют большую часть игры,
+то это число должно присутствовать в скрипте. Переведем 102 в шестнадцатиричную
+систему счисления (<i><font color="#663366">66h - прим. пер.</font><font color="#000000">)
+</font></i><font color="#000000">и
+поищем последовательность </font><tt><font color="#663366">00 00 00 66</font></tt><font color="#000000">
+в файле</font><tt><font color="#663366"> scripts\acklint.int</font></tt>
+. Есть! Находим его по смещению <tt><font color="#993366">2422h</font></tt>.
+Отступим на несколько чисел назад от этого смещения, так что это будет
+смотреться примерно так::
+<pre><font color="#663366">80 2B 80 B9 C0 01 00 00 02 EF C0 01 </font><font color="#000099">00 00 00 66</font><font color="#663366"> ....</font></pre>
+
+<hr>
+<br>Теперь мы используем Soft-ICE. В локации Arroyo Temple Entrance, нажмите
+<tt>Ctrl-D</tt>
+(или любую другую определенную вами клавишу) для запуска Soft-ICE и введите
+следующую команду:
+<pre><font color="#000099">s ds:0 L ffffffff 80,2b,80,b9,c0,1,0,0,2,ef,c0,1,0,0,0,66</font></pre>
+Ответ будет таков:
+<pre><tt><font color="#000099">Pattern found at XXXX:YYYYYYYY</font></tt></pre>
+Эта команда искала в памяти те числа, которые мы только что ввели . Здесь
+становится понятно, что игра могла загрузить файл скрипта в память и позднее
+обращаться к нему, так что поставим breakpoint on memory access по адресу
+YYYYYYYY:
+<pre><font color="#000099">bpm ds:YYYYYYYY r</font></pre>
+Возвратимся в игру по нажатию <tt>Ctrl-D</tt>. Переместим курсор на Клинта
+и осмотрим его, как и прежде, но на этот раз появится Soft-ICE, остановившийся
+на <tt><font color="#000099">CS:467296</font></tt>. Начиная отсюда, вы
+можете проследить, как обрабатываются опкоды в Fallout 2.&nbsp; Ниже приведен
+основной цикл:
+<pre><font color="#000099">467296: SHL EDX,8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; Эта подпрограмма читает опкод и помещает его в&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOV AL,[EAX+1]&nbsp; ; регистр AX (возвращаемое значение).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XOR AH,AH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OR EAX,EDX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RET&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; AX сейчас содержит 802B, опкод для исполнения.
+
+46CDEC: MOV ESI,EAX
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOV [EBX+82],AX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TEST AH,80&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; Если самый старший (7й, считая от нуля) бит AH выключен,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JNZ 46CE27&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; то опкод неправилен.
+
+46CE27: XOR EAX,EAX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOV AX,SI
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOV EDX,EAX&nbsp;&nbsp;&nbsp;&nbsp; ; DX содержит 802B
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AND DH,3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; DX содержит 002B
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CMP DWORD PTR[EDX*4+59E230],0 ; DWORD PTR[59E230]является таблицей (массивом) указателей на функции.&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JNZ 46CE59&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; Каждый опкод соответствует точке входа в таблице, которая является
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; адресом функции, обрабатывающей данный опкод.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; Здесь идет проверка, является ли функция, соотв. опкоду 002b, несуществующей.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; Если да, то 002B - неправильный опкод.
+
+46CE59: XOR EAX,EAX&nbsp;&nbsp;&nbsp;&nbsp; ; Если нет (т.е. опкод верен и функция существует),
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOV AX,SI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; вызываем её.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AND AH,3
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LEA EDX,[EAX*4]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOV EAX,EBX
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font><b><font color="#663366">CALL [EDX+59E230]</font></b><font color="#000099">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; Перейдёт на 467CD0. Таким образом,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JMP 46CD62&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; коды по адресу CS:467CD0 обрабатывают опкод 002B,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ; но что они делают в точности? Я никогда этого не выяснял.
+
+46CD62: TEST BYTE PTR[EBX+80],80&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JNZ 46CD75
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DEC ECX
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CMP ECX,-1
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JZ&nbsp; 46CE75
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TEST BYTE PTR[EBX+80],16D
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JNZ 46CE75
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOV EDX,[EBX+88]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TEST EDX,EDX
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JNZ 46CE75</font>
+
+</pre>
+
+<h3>
+<a NAME="5."></a>2. Credits
+<hr ALIGN=LEFT WIDTH="500"></h3>
+<i>Origin: <a href="mailto:dystopia@iname.com">Borg Locutus</a></i>
+<br><i>Sent by <a href="mailto:iceman345@mail.ru">Iceman</a></i>
+<br><i>This doc has been translated by</i> <i><a href="mailto:w_master@softhome.net">Serge</a></i>,
+<i>master
+of</i> <font face="Arial,Helvetica"><font size=-1><b><i><a href="http://www.fallout.ru/undat/">unDAT
+division</a></i></b> <i>at</i> <i><b><a href="http://www.fallout.ru/">www.fallout.ru</a></b></i></font></font><i>
+.</i>
+<br>&nbsp;
+</body>
+</html>

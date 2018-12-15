@@ -77,10 +77,6 @@ static void test_tile() {
 
 static void test_adventure() {
 	map.clear();
-	map.setscene(10, 10, 10);
-	map.setscene(20, 10, 14);
-	map.setscene(23, 15, 17);
-	map.setscene(15, 15, 32);
 	player.create("narg");
 	player.add(LeatherArmor);
 	player.add(SMG10mm);

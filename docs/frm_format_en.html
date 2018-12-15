@@ -1,0 +1,187 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <title>*.FRM file format</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#FF0000" vlink="#800080" alink="#0000FF">
+<div align="center"><font size="6">FRM File Format</font> </div>
+<p>Base Description:</p>
+<blockquote> 
+  <p>FRM files are unpaletted 256-color image files containing either one or several 
+    images in one file. The palette used for FRM files come in the form of external 
+    palette files. </p>
+  <p>All values within the FRM file are stored in Big-Endian (Motorola) format 
+    as opposed to Little-Endian (Intel) format. For those who don't know what 
+    the difference is, Big-Endian stores the most-significant (largest digit place) 
+    digits closest to the number's starting address, whereas Little-Endian stores 
+    values with the least-significant digits closest to the starting address. 
+    Ex:</p>
+  <blockquote> 
+    <blockquote> 
+      <p><font size="2">With hex number 3F:2B:</font></p>
+      <p><font size="2">Big-Endian: 3F:2B</font></p>
+      <p><font size="2">Little-Endian: 2B:3F</font></p>
+    </blockquote>
+  </blockquote>
+  <p>&nbsp;</p>
+</blockquote>
+<p>FRM Header:</p>
+<blockquote> 
+  <p>Before the image data comes the header holding necessary information about 
+    the file:</p>
+  <table width="100%" border="0" cellspacing="0" cellpadding="3">
+    <tr bgcolor="#666666"> 
+      <td><font color="#FFFFFF" size="4">Offset</font></td>
+      <td><font color="#FFFFFF" size="4">Length</font></td>
+      <td> 
+        <div align="right"><font color="#FFFFFF" size="4">Description</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x00</font></td>
+      <td><font size="4">4 Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">ID</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x04</font></td>
+      <td><font size="4">2 Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">Number of Frame pointers</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x06</font></td>
+      <td><font size="4">4 Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">Number of Frames (from now known as 
+          &quot;F&quot;)</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x0A</font></td>
+      <td><font size="4">2 Bytes for each frame</font></td>
+      <td> 
+        <div align="right"><font size="4">Unknown</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x0A + (2*F)</font></td>
+      <td><font size="4">4 bytes for each frame</font></td>
+      <td> 
+        <div align="right"><font size="4">Array of 4-byte (32-bit) pointers each 
+          frames</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">Total Size:</font></td>
+      <td><font size="4">0x0A + (2*F) + (4*F)</font></td>
+      <td> 
+        <div align="right"><font size="4"></font></div>
+      </td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+</blockquote>
+<p>FRM Data:</p>
+<blockquote> 
+  <p>After the header comes the frame data in the following format:</p>
+  <table width="100%" border="0" cellspacing="0" cellpadding="3">
+    <tr bgcolor="#666666"> 
+      <td><font color="#FFFFFF" size="4">Offset</font></td>
+      <td><font color="#FFFFFF" size="4">Length</font></td>
+      <td> 
+        <div align="right"><font color="#FFFFFF" size="4">Description</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x00</font></td>
+      <td><font size="4">2 Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">Size X (Width)</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x02</font></td>
+      <td><font size="4">2 Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">Size Y (Height)</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x04</font></td>
+      <td><font size="4">4 Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">Multiplied picture size (essentially 
+          X*Y)</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x08</font></td>
+      <td><font size="4">2 Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">X offset from previous frame</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x0A</font></td>
+      <td><font size="4">2 Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">Y offset from previous frame</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">0x0C</font></td>
+      <td><font size="4">X*Y Bytes</font></td>
+      <td> 
+        <div align="right"><font size="4">Frame data</font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4"></font></td>
+      <td><font size="4"></font></td>
+      <td> 
+        <div align="right"><font size="4"></font></div>
+      </td>
+    </tr>
+    <tr bgcolor="#CCCCCC"> 
+      <td><font size="4">Total Size:</font></td>
+      <td><font size="4">0x0C + (X*Y)</font></td>
+      <td> 
+        <div align="right"><font size="4"><font size="4"></font></font></div>
+      </td>
+    </tr>
+  </table>
+  <p>Frame data comes in the form of byte color indexes to a 256-color palette. 
+    Hence a byte with the number 137 would correspond to color 137 in the palette.</p>
+</blockquote>
+<p>Palette Information:</p>
+<blockquote> 
+  <p>PAL palette files are simply an array of 256 BGR (not RGB) structures. For 
+    those who don't know, the BGR color triplet represents the Blue, Green, and 
+    Red component of a color. Each component uses a single byte and ranges from 
+    0 to 255 in brightness. This allows for over a 24-bit color scale, over 16 
+    million colors, enough to cover a 4000x4000 monitor with a different color 
+    each pixel and not use them all.</p>
+  <p>There appears to be more than one palette per PAL file probably representing 
+    different lighting levels. Which is which is unknown. The first palette in 
+    <i>color.pal</i> is a standard palette but needs to be gamma corrected by 
+    a factor of four (multiply brightness by four).</p>
+  <p>Additional information would be appreciated.</p>
+  <hr>
+</blockquote>
+<p><i>Originally created by <a href="mailto:andrew@uic.nnov.ru">Andrey</a> and 
+  <a href="mailto:iceman345@mail.ru">Iceman</a></i> <br>
+  <i>Slightly rewritten by <a
+href="mailto:serge@fallout.ru">Serge</a>, R&D Group Leader, <a href="http://www.fallout.ru/teamx/en/">TeamX</a></i><br>
+  <i>Translated by <a href="mailto:dr_w95@mail.ru">Dr.W95</a></i> </p>
+<p><i>Additional information, translation revision and HTML formatting by Xotor 
+  (<a href="mailto:%20xotor@hotmail.com">xotor@hotmail.com</a>)</i> </p>
+</body>
+</html>
