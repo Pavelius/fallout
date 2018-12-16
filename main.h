@@ -704,6 +704,7 @@ struct map_info {
 	static short unsigned getland(short unsigned tile);
 	unsigned short		getlandtile(short unsigned index, short unsigned value) const;
 	short unsigned		getobject(short unsigned index) const;
+	short unsigned		getroof(short unsigned index) const;
 	short unsigned		gettile(short unsigned index) const;
 	bool				isblocked(short unsigned index) const;
 	short unsigned		to(short unsigned index, direction_s d) const;
@@ -713,12 +714,14 @@ struct map_info {
 	void				setnone(short unsigned index);
 	void				setland(short unsigned index, short unsigned value);
 	void				setlandx(short unsigned index, short unsigned value);
+	void				setroof(short unsigned index, short unsigned value);
 	void				setscene(short unsigned index, short unsigned value);
 	void				settile(short unsigned index, short unsigned value);
 	void				setwall(short unsigned index, short unsigned value);
 private:
 	friend archive;
-	unsigned short		tiles[width*height];
+	unsigned short		floor[width*height];
+	unsigned short		roof[width*height];
 	unsigned short		objects[width*height * 4];
 	unsigned char		flags[width*height * 4];
 	void				updateland();

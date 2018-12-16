@@ -147,6 +147,30 @@ static void render_tiles(point screen, point camera) {
 	}
 }
 
+static void render_roof(point screen, point camera) {
+	auto ps = draw::gres(res::TILES);
+	if(!ps)
+		return;
+	auto a = draw::getstamp() / 100;
+	auto pm = s2m(camera);
+	int x1 = pm.x - 8; int x2 = x1 + 8 + 11;
+	int y1 = pm.y; int y2 = y1 + 18;
+	for(auto y = y1; y < y2; y++) {
+		if(y < 0 || y >= map.height)
+			continue;
+		for(int x = x1; x < x2; x++) {
+			if(x < 0 || x >= map.width)
+				continue;
+			auto tv = map.getroof(map.getm(x, y));
+			if(tv > 1) {
+				point pt = m2s(x, y);
+				point pz = pt + screen - camera;
+				draw::image(pz.x, pz.y + tile_height / 2 - 96, ps, ps->ganim(tv, a), 0);
+			}
+		}
+	}
+}
+
 static void render_area(point screen, point camera) {
 	const rect rc = {0, 0, 640, 480};
 	adat<drawable*, 512> result;
@@ -303,6 +327,7 @@ static void render_screen(point& hilite_hex) {
 	render_tiles(screen, camera);
 	draw::hexagon(hilite_hex.y*(map_info::width * 2) + hilite_hex.x, camera);
 	render_area(screen, camera);
+	render_roof(screen, camera);
 	render_actions();
 #ifdef _DEBUG
 	char temp[260];
@@ -348,6 +373,7 @@ static const char* get_scenery_name(short unsigned i) {
 
 short unsigned get_group_frame(short unsigned i);
 const char* get_group_name(short unsigned i);
+unsigned get_group_last();
 
 static void choose_tile_ex(short unsigned& result, const sprite* ps, const int col, int first, int last,
 	const char* (*get_name)(short unsigned ii),
@@ -443,8 +469,11 @@ void creature::adventure() {
 		case Alpha + 'T':
 			map.settile(map.getm(current_hex.x / 2, current_hex.y / 2), tile_data[current_tile].fid);
 			break;
+		case Alpha + 'R':
+			map.setroof(map.getm(current_hex.x / 2, current_hex.y / 2), tile_data[current_tile].fid);
+			break;
 		case Ctrl + Alpha + 'G':
-			choose_tile_ex(current_group, gres(res::TILES), 4, 0, 6,
+			choose_tile_ex(current_group, gres(res::TILES), 4, 0, get_group_last(),
 				get_group_name, get_group_frame);
 			break;
 		case Alpha + 'G':

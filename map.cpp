@@ -22,7 +22,7 @@ land_info land_data[] = {{"Недоступно"},
 {"Слизь", 40, {1058, 1059, 1062, 1063}, {1053, 1054, 1056, 1060, 1068, 1066, 1065, 1061}, {1080, 1077, 1069, 1072}},
 {"Плитка", 15, {2261, 2274, 2274, 2274}, {2267, 2265, 2266, 2264, 2269, 2268, 2262, 2263}, {2271, 2272, 2273, 2270}},
 {"Каменный пол", 80, {2237, 2238, 2239, 2240}, {}, {}},
-//
+{"Пол пещеры", 50, {21, 22, 23, 24}, {}, {}},
 {"Огород", 15, {716, 717, 718}, {715, 719}, {}},
 };
 struct group_info {
@@ -38,12 +38,17 @@ static group_info group_data[] = {{"", {3, 3}, 1415},
 {"Мост", {3, 2}, 1749},
 {"Реактор", {8, 8}, 1827},
 {"Неработающий реактор", {8, 8}, 2028},
+{"Углубление в пещере", {2, 3}, 118},
+{"Ямка в пещере", {2, 2}, 124},
 };
 short unsigned get_group_frame(short unsigned i) {
-	return group_data[i].start;
+	return tile_data[group_data[i].start].fid;
 }
 const char* get_group_name(short unsigned i) {
 	return group_data[i].name;
+}
+unsigned get_group_last() {
+	return sizeof(group_data) / sizeof(group_data[0]) - 1;
 }
 
 // Получение координаты тайла(x,y) на экране
@@ -105,7 +110,13 @@ short unsigned map_info::geth(int x, int y) const {
 short unsigned map_info::gettile(short unsigned index) const {
 	if(index == Blocked)
 		return 0;
-	return tiles[index];
+	return floor[index];
+}
+
+short unsigned map_info::getroof(short unsigned index) const {
+	if(index == Blocked)
+		return 0;
+	return roof[index];
 }
 
 short unsigned map_info::getobject(short unsigned index) const {
@@ -123,7 +134,13 @@ void map_info::setscene(short unsigned index, short unsigned value) {
 void map_info::settile(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
-	tiles[index] = value;
+	floor[index] = value;
+}
+
+void map_info::setroof(short unsigned index, short unsigned value) {
+	if(index == Blocked)
+		return;
+	roof[index] = value;
 }
 
 void map_info::setnone(short unsigned index) {
@@ -139,7 +156,8 @@ void map_info::setwall(short unsigned index, short unsigned value) {
 }
 
 void map_info::clear() {
-	memset(tiles, 0, sizeof(tiles));
+	memset(floor, 0, sizeof(floor));
+	memset(roof, 0, sizeof(roof));
 	for(int y = 0; y <= height; y++) {
 		for(int x = 0; x < width; x++)
 			settile(getm(x, y), 172 + rand() % (190 - 172));
@@ -276,9 +294,9 @@ unsigned short map_info::getlandtile(short unsigned index, short unsigned value)
 
 void map_info::updateland() {
 	for(auto index = 0; index < width*height; index++) {
-		auto value = getland(tiles[index]);
+		auto value = getland(floor[index]);
 		if(value)
-			tiles[index] = getlandtile(index, value);
+			floor[index] = getlandtile(index, value);
 	}
 }
 
@@ -296,7 +314,7 @@ void map_info::setgroup(short unsigned index, short unsigned group) {
 				break;
 			if(pi >= count)
 				break;
-			tiles[i] = g.start + pi;
+			floor[i] = tile_data[g.start + pi].fid;
 			pi++;
 		}
 		pb += g.size.x;
@@ -313,7 +331,7 @@ short unsigned land_info::getlast() {
 void map_info::setland(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
-	tiles[index] = getlandtile(index, value);
+	floor[index] = getlandtile(index, value);
 	updateland();
 }
 
@@ -321,19 +339,20 @@ void map_info::setlandx(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
 	if(land_data[value].tiles[0]) {
-		tiles[index] = getlandtile(index, value);
+		floor[index] = getlandtile(index, value);
 		for(auto e : land_directions_all) {
 			auto i = tot(index, e);
 			if(i != Blocked)
-				tiles[i] = getlandtile(i, value);
+				floor[i] = getlandtile(i, value);
 		}
 		updateland();
 	} else
-		tiles[index] = land_data[value].random();
+		floor[index] = land_data[value].random();
 }
 
 template<> void archive::set<map_info>(map_info& e) {
-	set(e.tiles, sizeof(e.tiles));
+	set(e.floor, sizeof(e.floor));
+	set(e.roof, sizeof(e.roof));
 	set(e.objects, sizeof(e.objects));
 }
 
