@@ -2,9 +2,6 @@
 
 using namespace draw;
 
-animable::animable() : point{0, 0} {
-}
-
 rect animable::getrect() const {
 	if(!(*this))
 		return{0, 0, 0, 0};

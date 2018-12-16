@@ -39,6 +39,12 @@ static group_info group_data[] = {{"", {3, 3}, 1415},
 {"Реактор", {8, 8}, 1827},
 {"Неработающий реактор", {8, 8}, 2028},
 };
+short unsigned get_group_frame(short unsigned i) {
+	return group_data[i].start;
+}
+const char* get_group_name(short unsigned i) {
+	return group_data[i].name;
+}
 
 // Получение координаты тайла(x,y) на экране
 point m2s(int x, int y) {

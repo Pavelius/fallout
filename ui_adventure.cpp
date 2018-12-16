@@ -5,6 +5,8 @@ using namespace draw;
 static bool			game_running;
 static unsigned		gamestamp;
 static unsigned		timestamp;
+static animable		animables[512];
+static int			animables_count;
 
 runstate::runstate(bool new_value) : value(game_running) {
 	game_running = new_value;
@@ -147,7 +149,7 @@ static void render_tiles(point screen, point camera) {
 
 static void render_area(point screen, point camera) {
 	const rect rc = {0, 0, 640, 480};
-	map_render result;
+	adat<drawable*, 512> result;
 	rect rcscreen;
 	rcscreen.x1 = camera.x - screen.x;
 	rcscreen.y1 = camera.y - screen.y;
@@ -161,6 +163,7 @@ static void render_area(point screen, point camera) {
 	auto psw = draw::gres(res::WALLS);
 	auto pss = draw::gres(res::SCENERY);
 	auto a = draw::getstamp() / 120;
+	animables_count = 0;
 	for(auto y = y1; y < y2; y++) {
 		if(y < 0 || y >= map.height)
 			continue;
@@ -168,13 +171,18 @@ static void render_area(point screen, point camera) {
 			if(x < 0 || x >= map.width)
 				continue;
 			auto tv = map.getobject(map.geth(x, y));
+			if(!tv)
+				continue;
+			auto pa = animables + (animables_count++);
+			static_cast<point&>(*pa) = m2h(x, y);
 			if(tv >= FirstWall && tv <= LastWall) {
-				point pz = m2h(x, y);
-				result.add(pz.x, pz.y, psw, psw->ganim(wall_data[tv - FirstWall].fid, a));
-			} else if(tv >= FirstScenery && tv <= LastScenery) {
-				point pz = m2h(x, y);
-				result.add(pz.x, pz.y, psw, pss->ganim(tv - FirstScenery, a));
+				pa->ps = psw;
+				pa->frame = psw->ganim(wall_data[tv - FirstWall].fid, a);
+			} else {
+				pa->ps = pss;
+				pa->frame = pss->ganim(tv - FirstScenery, a);
 			}
+			result.add(pa);
 		}
 	}
 	result.add(&player);
@@ -306,79 +314,6 @@ static void render_screen(point& hilite_hex) {
 #endif // _DEBUG
 }
 
-struct wall_place_info {
-	const char*			name;
-	short unsigned		corners[8][4];
-	void lefttoright(int x, int y, int c) const {
-		auto i = map.geth(x, y);
-		map.setwall(i, corners[0][0]);
-		for(auto k = 0; k < 3; k++) {
-			for(auto v : corners[1]) {
-				if(!v)
-					break;
-				i = map.to(i, Right);
-				map.setwall(i, v);
-			}
-		}
-		map.setwall(i, corners[2][0]);
-	}
-};
-static wall_place_info wall_place[] = {{"Деревянная ограда", {{64}, {66, 65}, {67}, {62, 63}, {61}, {57, 58}, {56}, {59, 60}}}};
-
-static short unsigned choose_tile(int id) {
-	const int col = 4;
-	const auto dx = 640 / col;
-	const auto dy = 480 / col;
-	auto ps = gres(res::TILES);
-	auto push_id = id;
-	int origin = (id / col) * col - col;
-	while(ismodal()) {
-		draw::rectf({0, 0, getwidth(), getheight()}, colors::gray);
-		if(origin < 0)
-			origin = 0;
-		for(auto y = 0; y < col; y++) {
-			for(auto x = 0; x < col; x++) {
-				auto x1 = x * dx;
-				auto y1 = y * dy;
-				auto ii = origin + y * col + x;
-				auto fi = tile_data[ii].fid;
-				if(fi != -1)
-					image(x1 + dx / 2, y1 + dy / 2 + 20, ps, ps->ganim(fi, getstamp() / 100), 0);
-				auto pn = tile_data[ii].name;
-				char temp[32]; szprint(temp, zendof(temp), "%1i/%2i", ii, fi);
-				text(x1 + (dx - textw(pn)) / 2, y1 + dy - 32, pn);
-				text(x1 + (dx - textw(temp)) / 2, y1 + dy - 48, temp);
-				if(ii == id)
-					rectx({x1 + 4, y1 + 4, x1 + 210 - 4, y1 + 150 - 4}, colors::black);
-			}
-		}
-		domodal();
-		auto prev_scenery = id;
-		switch(hot.key) {
-		case KeyLeft: id--; break;
-		case KeyRight: id++; break;
-		case KeyUp:
-			if(id >= col)
-				id -= col;
-			break;
-		case KeyDown: id += col; break;
-		case KeyEnter: breakmodal(1); break;
-		case KeyEscape: breakmodal(0); break;
-		}
-		if(id < 0)
-			id = 0;
-		if(id >= (LastWall - FirstWall) - col)
-			id = (LastWall - FirstWall) - (col - 1);
-		if(id < origin)
-			origin -= col;
-		if(id > origin + col * col - 1)
-			origin += col;
-	}
-	if(getresult())
-		return id;
-	return push_id;
-}
-
 static const char* get_land_name(short unsigned i) {
 	return land_data[i].name;
 }
@@ -395,12 +330,31 @@ static short unsigned get_tile_frame(short unsigned i) {
 	return tile_data[i].fid;
 }
 
-static short unsigned choose_tile_ex(int id, const sprite* ps, const int col, int first, int last,
+static const char* get_wall_name(short unsigned i) {
+	return wall_data[i].name;
+}
+
+static short unsigned get_wall_frame(short unsigned i) {
+	return wall_data[i].fid;
+}
+
+static short unsigned get_scenery_frame(short unsigned i) {
+	return i;
+}
+
+static const char* get_scenery_name(short unsigned i) {
+	return "";
+}
+
+short unsigned get_group_frame(short unsigned i);
+const char* get_group_name(short unsigned i);
+
+static void choose_tile_ex(short unsigned& result, const sprite* ps, const int col, int first, int last,
 	const char* (*get_name)(short unsigned ii),
 	short unsigned(*get_frame)(short unsigned ii)) {
 	const auto dx = 640 / col;
 	const auto dy = 480 / col;
-	auto push_id = id;
+	int id = result;
 	int origin = (id / col) * col - col;
 	while(ismodal()) {
 		draw::rectf({0, 0, getwidth(), getheight()}, colors::gray);
@@ -457,109 +411,12 @@ static short unsigned choose_tile_ex(int id, const sprite* ps, const int col, in
 	}
 	resume_game();
 	if(getresult())
-		return id;
-	return push_id;
-}
-
-static short unsigned choose_wall(int id) {
-	const int col = 3;
-	const auto dx = 640 / col;
-	const auto dy = 480 / col;
-	auto ps = gres(res::WALLS);
-	auto push_id = id;
-	int origin = (id / col) * col - col;
-	while(ismodal()) {
-		draw::rectf({0, 0, getwidth(), getheight()}, colors::gray);
-		if(origin < 0)
-			origin = 0;
-		for(auto y = 0; y < col; y++) {
-			for(auto x = 0; x < col; x++) {
-				auto x1 = x * dx;
-				auto y1 = y * dy;
-				auto ii = origin + y * 3 + x;
-				auto fi = wall_data[ii].fid;
-				if(fi != -1)
-					image(x1 + dx / 2, y1 + dy / 2 + 20, ps, ps->ganim(fi, getstamp() / 100), 0);
-				auto pn = wall_data[ii].name;
-				char temp[32]; szprint(temp, zendof(temp), "%1i", ii);
-				text(x1 + (dx - textw(pn)) / 2, y1 + dy - 32, pn);
-				text(x1 + (dx - textw(temp)) / 2, y1 + dy - 48, temp);
-				if(ii == id)
-					rectx({x1 + 4, y1 + 4, x1 + 210 - 4, y1 + 150 - 4}, colors::black);
-			}
-		}
-		domodal();
-		auto prev_scenery = id;
-		switch(hot.key) {
-		case KeyLeft: id--; break;
-		case KeyRight: id++; break;
-		case KeyUp:
-			if(id >= col)
-				id -= col;
-			break;
-		case KeyDown: id += col; break;
-		case KeyEnter: breakmodal(1); break;
-		case KeyEscape: breakmodal(0); break;
-		}
-		if(id < 0)
-			id = 0;
-		if(id >= (LastWall - FirstWall) - (col - 1))
-			id = (LastWall - FirstWall) - col;
-		if(id < origin)
-			origin -= col;
-		if(id > origin + (col * col - 1))
-			origin += col;
-	}
-	if(getresult())
-		return id;
-	return push_id;
-}
-
-static short unsigned choose_scenery(int id_scenery) {
-	auto ps = gres(res::SCENERY);
-	auto push_scenery = id_scenery;
-	int origin = (id_scenery / 3) * 3 - 3;
-	while(ismodal()) {
-		draw::rectf({0, 0, getwidth(), getheight()}, colors::gray);
-		if(origin < 0)
-			origin = 0;
-		for(auto y = 0; y < 3; y++) {
-			for(auto x = 0; x < 3; x++) {
-				auto x1 = x * 210;
-				auto y1 = y * 150;
-				auto fi = origin + y * 3 + x;
-				image(x1 + 100, y1 + 75, ps, ps->ganim(fi, getstamp() / 100), 0);
-				if(fi == id_scenery)
-					rectx({x1 + 4, y1 + 4, x1 + 210 - 4, y1 + 150 - 4}, colors::black);
-			}
-		}
-		domodal();
-		auto prev_scenery = id_scenery;
-		switch(hot.key) {
-		case KeyLeft: id_scenery--; break;
-		case KeyRight: id_scenery++; break;
-		case KeyUp:
-			if(id_scenery >= 3)
-				id_scenery -= 3;
-			break;
-		case KeyDown: id_scenery += 3; break;
-		case KeyEnter: breakmodal(1); break;
-		}
-		if(id_scenery < 0)
-			id_scenery = 0;
-		if(id_scenery < origin)
-			origin -= 3;
-		if(id_scenery > origin + 8)
-			origin += 3;
-	}
-	if(getresult())
-		return id_scenery;
-	return push_scenery;
+		result = id;
 }
 
 void creature::adventure() {
 	cursorset cursor;
-	unsigned short current_scenery = 4, current_wall = 4, current_tile = 1, current_land = 2;
+	unsigned short current_scenery = 4, current_wall = 4, current_tile = 1, current_land = 2, current_group = 0;
 	camera = {400, -100};
 	point current_hex;
 	while(ismodal() && player.isalive()) {
@@ -579,25 +436,43 @@ void creature::adventure() {
 			if(player.getorientation() < 5)
 				player.setorientation(player.getorientation() + 1);
 			break;
-		case Alpha + 'T':
-			current_tile = choose_tile_ex(current_tile, gres(res::TILES), 4, 1, 3100,
+		case Ctrl + Alpha + 'T':
+			choose_tile_ex(current_tile, gres(res::TILES), 4, 1, 3100,
 				get_tile_name, get_tile_frame);
 			break;
-		case Alpha + 'Q':
-			current_land = choose_tile_ex(current_land, gres(res::TILES), 4, 1, land_info::getlast(),
-				get_land_name, get_land_frame);
-			break;
-		case Alpha + 'Y':
+		case Alpha + 'T':
 			map.settile(map.getm(current_hex.x / 2, current_hex.y / 2), tile_data[current_tile].fid);
 			break;
-		case Alpha + 'R':
+		case Ctrl + Alpha + 'G':
+			choose_tile_ex(current_group, gres(res::TILES), 4, 0, 6,
+				get_group_name, get_group_frame);
+			break;
+		case Alpha + 'G':
+			map.setgroup(map.getm(current_hex.x / 2, current_hex.y / 2), current_group);
+			break;
+		case Ctrl + Alpha + 'Q':
+			choose_tile_ex(current_land, gres(res::TILES), 4, 1, land_info::getlast(),
+				get_land_name, get_land_frame);
+			break;
+		case Alpha + 'Q':
 			map.setlandx(map.getm(current_hex.x / 2, current_hex.y / 2), current_land);
+			break;
+		case Ctrl + Alpha + 'W':
+			choose_tile_ex(current_wall, gres(res::WALLS), 3, FirstWall, LastWall,
+				get_wall_name, get_wall_frame);
+			break;
+		case Alpha + 'W':
+			map.setwall(map.geth(current_hex.x, current_hex.y), current_wall);
+			break;
+		case Ctrl + Alpha + 'A':
+			choose_tile_ex(current_scenery, gres(res::SCENERY), 3, 1, LastScenery-FirstScenery + 1,
+				get_scenery_name, get_scenery_frame);
+			break;
+		case Alpha + 'A':
+			map.setscene(map.geth(current_hex.x, current_hex.y), current_scenery);
 			break;
 		case Alpha + 'E':
 			map.setnone(map.geth(current_hex.x, current_hex.y));
-			break;
-		case Alpha + 'G':
-			map.setgroup(map.getm(current_hex.x/2, current_hex.y/2), 6);
 			break;
 		case Alpha + 'D':
 			player.setaction(AnimateKnockOutBack);
@@ -626,20 +501,6 @@ void creature::adventure() {
 			break;
 		case Ctrl + Alpha + 'L':
 			map.serialize(false);
-			break;
-		case Alpha + 'U':
-			current_scenery = choose_scenery(current_scenery);
-			resume_game();
-			break;
-		case Alpha + 'W':
-			current_wall = choose_wall(current_wall);
-			resume_game();
-			break;
-		case Alpha + 'O':
-			map.setwall(map.geth(current_hex.x, current_hex.y), current_wall);
-			break;
-		case Alpha + 'M':
-			wall_place[0].lefttoright(current_hex.x, current_hex.y, 4);
 			break;
 		}
 	}

@@ -278,7 +278,7 @@ enum animation_s : unsigned char {
 enum map_object_s : short unsigned {
 	NoObject,
 	FirstWall = 1, LastWall = 1633,
-	FirstScenery = 2000, LastScenery = 3999,
+	FirstScenery = 2000, LastScenery = FirstScenery + 1861,
 };
 enum color_s : unsigned char {
 	ColorDisable = 0x60, ColorText = 0xD7, ColorCheck = 0x03, ColorInfo = 0xE4, ColorButton = 0x3C,
@@ -548,18 +548,13 @@ struct drawable {
 struct animable : drawable, point {
 	const sprite*		ps;
 	short unsigned		frame;
-	animable();
+	constexpr animable() : point(), ps(), frame() {}
+	constexpr animable(const point pt, const sprite* ps, short unsigned frame) : point(pt), ps(ps), frame(frame) {}
 	explicit operator bool() const { return ps != 0; }
 	rect				getrect() const override;
 	point				getposition() const override { return *this; }
 	bool				hittest(point position) const override;
 	void				painting(point screen) const override;
-};
-struct map_render : adat<drawable*, 512> {
-	void				add(drawable* dw) { adat::add(dw); }
-	void				add(int x, int y, const sprite* ps, short unsigned frame);
-private:
-	adat<animable, 512>	elements;
 };
 struct pregen_info {
 	unsigned char		level;
