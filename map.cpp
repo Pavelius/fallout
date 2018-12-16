@@ -23,6 +23,7 @@ land_info land_data[] = {{"Недоступно"},
 {"Плитка", 15, {2261, 2274, 2274, 2274}, {2267, 2265, 2266, 2264, 2269, 2268, 2262, 2263}, {2271, 2272, 2273, 2270}},
 {"Каменный пол", 80, {2237, 2238, 2239, 2240}, {}, {}},
 {"Пол пещеры", 50, {21, 22, 23, 24}, {}, {}},
+{"Камни пещеры", 40, {57, 63, 57, 63}, {65, 61, 68, 55, 66, 51, 67, 45}, {}},
 {"Огород", 15, {716, 717, 718}, {715, 719}, {}},
 };
 struct group_info {
@@ -40,6 +41,10 @@ static group_info group_data[] = {{"", {3, 3}, 1415},
 {"Неработающий реактор", {8, 8}, 2028},
 {"Углубление в пещере", {2, 3}, 118},
 {"Ямка в пещере", {2, 2}, 124},
+{"Доски в пустоше", {3, 6}, 474},
+{"Крыша", {2, 5}, 492},
+{"Крыша с устройствами", {3, 2}, 500},
+{"Вывеска", {4, 2}, 510},
 };
 short unsigned get_group_frame(short unsigned i) {
 	return tile_data[group_data[i].start].fid;
@@ -49,6 +54,9 @@ const char* get_group_name(short unsigned i) {
 }
 unsigned get_group_last() {
 	return sizeof(group_data) / sizeof(group_data[0]) - 1;
+}
+unsigned get_land_last() {
+	return sizeof(land_data) / sizeof(land_data[0]) - 1;
 }
 
 // Получение координаты тайла(x,y) на экране
@@ -322,10 +330,6 @@ void map_info::setgroup(short unsigned index, short unsigned group) {
 		if(index == Blocked)
 			break;
 	}
-}
-
-short unsigned land_info::getlast() {
-	return sizeof(land_data) / sizeof(land_data[0]) - 1;
 }
 
 void map_info::setland(short unsigned index, short unsigned value) {

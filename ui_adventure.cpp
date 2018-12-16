@@ -374,6 +374,7 @@ static const char* get_scenery_name(short unsigned i) {
 short unsigned get_group_frame(short unsigned i);
 const char* get_group_name(short unsigned i);
 unsigned get_group_last();
+unsigned get_land_last();
 
 static void choose_tile_ex(short unsigned& result, const sprite* ps, const int col, int first, int last,
 	const char* (*get_name)(short unsigned ii),
@@ -480,7 +481,7 @@ void creature::adventure() {
 			map.setgroup(map.getm(current_hex.x / 2, current_hex.y / 2), current_group);
 			break;
 		case Ctrl + Alpha + 'Q':
-			choose_tile_ex(current_land, gres(res::TILES), 4, 1, land_info::getlast(),
+			choose_tile_ex(current_land, gres(res::TILES), 4, 1, get_land_last(),
 				get_land_name, get_land_frame);
 			break;
 		case Alpha + 'Q':

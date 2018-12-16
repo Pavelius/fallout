@@ -474,7 +474,6 @@ struct land_info {
 	short unsigned		tiles[8];
 	short unsigned		corners[4];
 	short unsigned		random() const;
-	static short unsigned getlast();
 };
 struct item {
 	typedef bool		(item::*proctest)() const;
