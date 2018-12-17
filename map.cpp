@@ -27,11 +27,20 @@ land_info land_data[] = {{"Недоступно"},
 {"Огород", 15, {716, 717, 718}, {715, 719}, {}},
 };
 struct group_info {
+	struct element {
+		char			shift;
+		point			size;
+	};
 	const char*			name;
 	point				size;
 	short unsigned		start;
 	short unsigned		count;
+	aref<element>		additional;
 };
+static group_info::element add_poseidon[] = {{0, {2, 1}},
+{0, {4, 1}}, {0, {6, 1}}, {0, {8, 1}}, {0, {10, 1}}, {0, {11, 1}}, {0, {11, 1}},
+{0, {10, 2}}, {0, {9, 1}}, {0, {8, 2}}, {0, {7, 1}}, {0, {6, 2}}, {0, {5, 1}},
+{0, {4, 2}}, {0, {3, 1}}, {0, {2, 2}}};
 static group_info group_data[] = {{"", {3, 3}, 1415},
 {"Каменная впадина", {8, 4}, 1425},
 {"Скалы", {9, 3}, 1527, 26},
@@ -44,7 +53,7 @@ static group_info group_data[] = {{"", {3, 3}, 1415},
 {"Доски в пустоше", {3, 6}, 474},
 {"Крыша", {2, 5}, 492},
 {"Крыша с устройствами", {3, 2}, 500},
-{"Вывеска", {4, 2}, 510},
+{"Посейдон", {0, 0}, 508, 0, add_poseidon},
 };
 short unsigned get_group_frame(short unsigned i) {
 	return tile_data[group_data[i].start].fid;
@@ -308,27 +317,37 @@ void map_info::updateland() {
 	}
 }
 
-void map_info::setgroup(short unsigned index, short unsigned group) {
-	auto& g = group_data[group];
+void map_info::setgroup(short unsigned index, short unsigned start, short unsigned width, short unsigned height, int count) {
 	auto pb = 0;
-	auto count = g.count;
 	if(!count)
-		count = g.size.x* g.size.y;
-	for(auto y = g.size.y; y > 0; y--) {
-		auto i1 = index + g.size.x;
+		count = width * height;
+	for(auto y = height; y > 0; y--) {
+		auto i1 = index + width;
 		auto pi = pb;
 		for(auto i = index; i < i1; i++) {
 			if(i == Blocked)
 				break;
 			if(pi >= count)
 				break;
-			floor[i] = tile_data[g.start + pi].fid;
+			floor[i] = tile_data[start + pi].fid;
 			pi++;
 		}
-		pb += g.size.x;
+		pb += width;
 		index = tot(index, Down);
 		if(index == Blocked)
 			break;
+	}
+}
+
+void map_info::setgroup(short unsigned index, short unsigned group) {
+	setgroup(index, group_data[group].start,
+		group_data[group].size.x, group_data[group].size.y, group_data[group].count);
+	auto m = group_data[group].start + group_data[group].size.x * group_data[group].size.y;
+	for(auto& e : group_data[group].additional) {
+		index += e.shift;
+		setgroup(index, m, e.size.x, e.size.y, 0);
+		m += e.size.x * e.size.y;
+		index += e.size.y * map.width;
 	}
 }
 

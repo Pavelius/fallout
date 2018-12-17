@@ -710,6 +710,7 @@ struct map_info {
 	short unsigned		tot(short unsigned index, direction_s d) const;
 	void				serialize(bool write_mode);
 	void				setgroup(short unsigned index, short unsigned group);
+	void				setgroup(short unsigned index, short unsigned start, short unsigned width, short unsigned height, int count = 0);
 	void				setnone(short unsigned index);
 	void				setland(short unsigned index, short unsigned value);
 	void				setlandx(short unsigned index, short unsigned value);
