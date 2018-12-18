@@ -44,7 +44,7 @@ static group_info::element add_poseidon[] = {{2, 1},
 static group_info::element add_alien[] = {{7, 4, -1}, {6, 1}, {5, 1}};
 static group_info::element add_wall[] = {{4, 1, -1}};
 static group_info::element add_building[] = {{4, 1}, {6, 1}, {8, 1}, {7, 1}, {6, 1}, {5, 2}, {4, 1}, {3, 2}, {2, 1}, {1, 1}};
-static group_info::element add_some[] = {{9, 1}, {10, 2, -1}, {9, 3}};
+static group_info::element add_some[] = {{9, 1}, {10, 1, -1}, {9, 1}, {9, 2, -1}, {8, 1}, {6, 1, 1}, {4, 1, 1}, {5, 1, 1}};
 static group_info group_data[] = {{"", {3, 3}, 1415},
 {"Каменная впадина", {8, 4}, 1425},
 {"Скалы", {9, 3}, 1527, 26},
