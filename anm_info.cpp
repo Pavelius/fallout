@@ -125,7 +125,8 @@ void test_frame_animate() {
 void test_animate() {
 	char temp[260];
 	anm_info ai = {};
-	convert_creature_bs(res::HMLTHR);
+	//convert_creature_bs(res::HMLTHR);
+	static point base_origin[] = {{-2, 3}, {-2, 4}, {-1, 4}, {0, 4}, {1, 5}, {1, 4}};
 	static animation_s actions[] = {AnimateStand, AnimatePickup, AnimateUse, AnimateDodge,
 		AnimateDamaged, AnimateDamagedRear,
 		AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
@@ -200,8 +201,11 @@ void test_animate() {
 			rectf({0, 0, getwidth(), getheight()}, colors::gray);
 			szprint(zend(temp), zendof(temp), " {%1i, %2i}, {%3i, %4i}", fr.sx, fr.sy, fr.ox, fr.oy);
 			image(x - 32 / 2, y - 16 / 2, rsin, 1, ImageNoOffset);
-			if(!normal_mode)
+			if(!normal_mode) {
 				pt = pt + *pa;
+				if(a!=AnimateStand)
+					pt = pt + base_origin[orientation];
+			}
 			image(pt.x, pt.y, ps, fi, 0);
 			if(show_red) {
 				line(x - 4, y, x + 4, y, colors::red);
