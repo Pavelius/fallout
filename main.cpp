@@ -101,7 +101,7 @@ static void mainmenu() {
 			draw::setfont(res::FONT4);
 			field(x, y, 100, cmd(new_game), "История"); y += 41;
 			field(x, y, 100, cmd(show_worldmap), "Загрузить"); y += 41;
-			field(x, y, 100, cmd(test_frame_animate), "Предметы", Alpha + 'I'); y += 41;
+			field(x, y, 100, cmd(test_animate), "Предметы", Alpha + 'I'); y += 41;
 			field(x, y, 100, cmd(test_animate), "Анимация", Alpha + 'A'); y += 41;
 			field(x, y, 100, cmd(test_tile), "Тайлы", Alpha + 'T'); y += 41;
 			field(x, y, 100, cmd(test_adventure), "Игра", Alpha + 'G'); y += 41;
