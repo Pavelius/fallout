@@ -456,14 +456,14 @@ void creature::adventure() {
 		case KeyRight: camera.x += tile_width / 2; break;
 		case KeyUp: camera.y -= tile_width / 2; break;
 		case KeyDown: camera.y += tile_width / 2; break;
-		//case Alpha + '-':
-		//	if(player.getorientation())
-		//		player.setorientation(player.getorientation() - 1);
-		//	break;
-		//case Alpha + '+':
-		//	if(player.getorientation() < 5)
-		//		player.setorientation(player.getorientation() + 1);
-		//	break;
+		case Alpha + '-':
+			if(player.getorientation())
+				player.setorientation(player.getorientation() - 1);
+			break;
+		case Alpha + '+':
+			if(player.getorientation() < 5)
+				player.setorientation(player.getorientation() + 1);
+			break;
 		case Ctrl + Alpha + 'T':
 			choose_tile_ex(current_tile, gres(res::TILES), 4, 1, 3100,
 				get_tile_name, get_tile_frame);
@@ -532,26 +532,6 @@ void creature::adventure() {
 			break;
 		case Ctrl + Alpha + 'L':
 			map.serialize(false);
-			break;
-		case Alpha + '+':
-			group_size.x++;
-			map.setgroup(map.getm(current_hex.x / 2, current_hex.y / 2), current_tile, group_size.x, group_size.y);
-			break;
-		case Ctrl + Alpha + '+':
-			group_size.y++;
-			map.setgroup(map.getm(current_hex.x / 2, current_hex.y / 2), current_tile, group_size.x, group_size.y);
-			break;
-		case Alpha + '-':
-			if(group_size.x > 2) {
-				group_size.x--;
-				map.setgroup(map.getm(current_hex.x / 2, current_hex.y / 2), current_tile, group_size.x, group_size.y);
-			}
-			break;
-		case Ctrl + Alpha + '-':
-			if(group_size.y > 2) {
-				group_size.y--;
-				map.setgroup(map.getm(current_hex.x / 2, current_hex.y / 2), current_tile, group_size.x, group_size.y);
-			}
 			break;
 		}
 	}

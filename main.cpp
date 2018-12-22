@@ -23,6 +23,7 @@ static void show_invertory() {
 	e.add(AdvancedPowerArmor);
 	e.add(CombatArmor);
 	e.add(LeatherJacket);
+	e.add(MetalArmor);
 	e.add(SmallStatuette);
 	e.add(SmallPieceOfMachinery);
 	e.add(Stimpak);
@@ -79,6 +80,8 @@ static void test_adventure() {
 	map.clear();
 	player.create("narg");
 	player.add(LeatherArmor);
+	player.add(CombatArmor);
+	player.add(MetalArmor);
 	player.add(SMG10mm);
 	player.add(Pistol10mm);
 	player.add(Knife);
@@ -101,7 +104,7 @@ static void mainmenu() {
 			draw::setfont(res::FONT4);
 			field(x, y, 100, cmd(new_game), "История"); y += 41;
 			field(x, y, 100, cmd(show_worldmap), "Загрузить"); y += 41;
-			field(x, y, 100, cmd(test_animate), "Предметы", Alpha + 'I'); y += 41;
+			field(x, y, 100, cmd(show_invertory), "Предметы", Alpha + 'I'); y += 41;
 			field(x, y, 100, cmd(test_animate), "Анимация", Alpha + 'A'); y += 41;
 			field(x, y, 100, cmd(test_tile), "Тайлы", Alpha + 'T'); y += 41;
 			field(x, y, 100, cmd(test_adventure), "Игра", Alpha + 'G'); y += 41;
