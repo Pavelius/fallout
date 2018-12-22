@@ -8,6 +8,24 @@ static animation_s modify_weapon_base[] = {
 	AnimateWeaponThrust, AnimateWeaponSwing, AnimateWeaponThrow, AnimateRun,
 };
 
+animation_s actor::getbase(animation_s id) {
+	if(id >= AnimateWeaponStand) {
+		const auto k = (AnimateWeaponThrow - AnimateWeaponStand + 1);
+		auto wi = (id - AnimateWeaponStand) / k;
+		return animation_s(AnimateWeaponStand + wi * k);
+	}
+	return AnimateStand;
+}
+
+animation_s actor::getsubaction(animation_s id) {
+	if(id >= AnimateWeaponStand) {
+		const auto k = (AnimateWeaponThrow - AnimateWeaponStand + 1);
+		auto wi = (id - AnimateWeaponStand) / k;
+		return animation_s(AnimateWeaponStand + (id - AnimateWeaponStand) % k);
+	}
+	return AnimateStand;
+}
+
 int actor::byweapon(animation_s action, int weapon_index) {
 	if(!weapon_index)
 		return action;
@@ -163,6 +181,34 @@ int actor::getdistance(const point p1, const point p2) {
 //	//setaction(runmode ? ActionRun : ActionWalk);
 //	this->index = index;
 //}
+
+static animation_s animation_sequence[][2] = {{AnimateKilledBlowup, AnimateDeadBlowup},
+{AnimateKilledBurstInChest, AnimateDeadBurstInChest},
+{AnimateKilledBurstInHead, AnimateDeadBurstInHead},
+{AnimateKilledChest, AnimateDeadChest},
+{AnimateKilledElectro, AnimateDeadElectro},
+{AnimateKilledImmolate, AnimateDeadImmolate},
+{AnimateKilledLaser, AnimateDeadLaser},
+{AnimateKilledElectroChest, AnimateDeadElectroChest},
+{AnimateKilledMelt, AnimateDeadMelt},
+{AnimateKilledFired, AnimateDeadFired},
+};
+
+animation_s actor::getnextanim(animation_s id) {
+	for(auto& e : animation_sequence) {
+		if(e[0] == id)
+			return e[1];
+	}
+	return AnimateStand;
+}
+
+animation_s actor::getprevanim(animation_s id) {
+	for(auto& e : animation_sequence) {
+		if(e[1] == id)
+			return e[0];
+	}
+	return AnimateStand;
+}
 
 void actor::setaction(animation_s value, bool backward) {
 	if(value > AnimateWeaponStand) {

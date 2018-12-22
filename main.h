@@ -578,15 +578,19 @@ struct wearable {
 struct actor : drawable, point, wearable {
 	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0) {}
 	static int			byweapon(animation_s action, int weapon);
+	static animation_s	getbase(animation_s id);
+	static animation_s	getsubaction(animation_s id);
 	int					getcicle() const;
 	static int			getdistance(const point p1, const point p2);
 	unsigned			getfps() const;
 	unsigned short		getlastframe() const;
 	static int			getlongest(const point p1, const point p2);
-	rect				getrect() const override;
+	static animation_s	getnextanim(animation_s id);
 	unsigned char		getorientation() const { return orientation; }
 	static char			getorientation(point from, point to);
 	point				getposition() const override { return *this; }
+	static animation_s	getprevanim(animation_s id);
+	rect				getrect() const override;
 	virtual const sprite* getsprite() const = 0;
 	virtual item&		getweapon() const = 0;
 	bool				hittest(point position) const override { return false; }
