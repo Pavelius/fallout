@@ -239,7 +239,7 @@ unsigned actor::getfps() const {
 	auto ps = getsprite();
 	if(!ps)
 		return 8;
-	auto pi = getaction(ps, getcicle() / 6);
+	auto pi = draw::getaction(ps, getcicle() / 6);
 	if(!pi)
 		return 8;
 	return pi->speed;
@@ -301,7 +301,7 @@ void actor::painting(point camera) const {
 	point pt = getposition() - camera;
 	auto fi = pc->start + frame;
 	if(action == AnimateRun || action == AnimateWalk) {
-		auto pa = getaction(ps, cl / 6);
+		auto pa = draw::getaction(ps, cl / 6);
 		if(!pa)
 			return;
 		auto& pf = ps->get(fi);

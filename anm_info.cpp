@@ -40,13 +40,12 @@ void test_animate() {
 		AnimateDeadBlowup, AnimateDeadMelt, AnimateDeadFired,
 		AnimateDeadBack, AnimateDeadForward,
 	};
-	static res::tokens resources[] = {res::HMLTHR, res::HANPWR, res::HFLTHR, res::HMCMBT, };
+	static res::tokens resources[] = {res::HFLTHR, res::HANPWR, res::HMLTHR, res::HMCMBT, };
 	int resource = 0, action = 0, orientation = 2, weapon = 0;
 	bool fast_stand = false;
 	bool freezy_frame = false;
 	bool show_red = true;
 	bool lock_stand = true;
-	bool normal_mode = true;
 	animation_s am = AnimateStand;
 	res::tokens last_id = res::NoRes;
 	auto rsin = gres(res::INTRFACE);
@@ -67,6 +66,8 @@ void test_animate() {
 		if(a >= AnimateWeaponStand)
 			a = animation_s(a + weapon);
 		auto* pa = ai.points + (a * 6 + orientation);
+		auto ps = gres(resources[resource]);
+		auto psa = draw::getaction(ps, a);
 		szprint(temp, zendof(temp), "{%1i, %2i}", pa->x, pa->y);
 		if(fast_stand)
 			szprint(zend(temp), zendof(temp), " stand");
@@ -74,11 +75,8 @@ void test_animate() {
 			szprint(zend(temp), zendof(temp), " freezy");
 		if(!lock_stand)
 			szprint(zend(temp), zendof(temp), " unlocked");
-		if(normal_mode)
-			szprint(zend(temp), zendof(temp), " normal");
 		if(am!=AnimateStand)
 			szprint(zend(temp), zendof(temp), " custom");
-		auto ps = gres(resources[resource]);
 		auto tick = getstamp() / 200;
 		auto c1 = a * 6 + orientation;
 		auto fi = ps->ganim(c1, freezy_frame ? 0 : tick);
@@ -88,9 +86,13 @@ void test_animate() {
 			canvas = &original; setclip();
 			rectf({0, 0, getwidth(), getheight()}, colors::gray);
 			szprint(zend(temp), zendof(temp), " {%1i, %2i}, {%3i, %4i}", fr.sx, fr.sy, fr.ox, fr.oy);
+			if(psa) {
+				szprint(zend(temp), zendof(temp), " action {%1i, %2i}/{%3i, %4i}",
+					psa->offset[orientation].x, psa->offset[orientation].y,
+					psa->lastof[orientation].x, psa->lastof[orientation].y);
+			}
 			image(x - 32 / 2, y - 16 / 2, rsin, 1, ImageNoOffset);
-			if(!normal_mode)
-				pt = pt + *pa;
+			pt = pt + *pa;
 			image(pt.x, pt.y, ps, fi, 0);
 			if(show_red) {
 				line(x - 4, y, x + 4, y, colors::red);
@@ -116,7 +118,6 @@ void test_animate() {
 		case Alpha + 'X': freezy_frame = !freezy_frame; break;
 		case Alpha + 'R': show_red = !show_red; break;
 		case Alpha + 'U': lock_stand = !lock_stand; break;
-		case Alpha + 'N': normal_mode = !normal_mode; break;
 		case Alpha + 'O': am = AnimateStand; break;
 		case Alpha + 'L': am = a; break;
 		case KeyLeft:

@@ -533,6 +533,12 @@ void creature::adventure() {
 		case Ctrl + Alpha + 'L':
 			map.serialize(false);
 			break;
+		case Alpha + 'P':
+			if(player.getaction() == AnimateWalk)
+				player.setaction(AnimateStand);
+			else
+				player.setaction(AnimateWalk);
+			break;
 		}
 	}
 }

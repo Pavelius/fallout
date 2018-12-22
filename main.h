@@ -578,6 +578,7 @@ struct wearable {
 struct actor : drawable, point, wearable {
 	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0) {}
 	static int			byweapon(animation_s action, int weapon);
+	animation_s			getaction() const { return action; }
 	static animation_s	getbase(animation_s id);
 	static animation_s	getsubaction(animation_s id);
 	int					getcicle() const;
