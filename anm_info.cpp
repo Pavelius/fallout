@@ -4,58 +4,6 @@ using namespace draw;
 
 extern "C" void scale2x(void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned width, unsigned height);
 
-void anm_info::serialize(res::tokens id, bool write) {
-	if(!id)
-		return;
-	char temp[260];
-	szprint(temp, zendof(temp), "animpt/%1.pts", draw::getresname(id));
-	if(write) {
-		io::file file(temp, StreamWrite);
-		if(file)
-			file.write(this, sizeof(*this));
-	} else {
-		io::file file(temp, StreamRead);
-		memset(this, 0, sizeof(*this));
-		if(file)
-			file.read(this, sizeof(*this));
-	}
-}
-
-void anm_info::validate(int i) {
-	static animation_s copied[] = {
-		AnimatePickup, AnimateUse, AnimateDodge,
-		AnimateDamaged, AnimateDamagedRear,
-		AnimateUnarmed1, AnimateUnarmed2, AnimateThrown, AnimateRun,
-		AnimateKnockOutBack, AnimateKnockOutForward,
-		AnimateKilledChest, AnimateKilledElectro,
-		AnimateKilledBurstInHead, AnimateKilledBurstInChest,
-		AnimateKilledImmolate, AnimateKilledLaser, AnimateKilledElectroChest,
-		AnimateKilledBlowup, AnimateKilledMelt, AnimateKilledFired,
-	};
-	for(auto id : copied)
-		points[id * 6 + i] = points[AnimateUse * 6 + i];
-	for(auto w = 0; w < 10; w++)
-		validate_weapon(i, w);
-}
-
-void anm_info::validate_weapon(int i, int w) {
-	static animation_s copied_weapon[] = {
-		AnimateWeaponTakeOn, AnimateWeaponHide, AnimateWeaponDodge,
-		AnimateWeaponThrust, AnimateWeaponSwing,
-		AnimateWeaponAim, AnimateWeaponAttack,
-		AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
-		AnimateWeaponThrow,
-	};
-	if(w<10) {
-		for(auto id : copied_weapon) {
-			auto b = animation_s(AnimateWeaponStand + w * 13);
-			auto a1 = (b + (id - AnimateWeaponStand)) * 6 + i;
-			auto a2 = (b + (AnimateWeaponStand - AnimateWeaponStand)) * 6 + i;
-			points[a1] = points[a2];
-		}
-	}
-}
-
 static void mmax(int& v, int min, int max) {
 	if(v > max)
 		v = max;
@@ -92,14 +40,13 @@ void test_animate() {
 		AnimateDeadBlowup, AnimateDeadMelt, AnimateDeadFired,
 		AnimateDeadBack, AnimateDeadForward,
 	};
-	static res::tokens resources[] = {res::HMLTHR, res::HANPWR, res::HFLTHR};
+	static res::tokens resources[] = {res::HMLTHR, res::HANPWR, res::HFLTHR, res::HMCMBT, };
 	int resource = 0, action = 0, orientation = 2, weapon = 0;
 	bool fast_stand = false;
 	bool freezy_frame = false;
 	bool show_red = true;
 	bool lock_stand = true;
 	bool normal_mode = true;
-	bool use_serialize = false;
 	animation_s am = AnimateStand;
 	res::tokens last_id = res::NoRes;
 	auto rsin = gres(res::INTRFACE);
@@ -109,13 +56,8 @@ void test_animate() {
 		mmax(action, 0, sizeof(actions) / sizeof(actions[0]) - 1);
 		mmax(resource, 0, sizeof(resources) / sizeof(resources[0]) - 1);
 		mmax(weapon, 0, 13 - 1);
-		if(last_id != resources[resource]) {
-			if(use_serialize)
-				ai.serialize(last_id, true);
+		if(last_id != resources[resource])
 			last_id = resources[resource];
-			if(use_serialize)
-				ai.serialize(last_id, false);
-		}
 		rectf({0, 0, getwidth(), getheight()}, colors::gray);
 		short x = 160, y = 160;
 		point pt = {x, y};
@@ -149,11 +91,6 @@ void test_animate() {
 			image(x - 32 / 2, y - 16 / 2, rsin, 1, ImageNoOffset);
 			if(!normal_mode)
 				pt = pt + *pa;
-			else if(a != AnimateStand) {
-				auto base_origin = draw::getaction(ps, AnimateStand);
-				if(base_origin)
-					pt = pt + base_origin->offset[orientation];
-			}
 			image(pt.x, pt.y, ps, fi, 0);
 			if(show_red) {
 				line(x - 4, y, x + 4, y, colors::red);
@@ -171,22 +108,10 @@ void test_animate() {
 		case Alpha + 'W': resource++; break;
 		case Alpha + 'D': orientation--; break;
 		case Alpha + 'F': orientation++; break;
-		case Alpha + 'A': action--;
-			if(use_serialize)
-				ai.serialize(last_id, true);
-			break;
-		case Alpha + 'S': action++;
-			if(use_serialize)
-				ai.serialize(last_id, true);
-			break;
-		case Alpha + 'Y': weapon++;
-			if(use_serialize)
-				ai.serialize(last_id, true);
-			break;
-		case Alpha + 'T': weapon--;
-			if(use_serialize)
-				ai.serialize(last_id, true);
-			break;
+		case Alpha + 'A': action--; break;
+		case Alpha + 'S': action++; break;
+		case Alpha + 'Y': weapon++; break;
+		case Alpha + 'T': weapon--; break;
 		case Alpha + 'Z': fast_stand = !fast_stand; break;
 		case Alpha + 'X': freezy_frame = !freezy_frame; break;
 		case Alpha + 'R': show_red = !show_red; break;
@@ -194,23 +119,6 @@ void test_animate() {
 		case Alpha + 'N': normal_mode = !normal_mode; break;
 		case Alpha + 'O': am = AnimateStand; break;
 		case Alpha + 'L': am = a; break;
-		case Alpha + 'V':
-			if(!lock_stand) {
-				ai.validate(orientation);
-				lock_stand = true;
-			} else
-				dlgmsg("Защита", "Необходимо разлочить клавишей 'U'");
-			break;
-		case Alpha + 'B':
-			if(!lock_stand) {
-				if(a >= AnimateWeaponStand) {
-					auto w = (a - AnimateWeaponStand) / 13;
-					ai.validate_weapon(orientation, w);
-				}
-				lock_stand = true;
-			} else
-				dlgmsg("Защита", "Необходимо разлочить клавишей 'U'");
-			break;
 		case KeyLeft:
 			if((pa == (ai.points + orientation)) && lock_stand)
 				break;
@@ -233,7 +141,4 @@ void test_animate() {
 			break;
 		}
 	}
-	if(use_serialize)
-		ai.serialize(last_id, true);
-	//convert_creature(res::HMLTHR);
 }

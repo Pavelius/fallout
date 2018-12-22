@@ -260,7 +260,7 @@ enum animation_s : unsigned char {
 	// Weapon Block
 	AnimateWeaponStand, AnimateWeaponWalk, AnimateWeaponTakeOn, AnimateWeaponHide, AnimateWeaponDodge,
 	AnimateWeaponThrust, AnimateWeaponSwing,
-	AnimateWeaponAim, AnimateWeaponAttack,
+	AnimateWeaponAim, AnimateWeaponAimEnd,
 	AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
 	AnimateWeaponThrow,
 	// Weapon Animate
@@ -732,6 +732,7 @@ struct actinfo {
 	unsigned short		action;
 	int					count;
 	point				offset[6];
+	point				lastof[6];
 };
 struct command_info {
 	action_s			action;

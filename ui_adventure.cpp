@@ -518,7 +518,7 @@ void creature::adventure() {
 			player.wait();
 			player.setaction(AnimateWeaponBurst);
 			player.wait();
-			player.setaction(AnimateWeaponAttack);
+			player.setaction(AnimateWeaponAimEnd);
 			player.wait();
 			break;
 		case Alpha + 'H':

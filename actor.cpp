@@ -169,7 +169,7 @@ void actor::setaction(animation_s value, bool backward) {
 		static animation_s actions[13] = {
 			AnimateStand, AnimateWalk, AnimateWeaponTakeOn, AnimateWeaponHide, AnimateDodge,
 			AnimateWeaponThrust, AnimateWeaponSwing,
-			AnimateWeaponAim, AnimateWeaponAttack,
+			AnimateWeaponAim, AnimateWeaponAimEnd,
 			AnimateWeaponSingle, AnimateWeaponBurst, AnimateWeaponFlame,
 			AnimateWeaponThrow,
 		};
