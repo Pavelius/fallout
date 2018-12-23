@@ -40,7 +40,8 @@ void test_animate() {
 		AnimateDeadBlowup, AnimateDeadMelt, AnimateDeadFired,
 		AnimateDeadBack, AnimateDeadForward,
 	};
-	static res::tokens resources[] = {res::HFLTHR, res::HANPWR, res::HMLTHR, res::HMCMBT, };
+	static res::tokens resources[] = {res::HFLTHR, res::HANPWR, res::HMLTHR, res::HMCMBT, res::NFBRLP, res::NMFATT, res::NMDOCC,
+	res::NMGANG, res::MADETH, res::MABROM, res::MAGUN2, res::MAROBT, res::MAMTNT, res::MAMTN2};
 	int resource = 0, action = 0, orientation = 2, weapon = 0;
 	bool fast_stand = false;
 	bool freezy_frame = false;
