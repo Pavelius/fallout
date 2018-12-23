@@ -451,6 +451,7 @@ void creature::adventure() {
 		render_screen(current_hex);
 		update_logic();
 		domodal();
+		auto hex_index = map.geth(current_hex.x, current_hex.y);
 		switch(hot.key) {
 		case KeyLeft: camera.x -= tile_width / 2; break;
 		case KeyRight: camera.x += tile_width / 2; break;
@@ -493,14 +494,14 @@ void creature::adventure() {
 				get_wall_name, get_wall_frame);
 			break;
 		case Alpha + 'W':
-			map.setwall(map.geth(current_hex.x, current_hex.y), current_wall);
+			map.setwall(hex_index, current_wall);
 			break;
 		case Ctrl + Alpha + 'A':
 			choose_tile_ex(current_scenery, gres(res::SCENERY), 3, 1, LastScenery - FirstScenery + 1,
 				get_scenery_name, get_scenery_frame);
 			break;
 		case Alpha + 'A':
-			map.setscene(map.geth(current_hex.x, current_hex.y), current_scenery);
+			map.setscene(hex_index, current_scenery);
 			break;
 		case Alpha + 'E':
 			map.setnone(map.geth(current_hex.x, current_hex.y));
@@ -538,6 +539,11 @@ void creature::adventure() {
 				player.setaction(AnimateStand);
 			else
 				player.setaction(AnimateWalk);
+			break;
+		case MouseLeft:
+			map.blockimpassable();
+			map.createwave(player.getindex());
+			map.route(player.getindex(), &map_info::stepto, 0, 1);
 			break;
 		}
 	}

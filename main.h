@@ -644,6 +644,7 @@ struct creature : actor, weaponable {
 	int					getexperience() const { return experience; }
 	static const datetime& getdate();
 	gender_s			getgender() const { return gender; }
+	short unsigned		getindex() const;
 	int					getlevel() const { return level; }
 	static ability_s	getmaximum(ability_s id);
 	const char*			getname() const { return name; }
@@ -699,21 +700,36 @@ struct settlement {
 struct ground_info : item {
 	point				position;
 };
+const unsigned short	Blocked = 0xFFFF;
 struct map_info {
+	struct node {
+		short unsigned	index;
+		node*			next;
+	};
 	static const unsigned height = 100;
 	static const unsigned width = 100;
+	node*				addnode();
+	void				blockimpassable(short unsigned free_state = Blocked - 1);
 	void				clear();
+	void				createwave(short unsigned start);
+	void				createwave(short unsigned start, short unsigned max_cost);
+	unsigned short		getcost(unsigned short index);
+	int					getfree(unsigned short index, int radius, int size);
 	short unsigned		geth(int x, int y) const;
 	short unsigned		getm(int x, int y) const;
+	int					getnodecount() const;
 	static short unsigned getland(short unsigned tile);
 	unsigned short		getlandtile(short unsigned index, short unsigned value) const;
 	short unsigned		getobject(short unsigned index) const;
 	short unsigned		getroof(short unsigned index) const;
 	short unsigned		gettile(short unsigned index) const;
 	bool				isblocked(short unsigned index) const;
-	short unsigned		to(short unsigned index, direction_s d) const;
-	short unsigned		tot(short unsigned index, direction_s d) const;
+	node*				remove(node* p);
+	node*				removeall(node* p);
+	node*				removeback(node* p);
+	node*				route(short unsigned start, short unsigned(*proc)(short unsigned index), short unsigned maximum_range, short unsigned minimal_reach);
 	void				serialize(bool write_mode);
+	void				setcost(short unsigned index, short unsigned value);
 	void				setgroup(short unsigned index, short unsigned group);
 	void				setgroup(short unsigned index, short unsigned start, short unsigned width, short unsigned height, int count = 0);
 	void				setnone(short unsigned index);
@@ -723,6 +739,10 @@ struct map_info {
 	void				setscene(short unsigned index, short unsigned value);
 	void				settile(short unsigned index, short unsigned value);
 	void				setwall(short unsigned index, short unsigned value);
+	static short unsigned stepfrom(short unsigned index);
+	static short unsigned stepto(short unsigned index);
+	static short unsigned to(short unsigned index, direction_s d);
+	static short unsigned tot(short unsigned index, direction_s d);
 private:
 	friend archive;
 	unsigned short		floor[width*height];
@@ -810,8 +830,6 @@ const int				tile_width = 80; // Width of isometric tile
 const int				tile_height = 36; // Height of isometric tile
 point					h2m(point pt);
 point					s2m(point s); // Convert screen coordinates to tile index
-inline short unsigned	m2i(short unsigned x, short unsigned y) { return (y << 8) + x; }
-inline short unsigned	m2i(point pt) { return m2i(pt.x, pt.y); }
 point					m2s(int x, int y);
 point					m2h(int x, int y);
 extern ability_info		ability_data[];

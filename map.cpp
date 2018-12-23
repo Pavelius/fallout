@@ -1,13 +1,16 @@
 #include "archive.h"
 #include "main.h"
 
-const unsigned short	Blocked = 0xFFFF;
+static unsigned short	path_stack[256 * 256];
+static unsigned short	path_cost[256 * 256];
+static map_info::node	path_nodes[1024 * 8];
 map_info				map;
 const int				stx = tile_width / 5; // 16 - Ширина юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 const int				sty = tile_height / 3; // 12 - Высота юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 static direction_s		land_directions[] = {Up, Right, Down, Left};
 static direction_s		land_directions_all[] = {Up, Right, Down, Left, LeftDown, LeftUp, RightDown, RightUp};
 static direction_s		land_directions_corners[] = {LeftUp, RightUp, RightDown, LeftDown};
+static direction_s		hex_directions[] = {LeftUp, Up, RightUp, RightDown, Down, LeftDown};
 static direction_s		land_decode[16] = {Center, Left, Down, LeftDown,
 Right, Center, RightDown, RightDown,
 Up, LeftUp, Center, LeftUp,
@@ -196,7 +199,7 @@ void map_info::clear() {
 	memset(objects, 0, sizeof(objects));
 }
 
-short unsigned map_info::to(short unsigned index, direction_s d) const {
+short unsigned map_info::to(short unsigned index, direction_s d) {
 	if(index == Blocked)
 		return index;
 	auto x = index % (width * 2);
@@ -224,7 +227,7 @@ short unsigned map_info::to(short unsigned index, direction_s d) const {
 	}
 }
 
-short unsigned map_info::tot(short unsigned index, direction_s d) const {
+short unsigned map_info::tot(short unsigned index, direction_s d) {
 	if(index == Blocked)
 		return index;
 	auto x = index % width;
@@ -401,4 +404,182 @@ void map_info::serialize(bool write_mode) {
 		return;
 	archive a(file, write_mode);
 	a.set(*this);
+}
+
+void map_info::blockimpassable(short unsigned free_state) {
+	for(auto y = 0; y < height; y++) {
+		auto i2 = y * width + width;
+		for(auto i = y*width; i < i2; i++)
+			path_cost[i] = isblocked(i) ? Blocked : free_state;
+	}
+}
+
+map_info::node* map_info::addnode() {
+	for(auto& e : path_nodes) {
+		if(!e.index) {
+			e.next = 0;
+			return &e;
+		}
+	}
+	path_nodes[0].index = 0;
+	path_nodes[0].next = 0;
+	return path_nodes;
+}
+
+int map_info::getnodecount() const {
+	int result = 0;
+	for(auto& e : path_nodes) {
+		if(e.index)
+			result++;
+	}
+	return result;
+}
+
+unsigned short map_info::getcost(unsigned short index) {
+	return path_cost[index];
+}
+
+void map_info::setcost(short unsigned index, short unsigned value) {
+	path_cost[index] = value;
+}
+
+map_info::node* map_info::removeall(map_info::node* p) {
+	while(p) {
+		p->index = 0;
+		p = p->next;
+	}
+	return 0;
+}
+
+map_info::node* map_info::remove(map_info::node* p) {
+	auto p1 = p->next;
+	p->index = 0;
+	p->next = 0;
+	return p1;
+}
+
+map_info::node* map_info::removeback(node* p) {
+	auto start = p;
+	node* result = 0;
+	while(p->next) {
+		result = p;
+		p = p->next;
+	}
+	result->next = 0;
+	p->index = 0;
+	p->next = 0;
+	return start;
+}
+
+// First, make wave and see what cell on map is passable
+void map_info::createwave(short unsigned start) {
+	short unsigned path_push = 0;
+	short unsigned path_pop = 0;
+	path_stack[path_push++] = start;
+	path_cost[start] = 1;
+	while(path_push != path_pop) {
+		auto n = path_stack[path_pop++];
+		auto w = path_cost[n] + 1;
+		if(w >= (Blocked - 1))
+			break;
+		for(auto d : hex_directions) {
+			auto i = to(n, d);
+			if(path_cost[i] == Blocked)
+				continue;
+			if(path_cost[i] > w) {
+				path_cost[i] = w;
+				path_stack[path_push++] = i;
+			}
+		}
+	}
+}
+
+void map_info::createwave(short unsigned start, short unsigned max_cost) {
+	short unsigned path_push = 0;
+	short unsigned path_pop = 0;
+	path_stack[path_push++] = start;
+	path_cost[start] = 1;
+	while(path_push != path_pop) {
+		auto n = path_stack[path_pop++];
+		auto w = path_cost[n] + 1;
+		if(w >= (Blocked - 1))
+			break;
+		if(w > max_cost)
+			continue;
+		for(auto d : hex_directions) {
+			auto i = to(n, d);
+			if(path_cost[i] == Blocked)
+				continue;
+			if(!path_cost[i] || path_cost[i] > w) {
+				path_cost[i] = w;
+				path_stack[path_push++] = i;
+			}
+		}
+	}
+}
+
+short unsigned map_info::stepto(short unsigned index) {
+	auto current_index = Blocked;
+	auto current_value = Blocked;
+	for(auto d : hex_directions) {
+		auto i = to(index, d);
+		if(i >= Blocked - 1)
+			continue;
+		if(path_cost[i] < current_value) {
+			current_value = path_cost[i];
+			current_index = i;
+		}
+	}
+	return current_index;
+}
+
+short unsigned map_info::stepfrom(short unsigned index) {
+	auto current_index = Blocked;
+	auto current_value = 0;
+	for(auto d : hex_directions) {
+		auto i = to(index, d);
+		if(i >= Blocked - 1)
+			continue;
+		if(path_cost[i] > current_value) {
+			current_value = path_cost[i];
+			current_index = i;
+		}
+	}
+	return current_index;
+}
+
+// Calculate path step by step to any cell on map analizing create_wave result.
+// Go form goal to start and get lowest weight.
+// When function return 'path_stack' has step by step path and 'path_push' is top of this path.
+map_info::node* map_info::route(short unsigned start, short unsigned(*proc)(short unsigned index), short unsigned maximum_range, short unsigned minimal_reach) {
+	node* result = 0;
+	node* p = 0;
+	auto n = proc(start);
+	auto w = 0;
+	minimal_reach += 1; // Base cost is one
+	for(; n != Blocked && path_cost[n] >= 1; n = proc(n)) {
+		if(!p) {
+			result = addnode();
+			p = result;
+		} else {
+			p->next = addnode();
+			p = p->next;
+		}
+		p->index = n;
+		w += 1;
+		if(minimal_reach >= path_cost[n])
+			break;
+		if(maximum_range && w >= maximum_range)
+			break;
+	}
+	return result;
+}
+
+bool map_info::isblocked(short unsigned index) const {
+	return false;
+}
+
+short unsigned creature::getindex() const {
+	auto pt = h2m(*this);
+	return map.geth(pt.x, pt.y);
 }
