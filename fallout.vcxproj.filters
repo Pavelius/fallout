@@ -203,7 +203,7 @@
       <Filter>logic</Filter>
     </ClCompile>
     <ClCompile Include="animation.cpp">
-      <Filter>ui</Filter>
+      <Filter>draw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +254,9 @@
     </ClInclude>
     <ClInclude Include="archive.h">
       <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="animation.h">
+      <Filter>draw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

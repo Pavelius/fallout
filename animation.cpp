@@ -1,5 +1,7 @@
 #include "main.h"
 
+using namespace draw;
+
 static int compare_animation(const void* p1, const void* p2) {
 	auto d1 = (animation*)p1;
 	auto d2 = (animation*)p2;

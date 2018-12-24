@@ -1,8 +1,8 @@
+#include "animation.h"
 #include "archive.h"
 #include "collection.h"
 #include "crt.h"
 #include "datetime.h"
-#include "draw.h"
 #include "grammar.h"
 #include "screenshoot.h"
 #include "stringcreator.h"
@@ -534,19 +534,6 @@ private:
 	int					f;
 	int					action;
 };
-struct animation {
-	point				position;
-	const sprite*		ps;
-	short unsigned		fi;
-	short				zorder;
-	unsigned			flags;
-	void*				param;
-	bool				intersect(const rect& screen) const { return ps->get(fi).getrect(position.x, position.y, 0).intersect(screen); }
-	rect				getrect() const { return ps->get(fi).getrect(position.x, position.y, 0); }
-	void				painting(point camera) const;
-	void				setup(point position, const sprite* ps, short unsigned fi);
-	static void			sort(animation* source, unsigned count);
-};
 struct pregen_info {
 	unsigned char		level;
 	const char*			id;
@@ -570,7 +557,7 @@ struct wearable {
 struct actor : point, wearable {
 	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0) {}
 	static int			byweapon(animation_s action, int weapon);
-	void				fill(animation& result);
+	void				fill(draw::animation& result);
 	animation_s			getaction() const { return action; }
 	static animation_s	getbase(animation_s id);
 	static animation_s	getsubaction(animation_s id);
