@@ -183,7 +183,7 @@ static dwvariant render_area(point screen, point camera) {
 				pa->setup(m2h(x, y), pss, pss->ganim(tv - FirstScenery, a));
 		}
 	}
-	player.fill(*result.add());
+	player.getanimation(*result.add());
 	animation::sort(result.data, result.count);
 	for(auto& e : result)
 		e.painting(camera);

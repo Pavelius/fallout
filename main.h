@@ -554,11 +554,11 @@ struct wearable {
 	item*				find(item_s type);
 	aref<item*>			select(aref<item*> source) const;
 };
-struct actor : point, wearable {
+struct actor : wearable, point {
 	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0) {}
 	static int			byweapon(animation_s action, int weapon);
-	void				fill(draw::animation& result);
 	animation_s			getaction() const { return action; }
+	void				getanimation(draw::animation& result);
 	static animation_s	getbase(animation_s id);
 	static animation_s	getsubaction(animation_s id);
 	int					getcicle() const;

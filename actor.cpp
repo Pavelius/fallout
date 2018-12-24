@@ -215,7 +215,7 @@ void actor::update() {
 		moveshift();
 }
 
-void actor::fill(animation& result) {
+void actor::getanimation(animation& result) {
 	memset(&result, 0, sizeof(result));
 	result.ps = getsprite();
 	if(!result.ps)
@@ -233,8 +233,6 @@ void actor::fill(animation& result) {
 		result.position.x = x - pf.sx / 2 + pa->offset[orientation].x;
 		result.position.y = y - pf.sy + pa->offset[orientation].y;
 		result.flags = ImageNoOffset;
-	} else {
+	} else
 		result.position = *this;
-		result.flags = 0;
-	}
 }
