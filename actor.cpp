@@ -87,8 +87,6 @@ void actor::preview(int x, int y, gender_s gender, const item& armor, const item
 	draw::image(x, y, ps, fr, 0);
 }
 
-void actor::moveto(point position, int run) {}
-
 char actor::getorientation(point from, point to) {
 	static const char orientations[25] = {
 		5, 5, 0, 0, 0,

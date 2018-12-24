@@ -151,6 +151,29 @@ static void render_roof(point screen, point camera) {
 	}
 }
 
+static void render_cost(point screen, point camera) {
+	point pc = screen - camera;
+	auto pm = s2m(camera);
+	int x1 = pm.x - 8; int x2 = x1 + 8 + 10;
+	int y1 = pm.y; int y2 = y1 + 18;
+	x1 *= 2; y1 *= 2; x2 *= 2; y2 *= 2;
+	auto sy = texth();
+	for(auto y = y1; y < y2; y++) {
+		if(y < 0 || y >= map.height)
+			continue;
+		for(int x = x2; x >= x1; x--) {
+			if(x < 0 || x >= map.width)
+				continue;
+			auto a = map.getcost(map.geth(x, y));
+			if(!a || a >= Blocked - 1)
+				continue;
+			auto pt = m2h(x, y) + screen - camera;
+			char temp[32]; szprint(temp, zendof(temp), "%1i", a);
+			text(pt.x - textw(temp)/2, pt.y - sy/3, temp);
+		}
+	}
+}
+
 static dwvariant render_area(point screen, point camera) {
 	const rect rc = {0, 0, 640, 480};
 	adat<animation, 512> result;
@@ -301,6 +324,7 @@ static void render_screen(point& hilite_hex) {
 	hilite_hex = h2m(hotspot);
 	render_tiles(screen, camera);
 	draw::hexagon(hilite_hex.y*(map_info::width * 2) + hilite_hex.x, camera);
+	render_cost(screen, camera);
 	render_area(screen, camera);
 	render_roof(screen, camera);
 	render_actions();
@@ -516,9 +540,7 @@ void creature::adventure() {
 				player.setaction(AnimateWalk);
 			break;
 		case MouseLeft:
-			map.blockimpassable();
-			map.createwave(player.getindex());
-			map.route(player.getindex(), &map_info::stepto, 0, 1);
+			player.moveto(hot.mouse + camera, false);
 			break;
 		}
 	}

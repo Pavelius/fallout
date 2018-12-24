@@ -554,8 +554,57 @@ struct wearable {
 	item*				find(item_s type);
 	aref<item*>			select(aref<item*> source) const;
 };
+struct map_info {
+	struct node {
+		short unsigned	index;
+		node*			next;
+	};
+	static const unsigned height = 100;
+	static const unsigned width = 100;
+	node*				addnode();
+	void				blockimpassable(short unsigned free_state = Blocked - 1);
+	void				clear();
+	void				createwave(short unsigned start, short unsigned max_cost = Blocked - 2);
+	unsigned short		getcost(unsigned short index);
+	int					getfree(unsigned short index, int radius, int size);
+	short unsigned		geth(int x, int y) const;
+	short unsigned		getm(int x, int y) const;
+	int					getnodecount() const;
+	static short unsigned getland(short unsigned tile);
+	unsigned short		getlandtile(short unsigned index, short unsigned value) const;
+	short unsigned		getobject(short unsigned index) const;
+	short unsigned		getroof(short unsigned index) const;
+	short unsigned		gettile(short unsigned index) const;
+	bool				isblocked(short unsigned index) const;
+	node*				remove(node* p);
+	node*				removeall(node* p);
+	node*				removeback(node* p);
+	node*				route(short unsigned start, short unsigned(*proc)(short unsigned index), short unsigned maximum_range, short unsigned minimal_reach);
+	void				serialize(bool write_mode);
+	void				setcost(short unsigned index, short unsigned value);
+	void				setgroup(short unsigned index, short unsigned group);
+	void				setgroup(short unsigned index, short unsigned start, short unsigned width, short unsigned height, int count = 0);
+	void				setnone(short unsigned index);
+	void				setland(short unsigned index, short unsigned value);
+	void				setlandx(short unsigned index, short unsigned value);
+	void				setroof(short unsigned index, short unsigned value);
+	void				setscene(short unsigned index, short unsigned value);
+	void				settile(short unsigned index, short unsigned value);
+	void				setwall(short unsigned index, short unsigned value);
+	static short unsigned stepfrom(short unsigned index);
+	static short unsigned stepto(short unsigned index);
+	static short unsigned to(short unsigned index, direction_s d);
+	static short unsigned tot(short unsigned index, direction_s d);
+private:
+	friend archive;
+	unsigned short		floor[width*height];
+	unsigned short		roof[width*height];
+	unsigned short		objects[width*height * 4];
+	unsigned char		flags[width*height * 4];
+	void				updateland();
+};
 struct actor : wearable, point {
-	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0) {}
+	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0), path(0) {}
 	static int			byweapon(animation_s action, int weapon);
 	animation_s			getaction() const { return action; }
 	void				getanimation(draw::animation& result);
@@ -585,6 +634,7 @@ private:
 	animation_s			action;
 	unsigned char		orientation;
 	short unsigned		frame, frame_maximum;
+	map_info::node*		path;
 	unsigned			next_stamp;
 	void				moveshift();
 };
@@ -686,56 +736,6 @@ struct settlement {
 };
 struct ground_info : item {
 	point				position;
-};
-struct map_info {
-	struct node {
-		short unsigned	index;
-		node*			next;
-	};
-	static const unsigned height = 100;
-	static const unsigned width = 100;
-	node*				addnode();
-	void				blockimpassable(short unsigned free_state = Blocked - 1);
-	void				clear();
-	void				createwave(short unsigned start);
-	void				createwave(short unsigned start, short unsigned max_cost);
-	unsigned short		getcost(unsigned short index);
-	int					getfree(unsigned short index, int radius, int size);
-	short unsigned		geth(int x, int y) const;
-	short unsigned		getm(int x, int y) const;
-	int					getnodecount() const;
-	static short unsigned getland(short unsigned tile);
-	unsigned short		getlandtile(short unsigned index, short unsigned value) const;
-	short unsigned		getobject(short unsigned index) const;
-	short unsigned		getroof(short unsigned index) const;
-	short unsigned		gettile(short unsigned index) const;
-	bool				isblocked(short unsigned index) const;
-	node*				remove(node* p);
-	node*				removeall(node* p);
-	node*				removeback(node* p);
-	node*				route(short unsigned start, short unsigned(*proc)(short unsigned index), short unsigned maximum_range, short unsigned minimal_reach);
-	void				serialize(bool write_mode);
-	void				setcost(short unsigned index, short unsigned value);
-	void				setgroup(short unsigned index, short unsigned group);
-	void				setgroup(short unsigned index, short unsigned start, short unsigned width, short unsigned height, int count = 0);
-	void				setnone(short unsigned index);
-	void				setland(short unsigned index, short unsigned value);
-	void				setlandx(short unsigned index, short unsigned value);
-	void				setroof(short unsigned index, short unsigned value);
-	void				setscene(short unsigned index, short unsigned value);
-	void				settile(short unsigned index, short unsigned value);
-	void				setwall(short unsigned index, short unsigned value);
-	static short unsigned stepfrom(short unsigned index);
-	static short unsigned stepto(short unsigned index);
-	static short unsigned to(short unsigned index, direction_s d);
-	static short unsigned tot(short unsigned index, direction_s d);
-private:
-	friend archive;
-	unsigned short		floor[width*height];
-	unsigned short		roof[width*height];
-	unsigned short		objects[width*height * 4];
-	unsigned char		flags[width*height * 4];
-	void				updateland();
 };
 namespace draw {
 struct actinfo {

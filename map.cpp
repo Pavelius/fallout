@@ -407,9 +407,11 @@ void map_info::serialize(bool write_mode) {
 }
 
 void map_info::blockimpassable(short unsigned free_state) {
-	for(auto y = 0; y < height; y++) {
-		auto i2 = y * width + width;
-		for(auto i = y*width; i < i2; i++)
+	auto my = height * 2;
+	auto mx = width * 2;
+	for(short unsigned y = 0; y < my; y++) {
+		short unsigned i2 = y * mx + mx;
+		for(short unsigned i = y*mx; i < i2; i++)
 			path_cost[i] = isblocked(i) ? Blocked : free_state;
 	}
 }
@@ -471,29 +473,6 @@ map_info::node* map_info::removeback(node* p) {
 	return start;
 }
 
-// First, make wave and see what cell on map is passable
-void map_info::createwave(short unsigned start) {
-	short unsigned path_push = 0;
-	short unsigned path_pop = 0;
-	path_stack[path_push++] = start;
-	path_cost[start] = 1;
-	while(path_push != path_pop) {
-		auto n = path_stack[path_pop++];
-		auto w = path_cost[n] + 1;
-		if(w >= (Blocked - 1))
-			break;
-		for(auto d : hex_directions) {
-			auto i = to(n, d);
-			if(path_cost[i] == Blocked)
-				continue;
-			if(path_cost[i] > w) {
-				path_cost[i] = w;
-				path_stack[path_push++] = i;
-			}
-		}
-	}
-}
-
 void map_info::createwave(short unsigned start, short unsigned max_cost) {
 	short unsigned path_push = 0;
 	short unsigned path_pop = 0;
@@ -502,13 +481,11 @@ void map_info::createwave(short unsigned start, short unsigned max_cost) {
 	while(path_push != path_pop) {
 		auto n = path_stack[path_pop++];
 		auto w = path_cost[n] + 1;
-		if(w >= (Blocked - 1))
-			break;
-		if(w > max_cost)
+		if(w >= max_cost)
 			continue;
 		for(auto d : hex_directions) {
-			auto i = to(n, d);
-			if(path_cost[i] == Blocked)
+			auto i = tot(n, d);
+			if(i==Blocked || path_cost[i] >= Blocked)
 				continue;
 			if(!path_cost[i] || path_cost[i] > w) {
 				path_cost[i] = w;
@@ -520,7 +497,7 @@ void map_info::createwave(short unsigned start, short unsigned max_cost) {
 
 short unsigned map_info::stepto(short unsigned index) {
 	auto current_index = Blocked;
-	auto current_value = Blocked;
+	auto current_value = Blocked-1;
 	for(auto d : hex_directions) {
 		auto i = to(index, d);
 		if(i >= Blocked - 1)
@@ -582,4 +559,14 @@ bool map_info::isblocked(short unsigned index) const {
 short unsigned creature::getindex() const {
 	auto pt = h2m(*this);
 	return map.geth(pt.x, pt.y);
+}
+
+void actor::moveto(point position, int run) {
+	auto p1 = h2m(*this);
+	auto i1 = map.geth(p1.x, p1.y);
+	auto p2 = h2m(position);
+	auto i2 = map.geth(p2.x, p2.y);
+	map.blockimpassable();
+	map.createwave(i2, Blocked);
+	//path = map.route(i1, map.stepto, 0, 0);
 }
