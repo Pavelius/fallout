@@ -38,7 +38,7 @@ inline point m2w(int x, int y) {
 	return{(short)(x * world_map_tile_width), (short)(y * world_map_tile_height)};
 }
 
-struct adventurer : drawable {
+struct adventurer {
 	point		pos;
 	point		start, target;
 	unsigned	timestart;
@@ -75,15 +75,15 @@ struct adventurer : drawable {
 		return car ? 10 : 2;
 	}
 
-	rect getrect() const override {
+	rect getrect() const {
 		return {pos.x - 4, pos.y - 4, pos.x + 4, pos.y + 4};
 	}
 
-	point getposition() const override {
+	point getposition() const {
 		return pos;
 	}
 
-	void update() override {
+	void update() {
 		unsigned hours = (creature::getdate() - timestart) / 60;
 		int dx = target.x - start.x;
 		int dy = target.y - start.y;
@@ -100,7 +100,7 @@ struct adventurer : drawable {
 		}
 	}
 
-	void painting(point camera) const override {
+	void painting(point camera) const {
 		auto ps = gres(res::INTRFACE);
 		if(!ps)
 			return;

@@ -2,6 +2,17 @@
 
 using namespace draw;
 
+static animation_s animation_sequence[][2] = {{AnimateKilledBlowup, AnimateDeadBlowup},
+{AnimateKilledBurstInChest, AnimateDeadBurstInChest},
+{AnimateKilledBurstInHead, AnimateDeadBurstInHead},
+{AnimateKilledChest, AnimateDeadChest},
+{AnimateKilledElectro, AnimateDeadElectro},
+{AnimateKilledImmolate, AnimateDeadImmolate},
+{AnimateKilledLaser, AnimateDeadLaser},
+{AnimateKilledElectroChest, AnimateDeadElectroChest},
+{AnimateKilledMelt, AnimateDeadMelt},
+{AnimateKilledFired, AnimateDeadFired},
+};
 static animation_s modify_weapon_base[] = {
 	AnimateWeaponStand, AnimateWeaponWalk, AnimatePickup, AnimateUse, AnimateWeaponDodge,
 	AnimateDamaged, AnimateDamagedRear,
@@ -76,11 +87,6 @@ void actor::preview(int x, int y, gender_s gender, const item& armor, const item
 	draw::image(x, y, ps, fr, 0);
 }
 
-rect actor::getrect() const {
-	auto pos = getposition();
-	return{pos.x - 100, pos.y - 100, pos.x + 100, pos.y + 64};
-}
-
 void actor::moveto(point position, int run) {}
 
 char actor::getorientation(point from, point to) {
@@ -112,54 +118,6 @@ int actor::getdistance(const point p1, const point p2) {
 	int dy = p1.y - p2.y;
 	return isqrt(dx*dx + dy * dy);
 }
-
-//bool hittest(point camera, point mouse) const override {
-//	sprite* source = getsprite();
-//	if(!source)
-//		return false;
-//	int cicle = getcicle();
-//	auto pc = source->gcicle(cicle);
-//	if(!pc->count)
-//		return false;
-//	int frame = pc->start + tick;
-//	point pt = getzpos() - camera;
-//	if(action == ActionRun || action == ActionWalk) {
-//		auto pa = draw::getaction(source, cicle / 6);
-//		if(!pa)
-//			return false;
-//		auto pf = source->get(frame);
-//		return draw::hittest(
-//			pt.x - pf.sx / 2 + pa->offset[orientation].x,
-//			pt.y - pf.sy + pa->offset[orientation].y,
-//			source, frame, ImageNoOffset, mouse);
-//	} else
-//		return draw::hittest(pt.x, pt.y, source, frame, 0, mouse);
-//}
-
-//void moveto(short unsigned index, int runmode) {
-//	if(!index || this->index == index)
-//		return;
-//	if(runmode == -1)
-//		runmode = 0;
-//	setorientation(
-//		game::getorientation(
-//			m2h(i2x(this->index), i2y(this->index)),
-//			m2h(i2x(index), i2y(index))));
-//	//setaction(runmode ? ActionRun : ActionWalk);
-//	this->index = index;
-//}
-
-static animation_s animation_sequence[][2] = {{AnimateKilledBlowup, AnimateDeadBlowup},
-{AnimateKilledBurstInChest, AnimateDeadBurstInChest},
-{AnimateKilledBurstInHead, AnimateDeadBurstInHead},
-{AnimateKilledChest, AnimateDeadChest},
-{AnimateKilledElectro, AnimateDeadElectro},
-{AnimateKilledImmolate, AnimateDeadImmolate},
-{AnimateKilledLaser, AnimateDeadLaser},
-{AnimateKilledElectroChest, AnimateDeadElectroChest},
-{AnimateKilledMelt, AnimateDeadMelt},
-{AnimateKilledFired, AnimateDeadFired},
-};
 
 animation_s actor::getnextanim(animation_s id) {
 	for(auto& e : animation_sequence) {
@@ -257,51 +215,26 @@ void actor::update() {
 		moveshift();
 }
 
-void actor::painting(point camera) const {
-	auto ps = getsprite();
-	if(!ps)
+void actor::fill(animation& result) {
+	memset(&result, 0, sizeof(result));
+	result.ps = getsprite();
+	if(!result.ps)
 		return;
 	auto cl = getcicle();
-	auto pc = ps->getcicle(cl);
+	auto pc = result.ps->getcicle(cl);
 	if(!pc->count)
 		return;
-	point pt = getposition() - camera;
-	auto fi = pc->start + frame;
+	result.fi = pc->start + frame;
 	if(action == AnimateRun || action == AnimateWalk) {
-		auto pa = draw::getaction(ps, cl / 6);
+		auto pa = draw::getaction(result.ps, cl / 6);
 		if(!pa)
 			return;
-		auto& pf = ps->get(fi);
-		draw::image(
-			pt.x - pf.sx / 2 + pa->offset[orientation].x,
-			pt.y - pf.sy + pa->offset[orientation].y,
-			ps, fi, ImageNoOffset);
-	} else
-		image(pt.x, pt.y, ps, fi, 0);
+		auto& pf = result.ps->get(result.fi);
+		result.position.x = x - pf.sx / 2 + pa->offset[orientation].x;
+		result.position.y = y - pf.sy + pa->offset[orientation].y;
+		result.flags = ImageNoOffset;
+	} else {
+		result.position = *this;
+		result.flags = 0;
+	}
 }
-
-//void setaction(int action) {
-//	if(action < 0)
-//		action = 0;
-//	if(this->action == action)
-//		return;
-//	if((action == ActionHideWeapon
-//		|| action == ActionPrepareWeapon)
-//		&& wear[Weapon - FirstWear] == 0)
-//		return;
-//	auto ps = getsprite();
-//	if(!ps)
-//		return;
-//	auto pa = draw::getaction(ps, action);
-//	if(pa->speed)
-//		timeout = 1000 / pa->speed;
-//	else
-//		timeout = animation_speed;
-//	this->action = action;
-//	timestart = draw::gettick();
-//	if(isanimationback(action)) {
-//		auto pc = ps->gcicle(getcicle());
-//		tick = pc->count - 1;
-//	} else
-//		tick = 0;
-//}

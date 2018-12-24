@@ -534,27 +534,18 @@ private:
 	int					f;
 	int					action;
 };
-struct drawable {
-	virtual unsigned	getfps() const { return 8; }
-	virtual point		getposition() const = 0;
-	virtual rect		getrect() const = 0;
-	virtual int			getzorder() const { return 0; } // Priority for z-order sortering (lesser was be most visible). If there is two drawable in same position.
-	virtual bool		hittest(point position) const { return false; }
-	virtual bool		isvisible() const { return true; }
-	virtual bool		isvisibleactive() const { return false; } // Drawable visible only when active.
-	virtual void		painting(point position) const = 0; // How to paint drawable.
-	virtual void		update() {}
-};
-struct animable : drawable, point {
+struct animation {
+	point				position;
 	const sprite*		ps;
-	short unsigned		frame;
-	constexpr animable() : point(), ps(), frame() {}
-	constexpr animable(const point pt, const sprite* ps, short unsigned frame) : point(pt), ps(ps), frame(frame) {}
-	explicit operator bool() const { return ps != 0; }
-	rect				getrect() const override;
-	point				getposition() const override { return *this; }
-	bool				hittest(point position) const override;
-	void				painting(point screen) const override;
+	short unsigned		fi;
+	short				zorder;
+	unsigned			flags;
+	void*				param;
+	bool				intersect(const rect& screen) const { return ps->get(fi).getrect(position.x, position.y, 0).intersect(screen); }
+	rect				getrect() const { return ps->get(fi).getrect(position.x, position.y, 0); }
+	void				painting(point camera) const;
+	void				setup(point position, const sprite* ps, short unsigned fi);
+	static void			sort(animation* source, unsigned count);
 };
 struct pregen_info {
 	unsigned char		level;
@@ -576,9 +567,10 @@ struct wearable {
 	item*				find(item_s type);
 	aref<item*>			select(aref<item*> source) const;
 };
-struct actor : drawable, point, wearable {
+struct actor : point, wearable {
 	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0) {}
 	static int			byweapon(animation_s action, int weapon);
+	void				fill(animation& result);
 	animation_s			getaction() const { return action; }
 	static animation_s	getbase(animation_s id);
 	static animation_s	getsubaction(animation_s id);
@@ -590,20 +582,17 @@ struct actor : drawable, point, wearable {
 	static animation_s	getnextanim(animation_s id);
 	unsigned char		getorientation() const { return orientation; }
 	static char			getorientation(point from, point to);
-	point				getposition() const override { return *this; }
+	point				getposition() const { return *this; }
 	static animation_s	getprevanim(animation_s id);
-	rect				getrect() const override;
 	virtual const sprite* getsprite() const = 0;
 	virtual item&		getweapon() const = 0;
-	bool				hittest(point position) const override { return false; }
 	bool				ismoving() const;
 	void				moveto(point position, int run);
-	void				painting(point screen) const override;
 	static void			preview(int x, int y, gender_s gender, const item& armor, const item& weapon, int orientation = -1, animation_s action = AnimateStand, unsigned tick = 0, const rect& clip = {-40, -100, 40, 30});
 	void				setaction(animation_s value, bool backward = false);
 	void				setorientation(unsigned char value) { orientation = value; }
 	void				setposition(point value) { x = value.x; y = value.y; }
-	void				update() override;
+	void				update();
 	void				wait();
 private:
 	animation_s			action;

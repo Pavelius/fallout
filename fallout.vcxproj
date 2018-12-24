@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="ability.cpp" />
     <ClCompile Include="actor.cpp" />
+    <ClCompile Include="animation.cpp" />
     <ClCompile Include="anm_info.cpp" />
     <ClCompile Include="archive.cpp" />
     <ClCompile Include="attack.cpp" />
@@ -159,7 +160,6 @@
     <ClCompile Include="szdup.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="ui_adventure.cpp" />
-    <ClCompile Include="animable.cpp" />
     <ClCompile Include="cicling.cpp" />
     <ClCompile Include="collection.cpp" />
     <ClCompile Include="color.cpp" />

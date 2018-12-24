@@ -5,8 +5,6 @@ using namespace draw;
 static bool			game_running;
 static unsigned		gamestamp;
 static unsigned		timestamp;
-static animable		animables[512];
-static int			animables_count;
 
 runstate::runstate(bool new_value) : value(game_running) {
 	game_running = new_value;
@@ -105,24 +103,6 @@ static void change_weapon_action() {
 	correct_weapon_action();
 }
 
-static int compare_drawable(const void* p1, const void* p2) {
-	auto d1 = *((drawable**)p1);
-	auto d2 = *((drawable**)p2);
-	auto z1 = d1->getposition();
-	auto z2 = d2->getposition();
-	z1.y += d1->getzorder();
-	z2.y += d2->getzorder();
-	if(z1.y < z2.y)
-		return -1;
-	if(z1.y > z2.y)
-		return 1;
-	if(z1.x < z2.x)
-		return -1;
-	if(z1.x > z2.x)
-		return 1;
-	return 0;
-}
-
 static void render_tiles(point screen, point camera) {
 	auto ps = draw::gres(res::TILES);
 	if(!ps)
@@ -173,7 +153,7 @@ static void render_roof(point screen, point camera) {
 
 static dwvariant render_area(point screen, point camera) {
 	const rect rc = {0, 0, 640, 480};
-	adat<drawable*, 512> result;
+	adat<animation, 512> result;
 	rect rcscreen;
 	rcscreen.x1 = camera.x - screen.x;
 	rcscreen.y1 = camera.y - screen.y;
@@ -187,7 +167,6 @@ static dwvariant render_area(point screen, point camera) {
 	auto psw = draw::gres(res::WALLS);
 	auto pss = draw::gres(res::SCENERY);
 	auto a = draw::getstamp() / 120;
-	animables_count = 0;
 	for(auto y = y1; y < y2; y++) {
 		if(y < 0 || y >= map.height)
 			continue;
@@ -197,22 +176,17 @@ static dwvariant render_area(point screen, point camera) {
 			auto tv = map.getobject(map.geth(x, y));
 			if(!tv)
 				continue;
-			auto pa = animables + (animables_count++);
-			static_cast<point&>(*pa) = m2h(x, y);
-			if(tv >= FirstWall && tv <= LastWall) {
-				pa->ps = psw;
-				pa->frame = psw->ganim(wall_data[tv - FirstWall].fid, a);
-			} else {
-				pa->ps = pss;
-				pa->frame = pss->ganim(tv - FirstScenery, a);
-			}
-			result.add(pa);
+			auto pa = result.add();
+			if(tv >= FirstWall && tv <= LastWall)
+				pa->setup(m2h(x, y), psw, psw->ganim(wall_data[tv - FirstWall].fid, a));
+			else
+				pa->setup(m2h(x, y), pss, pss->ganim(tv - FirstScenery, a));
 		}
 	}
-	result.add(&player);
-	qsort(result.data, result.count, sizeof(result.data[0]), compare_drawable);
-	for(auto p : result)
-		p->painting(camera);
+	player.fill(*result.add());
+	animation::sort(result.data, result.count);
+	for(auto& e : result)
+		e.painting(camera);
 	return dwvariant();
 }
 

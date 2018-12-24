@@ -7,9 +7,6 @@
     <ClCompile Include="draw.cpp">
       <Filter>draw</Filter>
     </ClCompile>
-    <ClCompile Include="animable.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="cicling.cpp">
       <Filter>logic</Filter>
     </ClCompile>
@@ -204,6 +201,9 @@
     </ClCompile>
     <ClCompile Include="land.cpp">
       <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="animation.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
