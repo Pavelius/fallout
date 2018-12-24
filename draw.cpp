@@ -526,6 +526,40 @@ static void rle832(unsigned char* p1, int d1, unsigned char* s, int h, const uns
 	}
 }
 
+static bool hittest_rle832(unsigned char* d, unsigned char* s, const unsigned char* d1) {
+	const int cbs = 1;
+	const int cbd = 32 / 8;
+	while(true) {
+		unsigned char c = *s++;
+		if(c == 0)
+			return false;
+		else if(c <= 0x9F) {
+			unsigned char cb;
+			bool shift_source = false;
+			// count
+			if(c <= 0x7F) {
+				cb = c;
+				shift_source = true;
+			} else if(c == 0x80)
+				cb = *s++;
+			else
+				cb = c - 0x80;
+			// visible part
+			auto d2 = d + cb * cbd;
+			if(d1 >= d && d1 <= d2)
+				return true;
+			if(shift_source)
+				s += cb * cbs;
+			d = d2;
+		} else {
+			if(c == 0xA0)
+				d += (*s++)*cbd;
+			else
+				d += (c - 0xA0)*cbd;
+		}
+	}
+}
+
 static void rle832m(unsigned char* p1, int d1, unsigned char* s, int h, const unsigned char* s1, const unsigned char* s2, unsigned char alpha, const color* pallette) {
 	const int cbs = 3;
 	const int cbd = 32 / 8;
@@ -854,7 +888,7 @@ static void cpy32tn(unsigned char* d, int d_scan, unsigned char* s, int s_scan, 
 		color* sb = (color*)s;
 		color* se = sb + width;
 		while(sb < se) {
-			if(sb->a==0xFF) {
+			if(sb->a == 0xFF) {
 				d2++;
 				sb++;
 			} else
@@ -872,8 +906,7 @@ draw::state::state() :
 	linw(draw::linw),
 	canvas(draw::canvas),
 	clip(clipping),
-	palt(draw::palt) {
-}
+	palt(draw::palt) {}
 
 draw::state::~state() {
 	draw::font = this->font;
@@ -1626,6 +1659,7 @@ int draw::hittest(int x, int hit_x, const char* p, int lenght) {
 	return index;
 }
 
+
 int draw::hittest(rect rc, const char* string, unsigned state, point pt) {
 	int w1 = rc.width();
 	int dy = texth();
@@ -1658,7 +1692,58 @@ int draw::hittest(rect rc, const char* string, unsigned state, point pt) {
 	return -1;
 }
 
-void draw::image(int x, int y, const sprite* e, int id, int flags, unsigned char alpha) {
+bool draw::hittest(int x, int y, const sprite* e, int id, unsigned flags, point mouse) {
+	int x2, y2;
+	if(!e)
+		return false;
+	const sprite::frame& f = e->get(id);
+	if(!f.offset)
+		return false;
+	if(flags&ImageMirrorH) {
+		x2 = x;
+		if((flags&ImageNoOffset) == 0)
+			x2 += f.ox;
+		x = x2 - f.sx;
+	} else {
+		if((flags&ImageNoOffset) == 0)
+			x -= f.ox;
+		x2 = x + f.sx;
+	}
+	if(flags&ImageMirrorV) {
+		y2 = y;
+		if((flags&ImageNoOffset) == 0)
+			y2 += f.oy;
+		y = y2 - f.sy;
+	} else {
+		if((flags&ImageNoOffset) == 0)
+			y -= f.oy;
+		y2 = y + f.sy;
+	}
+	if(mouse.y<y || mouse.y>y2 || mouse.x<x || mouse.y>x2)
+		return false;
+	unsigned char* s = (unsigned char*)e + f.offset;
+	switch(f.encode) {
+	case sprite::RAW:
+	case sprite::RAW8:
+	case sprite::ALC:
+		return mouse.x >= x && mouse.x <= x2;
+	default:
+		break;
+	}
+	if((flags&ImageMirrorV) == 0) {
+		switch(f.encode) {
+		case sprite::RLE8: s = skip_v3(s, mouse.y - y); break;
+		case sprite::RLE: s = skip_rle32(s, mouse.y - y); break;
+		default: break;
+		}
+	}
+	y = mouse.y;
+	if(f.encode == sprite::RLE8)
+		return hittest_rle832(ptr(x, y), s, ptr(mouse.x, mouse.y));
+	return false;
+}
+
+void draw::image(int x, int y, const sprite* e, int id, unsigned flags, unsigned char alpha) {
 	const int cbd = 1;
 	int x2, y2;
 	color* pal;
@@ -1814,7 +1899,7 @@ void draw::image(int x, int y, const sprite* e, int id, int flags, unsigned char
 	}
 }
 
-void draw::image(int x, int y, const sprite* e, int id, int flags, unsigned char alpha, color* pal) {
+void draw::image(int x, int y, const sprite* e, int id, unsigned flags, unsigned char alpha, color* pal) {
 	auto pal_push = draw::palt;
 	draw::palt = pal;
 	image(x, y, e, id, flags | ImagePallette, alpha);
@@ -2019,8 +2104,7 @@ rect sprite::frame::getrect(int x, int y, unsigned flags) const {
 
 surface::plugin* surface::plugin::first;
 
-surface::surface() : width(0), height(0), scanline(0), bpp(32), bits(0) {
-}
+surface::surface() : width(0), height(0), scanline(0), bpp(32), bits(0) {}
 
 surface::surface(int width, int height, int bpp) : surface() {
 	resize(width, height, bpp, true);

@@ -320,6 +320,7 @@ enum tokens {
 	Count,
 };
 }
+const unsigned short	Blocked = 0xFFFF;
 enum variant_s : unsigned char {
 	NoVariant,
 	Abilities, Damages, Parameters, Perks, Skills, Wounds,
@@ -691,6 +692,16 @@ private:
 	unsigned			experience;
 	int					render_stats(int x, int y, int width, aref<variant> elements, bool show_maximum_only) const;
 };
+struct dwvariant {
+	enum type_s { None, Creature, Scenery, Wall, Tile};
+	type_s				type;
+	short unsigned		index;
+	struct creature*	creature;
+	constexpr dwvariant() : type(None), index(Blocked), creature(0) {}
+	constexpr dwvariant(short unsigned i) : type(Scenery), index(i), creature(0) {}
+	constexpr dwvariant(short unsigned i, type_s t) : type(t), index(i), creature(0) {}
+	constexpr dwvariant(short unsigned i, struct creature* v) : type(Creature), index(i), creature(v) {}
+};
 struct settlement {
 	const char*			name;
 	point				position;
@@ -700,7 +711,6 @@ struct settlement {
 struct ground_info : item {
 	point				position;
 };
-const unsigned short	Blocked = 0xFFFF;
 struct map_info {
 	struct node {
 		short unsigned	index;

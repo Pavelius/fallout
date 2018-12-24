@@ -171,7 +171,7 @@ static void render_roof(point screen, point camera) {
 	}
 }
 
-static void render_area(point screen, point camera) {
+static dwvariant render_area(point screen, point camera) {
 	const rect rc = {0, 0, 640, 480};
 	adat<drawable*, 512> result;
 	rect rcscreen;
@@ -213,6 +213,7 @@ static void render_area(point screen, point camera) {
 	qsort(result.data, result.count, sizeof(result.data[0]), compare_drawable);
 	for(auto p : result)
 		p->painting(camera);
+	return dwvariant();
 }
 
 static void render_item(int x, int y) {

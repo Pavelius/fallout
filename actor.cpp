@@ -113,39 +113,6 @@ int actor::getdistance(const point p1, const point p2) {
 	return isqrt(dx*dx + dy * dy);
 }
 
-//short unsigned actor::getnext(short unsigned index, int orientation) {
-//	// 0 - Right Up
-//	// 1 - Right
-//	// 2 - Right Down
-//	// 3 - Left Down
-//	// 4 - Left
-//	// 5 - Left 
-//	int nx = i2x(index);
-//	switch(orientation) {
-//	case 0:
-//		if(nx & 1)
-//			return index - 256 + 1;
-//		return index + 1;
-//	case 1:
-//		if(nx & 1)
-//			return index + 1;
-//		return index + 256 + 1;
-//	case 2:
-//		return index + 1 * 256;
-//	case 3:
-//		if(nx & 1)
-//			return index - 1;
-//		return index + 256 - 1;
-//	case 4:
-//		if(nx & 1)
-//			return index - 256 - 1;
-//		return index - 1;
-//	case 5:
-//		return index - 1 * 256;
-//	}
-//	return index;
-//}
-
 //bool hittest(point camera, point mouse) const override {
 //	sprite* source = getsprite();
 //	if(!source)

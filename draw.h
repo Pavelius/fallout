@@ -249,13 +249,14 @@ void					gradv(rect rc, const color c1, const color c2, int skip = 0);
 void					gradh(rect rc, const color c1, const color c2, int skip = 0);
 int						hittest(int x, int test_x, const char* string, int lenght);
 int						hittest(rect rc, const char* string, unsigned state, point mouse);
+bool					hittest(int x, int y, const sprite* e, int id, unsigned flags, point mouse);
 inline bool				ischecked(unsigned flags) { return (flags&Checked) != 0; }
 inline bool				isdisabled(unsigned flags) { return (flags&Disabled) != 0; }
 inline bool				isfocused(unsigned flags) { return (flags&Focused) != 0; }
 bool					ismodal();
 int						isqrt(int num);
-void					image(int x, int y, const sprite* e, int id, int flags, unsigned char alpha = 0xFF);
-void					image(int x, int y, const sprite* e, int id, int flags, unsigned char alpha, color* pal);
+void					image(int x, int y, const sprite* e, int id, unsigned flags, unsigned char alpha = 0xFF);
+void					image(int x, int y, const sprite* e, int id, unsigned flags, unsigned char alpha, color* pal);
 void					initialize();
 char*					key2str(char* result, int key);
 void					line(int x1, int y1, int x2, int y2); // Draw line
