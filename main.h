@@ -611,6 +611,7 @@ struct actor : wearable, point {
 	static animation_s	getnextanim(animation_s id);
 	unsigned char		getorientation() const { return orientation; }
 	static char			getorientation(point from, point to);
+	const map::node*	getpath() const { return path; }
 	point				getposition() const { return *this; }
 	static animation_s	getprevanim(animation_s id);
 	virtual const sprite* getsprite() const = 0;

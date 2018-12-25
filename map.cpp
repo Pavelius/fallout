@@ -15,7 +15,7 @@ const int				sty = tile_height / 3; // 12 - Высота юнита тайла. Каждый тайл имее
 static direction_s		land_directions[] = {Up, Right, Down, Left};
 static direction_s		land_directions_all[] = {Up, Right, Down, Left, LeftDown, LeftUp, RightDown, RightUp};
 static direction_s		land_directions_corners[] = {LeftUp, RightUp, RightDown, LeftDown};
-static direction_s		hex_directions[] = {LeftUp, Up, RightUp, RightDown, Down, LeftDown};
+static direction_s		hex_directions[] = {Left, Right, LeftUp, RightUp, RightDown, LeftDown};
 static direction_s		land_decode[16] = {Center, Left, Down, LeftDown,
 Right, Center, RightDown, RightDown,
 Up, LeftUp, Center, LeftUp,
@@ -242,7 +242,7 @@ short unsigned map::to(short unsigned index, direction_s d) {
 	case RightUp:
 		if(x >= (width * 2 - 1))
 			return Blocked;
-		if((x & 1) != 0)
+		if((x & 1) == 0)
 			return index + 1;
 		if(y == 0)
 			return Blocked;
@@ -435,9 +435,12 @@ void map::blockimpassable(short unsigned free_state) {
 	auto my = height * 2;
 	auto mx = width * 2;
 	for(short unsigned y = 0; y < my; y++) {
-		short unsigned i2 = y * mx + mx;
-		for(short unsigned i = y * mx; i < i2; i++)
+		short unsigned i = y * mx;
+		short unsigned i2 = i + mx;
+		while(i < i2) {
 			path_cost[i] = isblocked(i) ? Blocked : free_state;
+			i++;
+		}
 	}
 }
 
@@ -509,7 +512,7 @@ void map::createwave(short unsigned start, short unsigned max_cost) {
 		if(w >= max_cost)
 			continue;
 		for(auto d : hex_directions) {
-			auto i = tot(n, d);
+			auto i = to(n, d);
 			if(i == Blocked || path_cost[i] >= Blocked)
 				continue;
 			if(!path_cost[i] || path_cost[i] > w) {
@@ -556,10 +559,9 @@ short unsigned map::stepfrom(short unsigned index) {
 map::node* map::route(short unsigned start, short unsigned(*proc)(short unsigned index), short unsigned maximum_range, short unsigned minimal_reach) {
 	node* result = 0;
 	node* p = 0;
-	auto n = proc(start);
 	auto w = 0;
 	minimal_reach += 1; // Base cost is one
-	for(; n != Blocked && path_cost[n] >= 1; n = proc(n)) {
+	for(auto n = proc(start); n != Blocked && path_cost[n] >= 1; n = proc(n)) {
 		if(!p) {
 			result = addnode();
 			p = result;
@@ -578,7 +580,7 @@ map::node* map::route(short unsigned start, short unsigned(*proc)(short unsigned
 }
 
 bool map::isblocked(short unsigned index) {
-	return false;
+	return objects[index]!=0;
 }
 
 short unsigned creature::getindex() const {
@@ -593,5 +595,5 @@ void actor::moveto(point position, int run) {
 	auto i2 = geth(p2.x, p2.y);
 	blockimpassable();
 	createwave(i2, Blocked);
-	//path = map.route(i1, map.stepto, 0, 0);
+	path = route(i1, stepto, 0, 0);
 }

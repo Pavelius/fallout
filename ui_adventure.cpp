@@ -160,10 +160,10 @@ static void render_hexagon(point screen, point camera) {
 	x1 *= 2; y1 *= 2; x2 *= 2; y2 *= 2;
 	auto sy = texth();
 	for(auto y = y1; y < y2; y++) {
-		if(y < 0 || y >= map::height*2)
+		if(y < 0 || y >= map::height * 2)
 			continue;
 		for(int x = x2; x >= x1; x--) {
-			if(x < 0 || x >= map::width*2)
+			if(x < 0 || x >= map::width * 2)
 				continue;
 			auto pt = m2h(x, y) + screen - camera;
 			hexagon(pt.x, pt.y);
@@ -174,25 +174,34 @@ static void render_hexagon(point screen, point camera) {
 }
 
 static void render_cost(point screen, point camera) {
-	point pc = screen - camera;
-	auto pm = s2m(camera);
-	int x1 = pm.x - 8; int x2 = x1 + 8 + 10;
-	int y1 = pm.y; int y2 = y1 + 18;
-	x1 *= 2; y1 *= 2; x2 *= 2; y2 *= 2;
+	auto pm = h2m(camera);
+	auto x1 = pm.x - 16; auto x2 = x1 + 16 + 20;
+	auto y1 = pm.y; auto y2 = y1 + 36;
 	auto sy = texth();
 	for(auto y = y1; y < y2; y++) {
-		if(y < 0 || y >= map::height)
+		if(y < 0 || y >= map::height * 2)
 			continue;
 		for(int x = x2; x >= x1; x--) {
-			if(x < 0 || x >= map::width)
+			if(x < 0 || x >= map::width * 2)
 				continue;
 			auto a = map::getcost(map::geth(x, y));
 			if(!a || a >= Blocked - 1)
 				continue;
 			auto pt = m2h(x, y) + screen - camera;
 			char temp[32]; szprint(temp, zendof(temp), "%1i", a);
-			text(pt.x - textw(temp)/2, pt.y - sy/3, temp);
+			text(pt.x - textw(temp) / 2, pt.y - sy / 3, temp);
 		}
+	}
+}
+
+static void render_route(point screen, point camera, point p1, const node* p) {
+	p1 = p1 + screen - camera;
+	const auto s = width * 2;
+	while(p) {
+		point p2 = m2h(p->index%s, p->index / s) + screen - camera;
+		line(p1, p2, colors::yellow);
+		p1 = p2;
+		p = p->next;
 	}
 }
 
@@ -204,19 +213,17 @@ static dwvariant render_area(point screen, point camera) {
 	rcscreen.y1 = camera.y - screen.y;
 	rcscreen.x2 = rcscreen.x1 + 640;
 	rcscreen.y2 = rcscreen.y1 + 480;
-	point pc = screen - camera;
-	auto pm = s2m(camera);
-	int x1 = pm.x - 8; int x2 = x1 + 8 + 10;
-	int y1 = pm.y; int y2 = y1 + 18;
-	x1 *= 2; y1 *= 2; x2 *= 2; y2 *= 2;
+	auto pm = h2m(camera);
+	int x1 = pm.x - 16; int x2 = x1 + 36;
+	int y1 = pm.y; int y2 = y1 + 36;
 	auto psw = draw::gres(res::WALLS);
 	auto pss = draw::gres(res::SCENERY);
 	auto a = draw::getstamp() / 120;
 	for(auto y = y1; y < y2; y++) {
-		if(y < 0 || y >= map::height)
+		if(y < 0 || y >= map::height * 2)
 			continue;
-		for(int x = x2; x >= x1; x--) {
-			if(x < 0 || x >= map::width)
+		for(int x = x1; x < x2; x++) {
+			if(x < 0 || x >= map::width * 2)
 				continue;
 			auto tv = getobject(geth(x, y));
 			if(!tv)
@@ -348,7 +355,8 @@ static void render_screen(point& hilite_hex) {
 	auto point_hex = m2h(hilite_hex.x, hilite_hex.y) - camera;
 	render_tiles(screen, camera);
 	draw::hexagon(point_hex.x, point_hex.y);
-	render_cost(screen, camera);
+	//render_cost(screen, camera);
+	render_route(screen, camera, player, player.getpath());
 	//render_hexagon(screen, camera);
 	render_area(screen, camera);
 	render_roof(screen, camera);
