@@ -1,10 +1,15 @@
 #include "archive.h"
 #include "main.h"
 
+using namespace map;
+
+static unsigned short	floor[width*height];
+static unsigned short	roof[width*height];
+static unsigned short	objects[width*height * 4];
+static unsigned char	flags[width*height * 4];
 static unsigned short	path_stack[256 * 256];
 static unsigned short	path_cost[256 * 256];
-static map_info::node	path_nodes[1024 * 8];
-map_info				map;
+static map::node		path_nodes[1024 * 8];
 const int				stx = tile_width / 5; // 16 - Ширина юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 const int				sty = tile_height / 3; // 12 - Высота юнита тайла. Каждый тайл имеет размер в 5х3 юнита.
 static direction_s		land_directions[] = {Up, Right, Down, Left};
@@ -129,67 +134,67 @@ point h2m(point pt) {
 	return{(short)x, (short)y};
 }
 
-short unsigned map_info::getm(int x, int y) const {
+short unsigned map::getm(int x, int y) {
 	if(((unsigned)x) >= width || ((unsigned)y) >= height)
 		return Blocked;
 	return y * width + x;
 }
 
-short unsigned map_info::geth(int x, int y) const {
+short unsigned map::geth(int x, int y) {
 	if(((unsigned)x) >= (width * 2) || ((unsigned)y) >= (height * 2))
 		return Blocked;
 	return y * width * 2 + x;
 }
 
-short unsigned map_info::gettile(short unsigned index) const {
+short unsigned map::gettile(short unsigned index) {
 	if(index == Blocked)
 		return 0;
 	return floor[index];
 }
 
-short unsigned map_info::getroof(short unsigned index) const {
+short unsigned map::getroof(short unsigned index) {
 	if(index == Blocked)
 		return 0;
 	return roof[index];
 }
 
-short unsigned map_info::getobject(short unsigned index) const {
+short unsigned map::getobject(short unsigned index) {
 	if(index == Blocked)
 		return 0;
 	return objects[index];
 }
 
-void map_info::setscene(short unsigned index, short unsigned value) {
+void map::setscene(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
 	objects[index] = value + FirstScenery;
 }
 
-void map_info::settile(short unsigned index, short unsigned value) {
+void map::settile(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
 	floor[index] = value;
 }
 
-void map_info::setroof(short unsigned index, short unsigned value) {
+void map::setroof(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
 	roof[index] = value;
 }
 
-void map_info::setnone(short unsigned index) {
+void map::setnone(short unsigned index) {
 	if(index == Blocked)
 		return;
 	objects[index] = 0;
 }
 
-void map_info::setwall(short unsigned index, short unsigned value) {
+void map::setwall(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
 	objects[index] = value + FirstWall;
 }
 
-void map_info::clear() {
+void map::clear() {
 	memset(floor, 0, sizeof(floor));
 	memset(roof, 0, sizeof(roof));
 	for(int y = 0; y <= height; y++) {
@@ -199,26 +204,50 @@ void map_info::clear() {
 	memset(objects, 0, sizeof(objects));
 }
 
-short unsigned map_info::to(short unsigned index, direction_s d) {
+short unsigned map::to(short unsigned index, direction_s d) {
 	if(index == Blocked)
 		return index;
-	auto x = index % (width * 2);
-	auto y = index / (width * 2);
-	const auto s = (width * 2);
+	const auto s = width * 2;
+	auto x = index % s;
+	auto y = index / s;
 	switch(d) {
 	case Left:
 		if(x == 0)
 			return Blocked;
-		return index - 1;
-	case Right:
-		if(x >= (width * 2 - 1))
+		if((x & 1) == 0)
+			return index - 1;
+		if(y == 0)
 			return Blocked;
-		return index + 1;
-	case Up:
+		return index - 1 - s;
+	case LeftUp:
 		if(y == 0)
 			return Blocked;
 		return index - s;
-	case Down:
+	case LeftDown:
+		if(x == 0)
+			return Blocked;
+		if((x & 1) != 0)
+			return index - 1;
+		if(y >= (height * 2 - 1))
+			return Blocked;
+		return index - 1 + s;
+	case Right:
+		if(x >= (width * 2 - 1))
+			return Blocked;
+		if(x & 1)
+			return index + 1;
+		if(y >= (height * 2 - 1))
+			return Blocked;
+		return index + 1 + s;
+	case RightUp:
+		if(x >= (width * 2 - 1))
+			return Blocked;
+		if((x & 1) != 0)
+			return index + 1;
+		if(y == 0)
+			return Blocked;
+		return index + 1 - s;
+	case RightDown:
 		if(y >= (height * 2 - 1))
 			return Blocked;
 		return index + s;
@@ -227,7 +256,7 @@ short unsigned map_info::to(short unsigned index, direction_s d) {
 	}
 }
 
-short unsigned map_info::tot(short unsigned index, direction_s d) {
+short unsigned map::tot(short unsigned index, direction_s d) {
 	if(index == Blocked)
 		return index;
 	auto x = index % width;
@@ -238,6 +267,10 @@ short unsigned map_info::tot(short unsigned index, direction_s d) {
 		if(x == 0)
 			return Blocked;
 		return index - 1;
+	case Right:
+		if(x >= (width - 1))
+			return Blocked;
+		return index + 1;
 	case LeftUp:
 		if(x == 0)
 			return Blocked;
@@ -250,10 +283,6 @@ short unsigned map_info::tot(short unsigned index, direction_s d) {
 		if(y >= (height - 1))
 			return Blocked;
 		return index - 1 + s;
-	case Right:
-		if(x >= (width - 1))
-			return Blocked;
-		return index + 1;
 	case RightUp:
 		if(x >= (width - 1))
 			return Blocked;
@@ -279,7 +308,7 @@ short unsigned map_info::tot(short unsigned index, direction_s d) {
 	}
 }
 
-short unsigned map_info::getland(short unsigned tile) {
+short unsigned map::getland(short unsigned tile) {
 	if(!tile)
 		return 0;
 	for(short unsigned i = 1; i < sizeof(land_data) / sizeof(land_data[0]); i++) {
@@ -299,7 +328,7 @@ short unsigned map_info::getland(short unsigned tile) {
 	return 0;
 }
 
-unsigned short map_info::getlandtile(short unsigned index, short unsigned value) const {
+unsigned short map::getlandtile(short unsigned index, short unsigned value) {
 	if(!value)
 		return 0;
 	if(index == Blocked)
@@ -326,7 +355,7 @@ unsigned short map_info::getlandtile(short unsigned index, short unsigned value)
 	return land_data[value].tiles[result];
 }
 
-void map_info::updateland() {
+static void updateland() {
 	for(auto index = 0; index < width*height; index++) {
 		auto value = getland(floor[index]);
 		if(value)
@@ -334,7 +363,7 @@ void map_info::updateland() {
 	}
 }
 
-void map_info::setgroup(short unsigned index, short unsigned start, short unsigned width, short unsigned height, int count) {
+void map::setgroup(short unsigned index, short unsigned start, short unsigned width, short unsigned height, int count) {
 	auto pb = 0;
 	if(!count)
 		count = width * height;
@@ -356,27 +385,27 @@ void map_info::setgroup(short unsigned index, short unsigned start, short unsign
 	}
 }
 
-void map_info::setgroup(short unsigned index, short unsigned group) {
+void map::setgroup(short unsigned index, short unsigned group) {
 	setgroup(index, group_data[group].start,
 		group_data[group].size.x, group_data[group].size.y, group_data[group].count);
 	auto m = group_data[group].start + group_data[group].size.x * group_data[group].size.y;
-	index += group_data[group].size.y * map.width;
+	index += group_data[group].size.y * width;
 	for(auto& e : group_data[group].additional) {
 		index += e.shift;
 		setgroup(index, m, e.x, e.y, 0);
 		m += e.x * e.y;
-		index += e.y * map.width;
+		index += e.y * width;
 	}
 }
 
-void map_info::setland(short unsigned index, short unsigned value) {
+void map::setland(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
 	floor[index] = getlandtile(index, value);
 	updateland();
 }
 
-void map_info::setlandx(short unsigned index, short unsigned value) {
+void map::setlandx(short unsigned index, short unsigned value) {
 	if(index == Blocked)
 		return;
 	if(land_data[value].tiles[0]) {
@@ -391,32 +420,28 @@ void map_info::setlandx(short unsigned index, short unsigned value) {
 		floor[index] = land_data[value].random();
 }
 
-template<> void archive::set<map_info>(map_info& e) {
-	set(e.floor, sizeof(e.floor));
-	set(e.roof, sizeof(e.roof));
-	set(e.objects, sizeof(e.objects));
-}
-
-void map_info::serialize(bool write_mode) {
+void map::serialize(bool write_mode) {
 	char temp[32]; szprint(temp, zendof(temp), "temp/AR%1.5i.map", 200);
 	io::file file(temp, write_mode ? StreamWrite : StreamRead);
 	if(!file)
 		return;
 	archive a(file, write_mode);
-	a.set(*this);
+	a.set(floor, sizeof(floor));
+	a.set(roof, sizeof(roof));
+	a.set(objects, sizeof(objects));
 }
 
-void map_info::blockimpassable(short unsigned free_state) {
+void map::blockimpassable(short unsigned free_state) {
 	auto my = height * 2;
 	auto mx = width * 2;
 	for(short unsigned y = 0; y < my; y++) {
 		short unsigned i2 = y * mx + mx;
-		for(short unsigned i = y*mx; i < i2; i++)
+		for(short unsigned i = y * mx; i < i2; i++)
 			path_cost[i] = isblocked(i) ? Blocked : free_state;
 	}
 }
 
-map_info::node* map_info::addnode() {
+map::node* map::addnode() {
 	for(auto& e : path_nodes) {
 		if(!e.index) {
 			e.next = 0;
@@ -428,7 +453,7 @@ map_info::node* map_info::addnode() {
 	return path_nodes;
 }
 
-int map_info::getnodecount() const {
+int map::getnodecount() {
 	int result = 0;
 	for(auto& e : path_nodes) {
 		if(e.index)
@@ -437,15 +462,15 @@ int map_info::getnodecount() const {
 	return result;
 }
 
-unsigned short map_info::getcost(unsigned short index) {
+unsigned short map::getcost(unsigned short index) {
 	return path_cost[index];
 }
 
-void map_info::setcost(short unsigned index, short unsigned value) {
+void map::setcost(short unsigned index, short unsigned value) {
 	path_cost[index] = value;
 }
 
-map_info::node* map_info::removeall(map_info::node* p) {
+map::node* map::removeall(map::node* p) {
 	while(p) {
 		p->index = 0;
 		p = p->next;
@@ -453,14 +478,14 @@ map_info::node* map_info::removeall(map_info::node* p) {
 	return 0;
 }
 
-map_info::node* map_info::remove(map_info::node* p) {
+map::node* map::remove(map::node* p) {
 	auto p1 = p->next;
 	p->index = 0;
 	p->next = 0;
 	return p1;
 }
 
-map_info::node* map_info::removeback(node* p) {
+map::node* map::removeback(node* p) {
 	auto start = p;
 	node* result = 0;
 	while(p->next) {
@@ -473,7 +498,7 @@ map_info::node* map_info::removeback(node* p) {
 	return start;
 }
 
-void map_info::createwave(short unsigned start, short unsigned max_cost) {
+void map::createwave(short unsigned start, short unsigned max_cost) {
 	short unsigned path_push = 0;
 	short unsigned path_pop = 0;
 	path_stack[path_push++] = start;
@@ -485,7 +510,7 @@ void map_info::createwave(short unsigned start, short unsigned max_cost) {
 			continue;
 		for(auto d : hex_directions) {
 			auto i = tot(n, d);
-			if(i==Blocked || path_cost[i] >= Blocked)
+			if(i == Blocked || path_cost[i] >= Blocked)
 				continue;
 			if(!path_cost[i] || path_cost[i] > w) {
 				path_cost[i] = w;
@@ -495,9 +520,9 @@ void map_info::createwave(short unsigned start, short unsigned max_cost) {
 	}
 }
 
-short unsigned map_info::stepto(short unsigned index) {
+short unsigned map::stepto(short unsigned index) {
 	auto current_index = Blocked;
-	auto current_value = Blocked-1;
+	auto current_value = Blocked - 1;
 	for(auto d : hex_directions) {
 		auto i = to(index, d);
 		if(i >= Blocked - 1)
@@ -510,7 +535,7 @@ short unsigned map_info::stepto(short unsigned index) {
 	return current_index;
 }
 
-short unsigned map_info::stepfrom(short unsigned index) {
+short unsigned map::stepfrom(short unsigned index) {
 	auto current_index = Blocked;
 	auto current_value = 0;
 	for(auto d : hex_directions) {
@@ -528,7 +553,7 @@ short unsigned map_info::stepfrom(short unsigned index) {
 // Calculate path step by step to any cell on map analizing create_wave result.
 // Go form goal to start and get lowest weight.
 // When function return 'path_stack' has step by step path and 'path_push' is top of this path.
-map_info::node* map_info::route(short unsigned start, short unsigned(*proc)(short unsigned index), short unsigned maximum_range, short unsigned minimal_reach) {
+map::node* map::route(short unsigned start, short unsigned(*proc)(short unsigned index), short unsigned maximum_range, short unsigned minimal_reach) {
 	node* result = 0;
 	node* p = 0;
 	auto n = proc(start);
@@ -552,21 +577,21 @@ map_info::node* map_info::route(short unsigned start, short unsigned(*proc)(shor
 	return result;
 }
 
-bool map_info::isblocked(short unsigned index) const {
+bool map::isblocked(short unsigned index) {
 	return false;
 }
 
 short unsigned creature::getindex() const {
 	auto pt = h2m(*this);
-	return map.geth(pt.x, pt.y);
+	return geth(pt.x, pt.y);
 }
 
 void actor::moveto(point position, int run) {
 	auto p1 = h2m(*this);
-	auto i1 = map.geth(p1.x, p1.y);
+	auto i1 = geth(p1.x, p1.y);
 	auto p2 = h2m(position);
-	auto i2 = map.geth(p2.x, p2.y);
-	map.blockimpassable();
-	map.createwave(i2, Blocked);
+	auto i2 = geth(p2.x, p2.y);
+	blockimpassable();
+	createwave(i2, Blocked);
 	//path = map.route(i1, map.stepto, 0, 0);
 }

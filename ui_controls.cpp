@@ -129,18 +129,13 @@ void draw::label(int x, int y, int id, const char* temp, bool checked, bool disa
 	draw::text(x, y, temp);
 }
 
-void draw::hexagon(short unsigned index, point camera) {
-	if(index == 0xFFFF)
-		return;
+void draw::hexagon(int x, int y) {
 	auto ps = gres(res::INTRFACE);
 	if(!ps)
 		return;
-	short x = index % (map_info::width * 2);
-	short y = index / (map_info::width * 2);
-	auto pt = m2h(x, y) - camera;
 	auto fr = ps->ganim(1, 0);
 	auto pf = ps->get(fr);
-	image(pt.x - pf.sx / 2, pt.y - pf.sy / 2, ps, fr, ImageNoOffset);
+	image(x - pf.sx / 2, y - pf.sy / 2, ps, fr, ImageNoOffset);
 }
 
 static void render_number(int x, int y, int digits, int value, const sprite* ps, int cicle, int symbol_offset, int symbol_width, int symbol_height) {

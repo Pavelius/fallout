@@ -1,6 +1,7 @@
 #include "main.h"
 
 using namespace draw;
+using namespace map;
 
 static bool			game_running;
 static unsigned		gamestamp;
@@ -112,12 +113,12 @@ static void render_tiles(point screen, point camera) {
 	int x1 = pm.x - 8; int x2 = x1 + 8 + 11;
 	int y1 = pm.y; int y2 = y1 + 18;
 	for(auto y = y1; y < y2; y++) {
-		if(y < 0 || y >= map.height)
+		if(y < 0 || y >= map::height)
 			continue;
 		for(int x = x1; x < x2; x++) {
-			if(x < 0 || x >= map.width)
+			if(x < 0 || x >= map::width)
 				continue;
-			auto tv = map.gettile(map.getm(x, y));
+			auto tv = map::gettile(map::getm(x, y));
 			if(tv > 1) {
 				point pt = m2s(x, y);
 				point pz = pt + screen - camera;
@@ -136,17 +137,38 @@ static void render_roof(point screen, point camera) {
 	int x1 = pm.x - 8; int x2 = x1 + 8 + 11;
 	int y1 = pm.y; int y2 = y1 + 18;
 	for(auto y = y1; y < y2; y++) {
-		if(y < 0 || y >= map.height)
+		if(y < 0 || y >= map::height)
 			continue;
 		for(int x = x1; x < x2; x++) {
-			if(x < 0 || x >= map.width)
+			if(x < 0 || x >= map::width)
 				continue;
-			auto tv = map.getroof(map.getm(x, y));
+			auto tv = getroof(getm(x, y));
 			if(tv > 1) {
 				point pt = m2s(x, y);
 				point pz = pt + screen - camera;
 				draw::image(pz.x, pz.y + tile_height / 2 - 96, ps, ps->ganim(tv, a), 0);
 			}
+		}
+	}
+}
+
+static void render_hexagon(point screen, point camera) {
+	point pc = screen - camera;
+	auto pm = s2m(camera);
+	int x1 = pm.x - 8; int x2 = x1 + 8 + 10;
+	int y1 = pm.y; int y2 = y1 + 18;
+	x1 *= 2; y1 *= 2; x2 *= 2; y2 *= 2;
+	auto sy = texth();
+	for(auto y = y1; y < y2; y++) {
+		if(y < 0 || y >= map::height*2)
+			continue;
+		for(int x = x2; x >= x1; x--) {
+			if(x < 0 || x >= map::width*2)
+				continue;
+			auto pt = m2h(x, y) + screen - camera;
+			hexagon(pt.x, pt.y);
+			char temp[32]; szprint(temp, zendof(temp), "%1i,%2i", x, y);
+			text(pt.x - textw(temp) / 2, pt.y - sy / 3, temp);
 		}
 	}
 }
@@ -159,12 +181,12 @@ static void render_cost(point screen, point camera) {
 	x1 *= 2; y1 *= 2; x2 *= 2; y2 *= 2;
 	auto sy = texth();
 	for(auto y = y1; y < y2; y++) {
-		if(y < 0 || y >= map.height)
+		if(y < 0 || y >= map::height)
 			continue;
 		for(int x = x2; x >= x1; x--) {
-			if(x < 0 || x >= map.width)
+			if(x < 0 || x >= map::width)
 				continue;
-			auto a = map.getcost(map.geth(x, y));
+			auto a = map::getcost(map::geth(x, y));
 			if(!a || a >= Blocked - 1)
 				continue;
 			auto pt = m2h(x, y) + screen - camera;
@@ -191,19 +213,20 @@ static dwvariant render_area(point screen, point camera) {
 	auto pss = draw::gres(res::SCENERY);
 	auto a = draw::getstamp() / 120;
 	for(auto y = y1; y < y2; y++) {
-		if(y < 0 || y >= map.height)
+		if(y < 0 || y >= map::height)
 			continue;
 		for(int x = x2; x >= x1; x--) {
-			if(x < 0 || x >= map.width)
+			if(x < 0 || x >= map::width)
 				continue;
-			auto tv = map.getobject(map.geth(x, y));
+			auto tv = getobject(geth(x, y));
 			if(!tv)
 				continue;
+			auto pt = m2h(x, y);
 			auto pa = result.add();
 			if(tv >= FirstWall && tv <= LastWall)
-				pa->setup(m2h(x, y), psw, psw->ganim(wall_data[tv - FirstWall].fid, a));
+				pa->setup(pt, psw, psw->ganim(wall_data[tv - FirstWall].fid, a));
 			else
-				pa->setup(m2h(x, y), pss, pss->ganim(tv - FirstScenery, a));
+				pa->setup(pt, pss, pss->ganim(tv - FirstScenery, a));
 		}
 	}
 	player.getanimation(*result.add());
@@ -322,9 +345,11 @@ static void render_screen(point& hilite_hex) {
 	auto mapspot = s2m(hotspot);
 	point screen = {0, 0};
 	hilite_hex = h2m(hotspot);
+	auto point_hex = m2h(hilite_hex.x, hilite_hex.y) - camera;
 	render_tiles(screen, camera);
-	draw::hexagon(hilite_hex.y*(map_info::width * 2) + hilite_hex.x, camera);
+	draw::hexagon(point_hex.x, point_hex.y);
 	render_cost(screen, camera);
+	//render_hexagon(screen, camera);
 	render_area(screen, camera);
 	render_roof(screen, camera);
 	render_actions();
@@ -333,7 +358,7 @@ static void render_screen(point& hilite_hex) {
 	szprint(temp, zendof(temp), "mouse(%1i, %2i), hex(%3i, %4i), tile %5i",
 		hotspot.x, hotspot.y,
 		hilite_hex.x, hilite_hex.y,
-		map.gettile(map.getm(hilite_hex.x / 2, hilite_hex.y / 2)));
+		gettile(getm(hilite_hex.x / 2, hilite_hex.y / 2)));
 	draw::text(10, 10, temp);
 #endif // _DEBUG
 }
@@ -440,17 +465,35 @@ static void choose_tile_ex(short unsigned& result, const sprite* ps, const int c
 		result = id;
 }
 
+void actor::wait() {
+	cursorset cursor;
+	point current_hex;
+	cursor.set(res::INTRFACE, 295);
+	auto current_action = action;
+	auto stop_frame = frame_maximum;
+	while(ismodal()) {
+		if(stop_frame == frame && next_stamp >= gametick())
+			break;
+		update_logic();
+		if(current_action != action)
+			break;
+		render_screen(current_hex);
+		domodal();
+	}
+}
+
 void creature::adventure() {
 	cursorset cursor;
 	unsigned short current_scenery = 4, current_wall = 4, current_tile = 1, current_land = 2, current_group = 0;
 	point group_size = {3, 2};
-	camera = {400, -100};
+	camera = {-100, -160};
 	point current_hex;
 	while(ismodal() && player.isalive()) {
+		rectf({0, 0, 640, 480}, colors::gray);
 		render_screen(current_hex);
 		update_logic();
 		domodal();
-		auto hex_index = map.geth(current_hex.x, current_hex.y);
+		auto hex_index = geth(current_hex.x, current_hex.y);
 		switch(hot.key) {
 		case KeyLeft: camera.x -= tile_width / 2; break;
 		case KeyRight: camera.x += tile_width / 2; break;
@@ -469,41 +512,41 @@ void creature::adventure() {
 				get_tile_name, get_tile_frame);
 			break;
 		case Alpha + 'T':
-			map.settile(map.getm(current_hex.x / 2, current_hex.y / 2), tile_data[current_tile].fid);
+			settile(getm(current_hex.x / 2, current_hex.y / 2), tile_data[current_tile].fid);
 			break;
 		case Alpha + 'R':
-			map.setroof(map.getm(current_hex.x / 2, current_hex.y / 2), tile_data[current_tile].fid);
+			setroof(getm(current_hex.x / 2, current_hex.y / 2), tile_data[current_tile].fid);
 			break;
 		case Ctrl + Alpha + 'G':
 			choose_tile_ex(current_group, gres(res::TILES), 4, 0, get_group_last(),
 				get_group_name, get_group_frame);
 			break;
 		case Alpha + 'G':
-			map.setgroup(map.getm(current_hex.x / 2, current_hex.y / 2), current_group);
+			setgroup(getm(current_hex.x / 2, current_hex.y / 2), current_group);
 			break;
 		case Ctrl + Alpha + 'Q':
 			choose_tile_ex(current_land, gres(res::TILES), 4, 1, get_land_last(),
 				get_land_name, get_land_frame);
 			break;
 		case Alpha + 'Q':
-			map.setlandx(map.getm(current_hex.x / 2, current_hex.y / 2), current_land);
+			setlandx(getm(current_hex.x / 2, current_hex.y / 2), current_land);
 			break;
 		case Ctrl + Alpha + 'W':
 			choose_tile_ex(current_wall, gres(res::WALLS), 3, FirstWall, LastWall,
 				get_wall_name, get_wall_frame);
 			break;
 		case Alpha + 'W':
-			map.setwall(hex_index, current_wall);
+			setwall(hex_index, current_wall);
 			break;
 		case Ctrl + Alpha + 'A':
 			choose_tile_ex(current_scenery, gres(res::SCENERY), 3, 1, LastScenery - FirstScenery + 1,
 				get_scenery_name, get_scenery_frame);
 			break;
 		case Alpha + 'A':
-			map.setscene(hex_index, current_scenery);
+			setscene(hex_index, current_scenery);
 			break;
 		case Alpha + 'E':
-			map.setnone(map.geth(current_hex.x, current_hex.y));
+			setnone(geth(current_hex.x, current_hex.y));
 			break;
 		case Alpha + 'D':
 			player.setaction(AnimateKnockOutBack);
@@ -528,10 +571,10 @@ void creature::adventure() {
 			player.wait();
 			break;
 		case Ctrl + Alpha + 'S':
-			map.serialize(true);
+			map::serialize(true);
 			break;
 		case Ctrl + Alpha + 'L':
-			map.serialize(false);
+			map::serialize(false);
 			break;
 		case Alpha + 'P':
 			if(player.getaction() == AnimateWalk)
@@ -543,22 +586,5 @@ void creature::adventure() {
 			player.moveto(hot.mouse + camera, false);
 			break;
 		}
-	}
-}
-
-void actor::wait() {
-	cursorset cursor;
-	point current_hex;
-	cursor.set(res::INTRFACE, 295);
-	auto current_action = action;
-	auto stop_frame = frame_maximum;
-	while(ismodal()) {
-		if(stop_frame == frame && next_stamp >= gametick())
-			break;
-		update_logic();
-		if(current_action != action)
-			break;
-		render_screen(current_hex);
-		domodal();
 	}
 }

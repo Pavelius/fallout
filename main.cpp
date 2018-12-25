@@ -77,7 +77,11 @@ static void test_tile() {
 }
 
 static void test_adventure() {
-	map.clear();
+	map::clear();
+	for(int y = 0; y < map::height; y++) {
+		for(int x = 0; x < map::width; x++)
+			map::settile(map::getm(x, y), 132);
+	}
 	player.create("narg");
 	player.add(LeatherArmor);
 	player.add(CombatArmor);
@@ -87,13 +91,11 @@ static void test_adventure() {
 	player.add(Knife);
 	player.add(Sledgehammer);
 	player.add(LaserRifle);
-	player.setposition({600, 100});
+	player.setposition(m2h(6, 6));
 	player.setorientation(2);
 	player.setaction(AnimateStand);
 	player.adventure();
 }
-
-void test_frame_animate();
 
 static void mainmenu() {
 	while(ismodal()) {

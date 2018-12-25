@@ -554,28 +554,28 @@ struct wearable {
 	item*				find(item_s type);
 	aref<item*>			select(aref<item*> source) const;
 };
-struct map_info {
+namespace map {
 	struct node {
 		short unsigned	index;
 		node*			next;
 	};
-	static const unsigned height = 100;
-	static const unsigned width = 100;
+	const unsigned height = 8;
+	const unsigned width = 8;
 	node*				addnode();
 	void				blockimpassable(short unsigned free_state = Blocked - 1);
 	void				clear();
 	void				createwave(short unsigned start, short unsigned max_cost = Blocked - 2);
 	unsigned short		getcost(unsigned short index);
 	int					getfree(unsigned short index, int radius, int size);
-	short unsigned		geth(int x, int y) const;
-	short unsigned		getm(int x, int y) const;
-	int					getnodecount() const;
+	short unsigned		geth(int x, int y);
+	short unsigned		getm(int x, int y);
+	int					getnodecount();
 	static short unsigned getland(short unsigned tile);
-	unsigned short		getlandtile(short unsigned index, short unsigned value) const;
-	short unsigned		getobject(short unsigned index) const;
-	short unsigned		getroof(short unsigned index) const;
-	short unsigned		gettile(short unsigned index) const;
-	bool				isblocked(short unsigned index) const;
+	unsigned short		getlandtile(short unsigned index, short unsigned value);
+	short unsigned		getobject(short unsigned index);
+	short unsigned		getroof(short unsigned index);
+	short unsigned		gettile(short unsigned index);
+	bool				isblocked(short unsigned index);
 	node*				remove(node* p);
 	node*				removeall(node* p);
 	node*				removeback(node* p);
@@ -595,13 +595,6 @@ struct map_info {
 	static short unsigned stepto(short unsigned index);
 	static short unsigned to(short unsigned index, direction_s d);
 	static short unsigned tot(short unsigned index, direction_s d);
-private:
-	friend archive;
-	unsigned short		floor[width*height];
-	unsigned short		roof[width*height];
-	unsigned short		objects[width*height * 4];
-	unsigned char		flags[width*height * 4];
-	void				updateland();
 };
 struct actor : wearable, point {
 	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0), path(0) {}
@@ -634,7 +627,7 @@ private:
 	animation_s			action;
 	unsigned char		orientation;
 	short unsigned		frame, frame_maximum;
-	map_info::node*		path;
+	map::node*			path;
 	unsigned			next_stamp;
 	void				moveshift();
 };
@@ -651,6 +644,7 @@ struct creature : actor, weaponable {
 	void				add(const item& it);
 	void				act(const char* format, ...) {}
 	static void			adventure();
+	static void			testadventure();
 	bool				equip(const item& it);
 	void				apply(const pregen_info* pg);
 	void				clear();
@@ -789,7 +783,7 @@ unsigned				getstamp();
 unsigned				gettick(unsigned start);
 sprite*					gres(res::tokens id);
 const char*				getresname(res::tokens id);
-void					hexagon(short unsigned index, point screen);
+void					hexagon(int x, int y);
 void					image(int x, int y, res::tokens token, int id, int flags = 0, unsigned char alpha = 0xFF);
 void					initialize();
 bool					isnext(callback_proc proc);
@@ -827,7 +821,6 @@ extern adat<creature, 128> creature_data;
 extern resist_info		damage_data[];
 extern gender_info		gender_data[];
 extern land_info		land_data[];
-extern map_info			map;
 extern material_info	material_data[];
 extern perk_info		perk_data[];
 extern skill_info		skill_data[];
