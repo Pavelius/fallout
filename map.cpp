@@ -587,13 +587,3 @@ short unsigned creature::getindex() const {
 	auto pt = h2m(*this);
 	return geth(pt.x, pt.y);
 }
-
-void actor::moveto(point position, int run) {
-	auto p1 = h2m(*this);
-	auto i1 = geth(p1.x, p1.y);
-	auto p2 = h2m(position);
-	auto i2 = geth(p2.x, p2.y);
-	blockimpassable();
-	createwave(i2, Blocked);
-	path = route(i1, stepto, 0, 0);
-}

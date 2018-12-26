@@ -154,7 +154,7 @@ void actor::setaction(animation_s value, bool backward) {
 	else
 		next_stamp = gametick() + 1000 / getfps();
 	if(ismoving())
-		moveshift();
+		movepath();
 }
 
 unsigned actor::getfps() const {
@@ -184,6 +184,40 @@ bool actor::ismoving() const {
 		|| action == AnimateWeaponWalk;
 }
 
+void actor::movepath() {
+	point p1 = *this;
+	moveshift();
+	if(path) {
+		auto p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
+		auto n1 = getdistance(p1, *this);
+		auto n2 = getdistance(p1, p3);
+		if(n1 > n2) {
+			path = map::remove(path);
+			if(!path)
+				setaction(AnimateStand);
+			else {
+				p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
+				orientation = getorientation(*this, p3);
+			}
+		}
+	}
+}
+
+void actor::moveto(point position, int run) {
+	auto p1 = h2m(*this);
+	auto i1 = map::geth(p1.x, p1.y);
+	auto p2 = h2m(position);
+	auto i2 = map::geth(p2.x, p2.y);
+	map::blockimpassable();
+	map::createwave(i2, Blocked);
+	path = map::route(i1, map::stepto, 0, 0);
+	if(path) {
+		auto p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
+		orientation = getorientation(p1, p3);
+		setaction(AnimateWalk);
+	}
+}
+
 void actor::update() {
 	if(!next_stamp)
 		return;
@@ -200,7 +234,7 @@ void actor::update() {
 			next_stamp += xrand(2 * 1000, 8 * 1000);
 		} else if (need_shift) {
 			frame = 0;
-			moveshift();
+			movepath();
 		} else
 			setaction(AnimateStand);
 		return;
@@ -210,7 +244,7 @@ void actor::update() {
 	else
 		frame--;
 	if(need_shift)
-		moveshift();
+		movepath();
 }
 
 void actor::getanimation(animation& result) {

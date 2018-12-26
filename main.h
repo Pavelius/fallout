@@ -591,10 +591,10 @@ namespace map {
 	void				setscene(short unsigned index, short unsigned value);
 	void				settile(short unsigned index, short unsigned value);
 	void				setwall(short unsigned index, short unsigned value);
-	static short unsigned stepfrom(short unsigned index);
-	static short unsigned stepto(short unsigned index);
-	static short unsigned to(short unsigned index, direction_s d);
-	static short unsigned tot(short unsigned index, direction_s d);
+	short unsigned		stepfrom(short unsigned index);
+	short unsigned		stepto(short unsigned index);
+	short unsigned		to(short unsigned index, direction_s d);
+	short unsigned		tot(short unsigned index, direction_s d);
 };
 struct actor : wearable, point {
 	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0), path(0) {}
@@ -630,6 +630,7 @@ private:
 	short unsigned		frame, frame_maximum;
 	map::node*			path;
 	unsigned			next_stamp;
+	void				movepath();
 	void				moveshift();
 };
 struct weaponable {
