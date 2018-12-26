@@ -185,19 +185,21 @@ bool actor::ismoving() const {
 }
 
 void actor::movepath() {
-	point p1 = *this;
 	moveshift();
 	if(path) {
 		auto p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
-		auto n1 = getdistance(p1, *this);
-		auto n2 = getdistance(p1, p3);
+		auto n1 = getdistance(start_position, *this);
+		auto n2 = getdistance(start_position, p3);
 		if(n1 > n2) {
 			path = map::remove(path);
-			if(!path)
+			if(!path) {
+				*this = p3;
 				setaction(AnimateStand);
-			else {
+			} else {
+				n1 -= n2;
+				start_position = p3;
 				p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
-				orientation = getorientation(*this, p3);
+				orientation = getorientation(start_position, p3);
 			}
 		}
 	}
@@ -213,7 +215,8 @@ void actor::moveto(point position, int run) {
 	path = map::route(i1, map::stepto, 0, 0);
 	if(path) {
 		auto p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
-		orientation = getorientation(p1, p3);
+		start_position = position;
+		orientation = getorientation(*this, p3);
 		setaction(AnimateWalk);
 	}
 }

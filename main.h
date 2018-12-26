@@ -598,6 +598,7 @@ namespace map {
 };
 struct actor : wearable, point {
 	constexpr actor() : point{0, 0}, action(AnimateDeadBack), orientation(0), frame(0), frame_maximum(0), next_stamp(0), path(0) {}
+	constexpr void operator=(const point pt) { x = pt.x; y = pt.y; }
 	static int			byweapon(animation_s action, int weapon);
 	animation_s			getaction() const { return action; }
 	void				getanimation(draw::animation& result);
@@ -629,6 +630,7 @@ private:
 	unsigned char		orientation;
 	short unsigned		frame, frame_maximum;
 	map::node*			path;
+	point				start_position;
 	unsigned			next_stamp;
 	void				movepath();
 	void				moveshift();
