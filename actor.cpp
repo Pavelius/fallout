@@ -190,7 +190,7 @@ void actor::movepath() {
 		auto p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
 		auto n1 = getdistance(start_position, *this);
 		auto n2 = getdistance(start_position, p3);
-		if(n1 > n2) {
+		if(n1 >= n2) {
 			path = map::remove(path);
 			if(!path) {
 				*this = p3;
@@ -200,6 +200,15 @@ void actor::movepath() {
 				start_position = p3;
 				p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
 				orientation = getorientation(start_position, p3);
+				//if(n1 == 0)
+				//	*this = start_position;
+				//else {
+				//	n2 = getdistance(start_position, p3);
+				//	int dx = p3.x - start_position.x;
+				//	int dy = p3.y - start_position.y;
+				//	x = start_position.x + dx * n1 / n2;
+				//	y = start_position.y + dy * n1 / n2;
+				//}
 			}
 		}
 	}
@@ -215,9 +224,9 @@ void actor::moveto(point position, int run) {
 	path = map::route(i1, map::stepto, 0, 0);
 	if(path) {
 		auto p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
-		start_position = position;
-		orientation = getorientation(*this, p3);
-		setaction(AnimateWalk);
+		start_position = *this;
+		orientation = getorientation(start_position, p3);
+		setaction(run ? AnimateRun : AnimateWalk);
 	}
 }
 

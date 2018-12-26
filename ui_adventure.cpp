@@ -591,7 +591,7 @@ void creature::adventure() {
 				player.setaction(AnimateWalk);
 			break;
 		case MouseLeft:
-			player.moveto(hot.mouse + camera, false);
+			player.moveto(hot.mouse + camera, true);
 			break;
 		}
 	}
