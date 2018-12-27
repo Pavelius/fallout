@@ -356,7 +356,7 @@ static void render_screen(point& hilite_hex) {
 	render_tiles(screen, camera);
 	draw::hexagon(point_hex.x, point_hex.y);
 	//render_cost(screen, camera);
-	render_route(screen, camera, player, player.getpath());
+	//render_route(screen, camera, player, player.getpath());
 	//render_hexagon(screen, camera);
 	render_area(screen, camera);
 	render_roof(screen, camera);
@@ -591,7 +591,8 @@ void creature::adventure() {
 				player.setaction(AnimateWalk);
 			break;
 		case MouseLeft:
-			player.moveto(hot.mouse + camera, true);
+		case MouseLeft | Shift:
+			player.moveto(hot.mouse + camera, (hot.key&Shift)==0);
 			break;
 		}
 	}

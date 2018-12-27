@@ -199,16 +199,15 @@ void actor::movepath() {
 				n1 -= n2;
 				start_position = p3;
 				p3 = m2h(path->index % (map::width * 2), path->index / (map::width * 2));
+				auto o2 = orientation;
 				orientation = getorientation(start_position, p3);
-				//if(n1 == 0)
-				//	*this = start_position;
-				//else {
-				//	n2 = getdistance(start_position, p3);
-				//	int dx = p3.x - start_position.x;
-				//	int dy = p3.y - start_position.y;
-				//	x = start_position.x + dx * n1 / n2;
-				//	y = start_position.y + dy * n1 / n2;
-				//}
+				if(n1 > 0 && o2!=orientation) {
+					n2 = getdistance(start_position, p3);
+					int dx = p3.x - start_position.x;
+					int dy = p3.y - start_position.y;
+					x = start_position.x + dx * n1 / n2;
+					y = start_position.y + dy * n1 / n2;
+				}
 			}
 		}
 	}
