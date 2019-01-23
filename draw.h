@@ -107,9 +107,6 @@ struct sprite : pma {
 	unsigned			cicles_offset;
 	frame				frames[1];
 	//
-	frame&				add();
-	void*				add(const void* data, int dsize);
-	void				create(int count, int cicles, int additional_bytes);
 	int					esize() const { return frames[0].offset - (sizeof(sprite) + sizeof(frame)*(count - 1)); }
 	const unsigned char* edata() const { return (const unsigned char*)this + sizeof(sprite) + sizeof(frame)*(count - 1); }
 	int					ganim(int index, int tick) const;
@@ -118,7 +115,6 @@ struct sprite : pma {
 	int					glyph(unsigned sym) const;
 	unsigned char*		ptr(unsigned o) const { return (unsigned char*)this + o; }
 	int					store(const unsigned char* p, int width, int w, int h, int ox, int oy, sprite::encodes mode, unsigned char shadow_index, color* original_pallette, int explicit_frame, unsigned char transparent_index = 0);
-	void				write(const char* url);
 };
 typedef const char* (*proctext)(char* result, const char* result_maximum, void* object);
 namespace colors {
